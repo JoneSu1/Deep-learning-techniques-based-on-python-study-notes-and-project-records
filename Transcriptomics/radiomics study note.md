@@ -40,3 +40,15 @@ with the development of technological tools, some studies have extracted the dep
 
 5. 确定数据后进行模型的设计和优化
 常规可以是用转录组学诊断模型构建的相关方法：例如：决策树，随机森林，逻辑回归（单因素COX，多因素COX）, 朴素贝叶斯，SVM，XGboost，K-Means等分类，回归模型。
+
+
+在进行影像组学分析时候，我们使用python作为分析工具.
+我们需要用到相关的分析库有：pandas，Numpy， scipy， sciKit-learn
+
+其中特征提取：师依靠pyradiomics库进行提取的，快速且便捷.
+数据预处理：
+借助pandas，Numpy等库快速的完成数据预处理
+
+数理统计和机器学习模型的设计优化：
+scipy, scikit-learn库帮助我们用极少的代码实习数理统计和机器学习的建模.
+![6](https://user-images.githubusercontent.com/103999272/233128526-a872b462-7e07-46e6-b71d-cdf60a82dff3.png)
