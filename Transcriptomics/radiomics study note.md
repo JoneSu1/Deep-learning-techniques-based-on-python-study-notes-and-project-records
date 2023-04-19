@@ -45,10 +45,28 @@ with the development of technological tools, some studies have extracted the dep
 在进行影像组学分析时候，我们使用python作为分析工具.
 我们需要用到相关的分析库有：pandas，Numpy， scipy， sciKit-learn
 
-其中特征提取：师依靠pyradiomics库进行提取的，快速且便捷.
+其中特征提取：依靠pyradiomics库进行提取的，快速且便捷.
 数据预处理：
 借助pandas，Numpy等库快速的完成数据预处理
 
 数理统计和机器学习模型的设计优化：
 scipy, scikit-learn库帮助我们用极少的代码实习数理统计和机器学习的建模.
 ![6](https://user-images.githubusercontent.com/103999272/233128526-a872b462-7e07-46e6-b71d-cdf60a82dff3.png)
+
+
+同时如果不适用传统的方法进行特征提取，也可以考虑使用深度学习的方法来帮助筛选特征.
+Deep learning in radiomics refers to the application of advanced artificial intelligence techniques, particularly convolutional neural networks (CNNs) and other deep learning architectures, to analyze medical images and extract quantitative features for improved diagnosis, prognosis, and treatment planning in the field of radiology.
+
+Radiomics is a rapidly growing area of research that focuses on converting medical images into mineable high-dimensional data, enabling the extraction of valuable information from image features. By leveraging deep learning, radiomics can improve the accuracy and efficiency of medical image analysis, thereby enhancing clinical decision-making and patient outcomes.
+
+Here's a brief introduction to the use of deep learning in radiomics:
+
+Image Segmentation: Deep learning algorithms can automatically identify and delineate regions of interest (ROIs) in medical images, such as tumors, organs, or lesions. This allows for more accurate and consistent quantification of radiomic features, reducing the need for time-consuming manual segmentation by radiologists.
+
+Feature Extraction: CNNs and other deep learning models can be trained to automatically extract relevant features from medical images. These features, which may include textural, morphological, and intensity-based characteristics, can be used to quantify image properties and identify patterns related to disease states or treatment response.
+
+Prediction and Classification: Deep learning models can be used to predict clinical outcomes or classify patients based on the extracted radiomic features. For example, algorithms can be developed to predict tumor malignancy, treatment response, or patient survival, aiding in personalized medicine and tailored treatment plans.
+
+Integration with other data sources: By combining radiomic features with other patient data, such as genetic, clinical, and demographic information, deep learning models can provide more comprehensive and accurate prognostic and predictive tools.
+
+Enhanced visualization: Deep learning techniques can help radiologists visualize complex and subtle patterns in medical images, facilitating a better understanding of disease processes and improving diagnostic accuracy.
