@@ -93,4 +93,38 @@
     output:
     a>b
 
+**range**
+
+The range() function will help us get a arithmetic progression.
+
+**Code**
+
+    range(10)
+    #if I just use the range() funcation, I will get output: range(0,10)
+    list(range(10))
+    #if I use list() funcation, I will show: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+    list(range(0,10,2))
+    #The first number indicates the value at the beginning of the series.
+    #The second number represents the maximum value of this series.
+    #The third number represents the difference of this series of equal differences.
+    #[0, 2, 4, 6, 8]
+    
+**3. "for" loop**
+
+**Code**
+
+    for i in range(5):
+       print(i)
+       # means the number of i is in the range (0,1,2,3,4).
+       
+**Regarding "continue" and "break" in the loop.**
+
+    #continue
+    for i in range(5):
+       if i % 2 ==0:
+          continue
+       print(i)
+       #If the remainder of i divided by 2 is equal to 0, the cycle continues.
+       #When i is at the remainder of 2 is not equal to 0, then go to the next step and output i.
+
 
