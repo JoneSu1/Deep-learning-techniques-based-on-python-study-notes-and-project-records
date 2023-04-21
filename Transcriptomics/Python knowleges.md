@@ -127,4 +127,15 @@ The range() function will help us get a arithmetic progression.
        #If the remainder of i divided by 2 is equal to 0, the cycle continues.
        #When i is at the remainder of 2 is not equal to 0, then go to the next step and output i.
 
-
+     #break
+     for i in range(4):
+      for j in range(5,9):
+         if j == 6:
+               break
+         print(i,j)
+    # The role of this break is to stop the loop when j equals 6 and output the (i,j) before j equals 6
+    **output**
+    0 5
+    1 5
+    2 5
+    3 5
