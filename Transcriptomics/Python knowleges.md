@@ -210,3 +210,54 @@ The range() function will help us get a arithmetic progression.
     output: Ture
 
 **How to link two list**
+
+    # We can use addtion to link
+    **Code**
+    list_A = ["a","b","c"]
+    list_B = ["d","e"]
+    list_x = list_A + list_B
+    print(list_x)
+    **output**
+    ['a', 'b', 'c', 'd', 'e']
+    # we also can use fuction extend to link two list.
+    **Code**
+    list_A.extend(list_B)
+    print(list_A)
+    **OUTPUT**
+    ['a', 'b', 'c', 'd', 'e']
+
+**How to select specifical element**
+
+   
+    **Code**
+    print(list_A[0]) # choose first element
+    print(list_A[1:3])# choose element 2 and 3
+    print(list_A[-1]) #The negative sign indicates that the element is selected from the opposite direction of the list. 
+    print(list_A[2:]) # from 3th element to 
+    print(list_A[:3])# form beging to the second element.
+    print(list_A[-3:-1])# The negative sign indicates an element from the 3rd to the 2nd.
+    print(list_A[::2])#  A double colon means that the output is separated by several elements.
+    print(list_A[::-1]) 
+    **OUTPUT**
+    a
+    ['b', 'c']
+    e
+    ['c', 'd', 'e', 'd', 'e']
+    ['a', 'b', 'c']
+    ['e', 'd']
+    ['a', 'c', 'e',]
+    ['e', 'd', 'e', 'd', 'c', 'b', 'a']
+    
+
+**How is the sorting done at the list?**
+
+    #we can use sort function to define how to orde these elements.
+    **code**
+    list_C = ["saw","small","He","foxes","six"]
+    list_C.sort()# if we don't define the rule of order, It will follow the A-Z.
+    print(list_C)
+    **output**
+    ['He', 'foxes', 'saw', 'six', 'small']
+    
+    #if we define, we can do that: list_C.sort(key= len)# it will follow the length of elements to order.
+    
