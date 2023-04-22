@@ -134,8 +134,79 @@ The range() function will help us get a arithmetic progression.
                break
          print(i,j)
     # The role of this break is to stop the loop when j equals 6 and output the (i,j) before j equals 6
+    # The list() function will collect the vaule of producted by the range() function.
     **output**
     0 5
     1 5
     2 5
     3 5
+
+**while loop**
+
+    # This loop will continue until the qualifying condition is not met.
+    **Code**
+    x = 10
+    while x>0:
+      print(x)
+      x = x-2
+      
+    outPut
+    8
+    6
+    4
+    2
+    0
+    # means that when the x <0, this function will stop.
+    # We also can use the break to add the condition of stop.
+    **Code**
+    x = 10
+    while x>0:
+      print(x)
+      x = x-2
+      if x<5:
+        break
+     output
+     10
+     8
+     6
+     
+ **Regarding List function**
+ 
+    #The length and content of list can be changed.
+    #We can use the featurelist[] function to creat a list.
+    **Code**
+    featurelist = ["mean","median","Energy", "Entropy"]
+
+**Add and remove element in list**
+
+    # We can use the function append to add elements to the end.
+    **code**
+    featurelist.append("maximum")
+    print(featurelist)
+    **output**
+    ['mean', 'median', 'Energy', 'Entropy', 'maximum', 'maximum']
+    # We can also use the insert function to place the element at the specified position.
+    **code**
+    featurelist.insert(0,"minimum")
+    print(featurelist)
+    **output**
+    ['minimum', 'mean', 'median', 'Energy', 'Entropy', 'maximum', 'maximum']
+    # we also can use pop function to remove element at the specified postion. And The return value is the element that was removed.
+    **Code**
+    featurelist_pop = featurelist.pop(2)
+    print(featurelist_pop)
+    print(featurelist)
+    **output**
+    median
+    ['minimum', 'mean', 'Energy', 'Entropy', 'maximum', 'maximum']
+    # We can use the remove function to remove the first met element.  
+    **Code**
+    featurelist.remove("mean")
+    print(featurelist)
+    **output**
+    ['minimum', 'Energy', 'Entropy', 'maximum', 'maximum']
+    # If we want check a element weather or not involed in this list. we can use the in.
+    "Energy" in featurelist
+    output: Ture
+
+**How to link two list**
