@@ -261,3 +261,66 @@ The range() function will help us get a arithmetic progression.
     
     #if we define, we can do that: list_C.sort(key= len)# it will follow the length of elements to order.
     
+  **Dictionary**
+  
+     #A dictionary is a collection of keys and values that can be modified in length and content.
+     **Code**
+     dict_a = {"Name":"zhao","Age": 16,"Gender":"Male"}# create a dictionary
+     dict_a["Name"]# look up the dictionary
+     **output**
+     'zhao'
+ 
+ **How to insert a element in the dict**
+ 
+    **Code**
+    dict_a["Language"] = "English"
+    print(dict_a)
+    **output**
+    {'Name': 'zhao', 'Age': 16, 'Gender': 'Male', 'Language': 'English'}
+    
+ **How to motify element at dict**
+ 
+    #Motify
+    **Code**
+    dict_a["Age"] = 18
+    print(dict_a)
+    **output**
+    {'Name': 'zhao', 'Age': 18, 'Gender': 'Male', 'Language': 'English'}
+    
+    #How to delect element
+    #Generaly we can use del function to delect element in dict.
+    **code**
+    del dict_a["Age"]
+    print(dict_a)
+    **output**
+    {'Name': 'zhao', 'Gender': 'Male', 'Language': 'English'}
+    # on the other way, we can use XXX.pop("element") to delect.
+    **Code**
+    dict_a.pop("Gender")
+    print(dict_a)
+    **output**
+   {'Name': 'zhao', 'Language': 'English'}
+   
+
+**If we want to see the value or key in the dictionary separately**
+
+    #we can use the XXXX.keys(), and XXXX.values() to check.
+    **Code**
+    dict_a.keys()
+    **output**
+    dict_a.keys()
+    #Regarding values
+    **Code**
+    dict_a.values()
+    **Output**
+    dict_values(['zhao', 'English'])
+    
+**How to merge two dictionary?**
+
+    #we can use A_dictionary.update(B_dictionary) to merge A and B dictionary.
+    **Code**
+    dict_a.update({"ID":123})
+    print(dict_a)
+    **Output**
+    dict_a.update({"ID":123})
+    {'Name': 'zhao', 'Language': 'English', 'ID': 123}
