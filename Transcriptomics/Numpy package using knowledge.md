@@ -70,7 +70,21 @@
     [1. 1. 1.]]
     [2 5 8]
     
- **The list of order for ndarray**
+ **The list of syntax for ndarray**
  
                
 ![14](https://user-images.githubusercontent.com/103999272/235300690-af8b6ec7-eea3-430b-908e-46b67270125c.png)
+
+**The data type of ndarray**
+
+![15](https://user-images.githubusercontent.com/103999272/235301011-9bea6d78-f69a-4d8e-9d17-3a09a67c62e5.png)
+
+**How to convert the type of ndarray**
+    
+    #If we want to get a float64 ndarra, we can use XXX.astype(np.float32) to convert the type of ndarray's int32 
+    **Code**
+    print(arrl.dtype)# output:int32
+    float_arr = arrl.astype(np.float32)
+    float_arr.dtype #output: dtype('float32')
+    
+    
