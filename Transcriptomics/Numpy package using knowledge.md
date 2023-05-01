@@ -258,3 +258,8 @@
 **General syntax of calculation in the array**
 
 ![17](https://user-images.githubusercontent.com/103999272/235414104-42e84933-2500-443a-8560-308490906f39.png)
+
+**About the practice of computing commands**
+
+![18](https://user-images.githubusercontent.com/103999272/235415250-244f5dc9-723e-47f9-822a-2bffe0533e90.png)
+
