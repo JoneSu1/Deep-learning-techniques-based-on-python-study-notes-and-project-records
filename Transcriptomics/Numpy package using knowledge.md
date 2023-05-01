@@ -129,3 +129,83 @@
             [ True,  True,  True]])
             
 **Indexing and slicing in Numpy**
+     
+     **Code**
+     #use np.arange() function to creat a ndarray.
+     arrld = np.arange(10)
+     arrld
+     **Output**
+     array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+     # if we want to select one of elements in the array, we just use [] to do.
+     **Code**
+     arrld[3]
+     **Output**
+     3
+          # if we want to get a set of elements in the array.
+      **Code**
+      arrld_slice = arrld[3:6]
+      arrld_slice
+      **Output**
+      array([3, 4, 5])
+      #Numpy's slices are "references", not copies, and modifying a slice modifies the original array.
+      # The arrld_slice we just defined is part of the arrld array, and if we make the elements in arrld_slice change, the arrld array will be also changed.
+      **Code**
+      arrld_slice[0] = 33#that means the arrld_slice array' first element will be defined as 33.
+      arrld# same time, the arrld array' fourth element is changed as 33.
+      **Output**
+      array([ 0,  1,  2, 33,  4,  5,  6,  7,  8,  9])
+      # if we don't want to change the original array while changing the sliced array, we can use XXXX[3:6].copy() function to get a copy slice array.
+      arrld_slice_copy = arrld[3:6].copy()
+     arrld_slice_copy[0] = 333
+     print(arrld)
+     arrld_slice_copy
+     # we can see that only copy array is changed.
+     **Output**
+     [ 0  1  2 33  4  5  6  7  8  9]
+     array([333,   4,   5])
+     
+**Numpy manipulation of high-dimensional arrays**
+
+     #Firstly, create a senconde dimensional array.
+     **Code**
+     arr2d = np.array([[1,2,3],[4,5,6],[7,8,9]])
+     arr2d
+     **Output**
+     array([[1, 2, 3],
+       [4, 5, 6],
+       [7, 8, 9]])
+     **Code**
+     arr2d[0]# if we want to get first row, just use [0]
+     **Output**
+     array([1, 2, 3])
+     **Code**
+     arr2d[0][0]# if we want to get first element of row and column, we can use [0][0]
+     #output: 1
+     **Code**
+     arr2d[:,2]# if we want to get thirld column, we can use XXX[:,2]
+     #Output: array([3, 6, 9])
+     **Code**
+     arr2d[0:2,0:2]
+     #Output: array([[1, 2],
+                    [4, 5]])
+                    
+**Boolean index (used when performing feature filtering)**
+    
+     **Code**
+     arr2d == 5
+     # Output: 
+     array([[False, False, False],
+       [False,  True, False],
+       [False, False, False]])
+       
+     # We can set conditions to make logical judgments, and then we can filter out the elements that meet 
+     the conditions, and we can use.
+     **Code**
+     arr_features = np.array(["A","B","C","D","E"])# this array represents original data array.
+     arr_bool = np.array([True,True,False,False,False]) # This array demonstrates a logical result array.
+     arr_features[arr_bool]# It is possible to filter the elements that are Ture in the logical array at the corresponding positions in the original array.
+     **Output**
+     array(['A', 'B'], dtype='<U1')
+     
+
+          
