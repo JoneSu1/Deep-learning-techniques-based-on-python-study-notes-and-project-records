@@ -87,4 +87,45 @@
     float_arr = arrl.astype(np.float32)
     float_arr.dtype #output: dtype('float32')
     
-    
+**Array calculation**
+
+     #The rules of array computation are the same as those of simple computation, as long as the  rows and columns of two arrays are the same, 
+     you can add, subtract, multiply and divide between two arrays directly.
+     **Code**
+     a_arr = np.full((2,3),3) #An array of two rows and three columns of all 3s
+     a_arr
+     **output**
+     array([[3, 3, 3],
+       [3, 3, 3]])
+     **Code**
+     b_arr = np.full_like(a_arr,1) #np.full_like(XXXX,) means you can creat a style like XXXX new array.
+     b_arr
+     **Output**
+     array([[1, 1, 1],
+       [1, 1, 1]])
+     
+     **Code, Arithmetic between arrays and arrays **
+     a_arr + b_arr
+     **Output**
+     array([[4, 4, 4],
+       [4, 4, 4]])
+      
+     **Arithmetic between arrays and numbers**
+     **Code**
+     a_arr * 4
+     **Output**
+     array([[12, 12, 12],
+       [12, 12, 12]])
+       **Code**
+       6/a_arr
+       **Output**
+       array([[2., 2., 2.],
+       [2., 2., 2.]])
+       **Code**
+       a_arr > b_arr #If we compare two array, we will get logical results(One by one matching)
+       **Output**
+       
+        array([[ True,  True,  True],
+            [ True,  True,  True]])
+            
+**Indexing and slicing in Numpy**
