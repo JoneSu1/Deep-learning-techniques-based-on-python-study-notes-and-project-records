@@ -241,5 +241,20 @@
     # How to make the low-dimension object converting to high-dimension object
     # We can use the XXX.reshape(,) to get a two-dimension object.
     **Code**
-    
-          
+    arr_flat_2d = arr_flatten.reshape(3,3)
+    arr_flat_2d
+    **Output**
+    array([[1, 2, 3],
+       [4, 5, 6],
+       [7, 8, 9]])
+     
+ **Array functions for elements**
+        
+        #This syntax will do same with every element in the array.
+ 
+
+![16](https://user-images.githubusercontent.com/103999272/235413798-25592fe0-f2b2-47ad-bafc-62a712e73d85.png)
+
+**General syntax of calculation in the array**
+
+![17](https://user-images.githubusercontent.com/103999272/235414104-42e84933-2500-443a-8560-308490906f39.png)
