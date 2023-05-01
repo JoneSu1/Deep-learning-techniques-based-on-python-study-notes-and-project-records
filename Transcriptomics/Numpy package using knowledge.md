@@ -208,4 +208,9 @@
      array(['A', 'B'], dtype='<U1')
      
 
+**Array Transformation**
+    
+    # Array convert
+    arr2d.T
+    
           
