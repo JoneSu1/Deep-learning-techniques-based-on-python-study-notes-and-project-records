@@ -211,6 +211,35 @@
 **Array Transformation**
     
     # Array convert
-    arr2d.T
+    **Code**
+    arr2d.T #The columns convert to raws.
+    **Outpt**
+    array([[1, 4, 7],
+       [2, 5, 8],
+       [3, 6, 9]])
+    
+    #Number axis conversion
+    #Arrays for axis replacement
+    #XXX.transpose(()) function can be used to perform axis replacement when processing image dimensions. 
+    #If () is of the form (1, 0), it is a row transformation.
+    **Code**
+    arr2d.transpose((1,0))
+    **Output**
+    array([[1, 4, 7],
+       [2, 5, 8],
+       [3, 6, 9]])
+    
+    # How to make the high-dimension convert to one-dimension.
+    # We can use XXXX.flatten() function to get.
+    **Code**
+    # The two-dimension convert to one-dimension
+    arr_flatten = arr2d.flatten()
+    arr_flatten
+    **Output**
+    array([1, 2, 3, 4, 5, 6, 7, 8, 9])
+ 
+    # How to make the low-dimension object converting to high-dimension object
+    # We can use the XXX.reshape(,) to get a two-dimension object.
+    **Code**
     
           
