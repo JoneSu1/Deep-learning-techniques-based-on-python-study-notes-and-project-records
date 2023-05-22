@@ -270,3 +270,18 @@
  ![13](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/00faecf5-b7c4-4392-83fa-7ec2e7459121)
 
     
+![14](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/8ab6482c-4ecb-470f-8cca-34c2c39db0f3)
+
+      我们可以根据再基因片段上binding相关的碱基，通过无监督的模型训练碱基数据，确定哪一些碱基是重要的（高度大小表示重要性）. a图
+      b图， 随机扰动法，把位置上的碱基进行随机改变，然后进行神经网络学习。 如果碱基改变对结果变化不大，则这个碱基
+    不重要，如果变化大则重要。然后得到一个碱基重要性的得分.
+      c图，回推法。从output去回推input看重要性.
+      
+      这是从统计学的角度去解释这个结果（重要性评分）.
+      
+      
+      
+     
+    
+    
+    
