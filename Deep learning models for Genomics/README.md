@@ -236,4 +236,37 @@
 **单任务**
 ![10](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/e0946aac-e894-466c-85a4-2c915c1c8d22)
 
-     如果我们想知道我们的3条DNA序列在output部分是否相互产生了binding或者调控。这就是一个任务，尽管最后输出了多个结果.
+     如果我们想知道TF和3条DNA序列在output部分是否产生了binding或者调控。这就是一个任务，尽管最后输出了多个结果.
+     
+**多任务**
+![11](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/c953a4d5-fb2b-41da-b909-aeffb6a88ed7)
+
+    如果我们想知道2个TF在3条DNA序列是否产生调控，
+    这就是两个任务. 但他们是在同一个背景的.所以会
+    出现两个分支.
+        首先使用全部的数据取训练了TF和基因片段binding的模型，
+    然后再使用这个模型根据目标进行分支（构建单层分支网络）.
+    
+**多模型**
+     
+     最大的区别在于数据背景不同了，可能是多种类的数据联合进行分析的.
+     每一个种类的数据构成一个model layer，然后再整合（收敛）这些model去执行
+     任务（另一个新的神经网络）.
+    
+ ![12](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/807be4b1-40c5-40c4-ab8b-304545e9e56b)
+
+
+**基于迁移学习的小数据集训练模型**
+
+         在数据稀少情况下，从头开始训练模型可能
+    不可行。可以使用另一个在类似任务中训练
+    的模型大部分参数来初始化模型，这种方法
+    被称为迁移学习，可以看作是将先验知识整
+    合到模型中。在基因组学中，迁移学习在基
+    于序列的染色质可及性预测模型中的应用已
+    经得到证实。
+        可以把从其他项目得到了特征筛选层得到的参数可以顺着用到其他相似背景但是分支不同的筛选中.
+ 
+ ![13](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/00faecf5-b7c4-4392-83fa-7ec2e7459121)
+
+    
