@@ -135,4 +135,9 @@
                   根据所选的激活函数例如Relu，对输出的结果进行限制，只有正数据（保留对feature有意义的，筛除没有意义的）
                   
  **2.池化层**. 
-            
+    
+ ![12](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/23fb549b-e9ad-4ef2-a2d2-e5eec3db34e1)
+       
+   ![31](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/0aae5167-52fc-4839-ba16-26811c7f5ac4)
+
+
