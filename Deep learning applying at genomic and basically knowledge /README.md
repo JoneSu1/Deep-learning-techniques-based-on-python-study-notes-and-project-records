@@ -382,10 +382,40 @@
             
               通过Keras_dna ，可以轻松实现深度学习模型，以便从序列中预测基因组注
             释。它可以处理输入和输出的大量文件类型。可以处理标准的生物信息文件
-            格式作为输入，如 bigwig gff bed wig bedGraph 或 fasta ，并返回用于模
+            格式作为输入，如 bigwig gff bed wig bedGraph（经过注释的文件） 或 fasta(原始文件) ，并返回用于模
             型训练的标准化输入。
               •使用Keras 模型 (Tensorflow 高级 API) 快速开发深度基因组应用程序，可以实现
             现有的模型，同时也促进具有单个或多个目标或输入的模型开发。
               •注释文件（如BED 、 GFF 、 GTF 、 BIGWIG 、 BEDGRAPH 或 WIG ）以及基因组文
             件（ FASTA ）很容易集成到具有多种功能（序列窗口选择、多输入 物种预测）
             以及评估（ AUROC 、 AUPRC 、相关性）的深度学习模型中。
+            
+            
+**输入数据**
+![39](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/a3f501da-3cc0-401e-a6f4-3c1aff766f46)
+
+
+                  **关于使用Keras DNA有3个步骤，在输入部分分为：
+                  分类，回归，多种输入，首先导入数据，fasta文件，然后进行分类和注释他们**
+              •Keras_dna使用基因组注释的大多数标准生物信息文件格式作为输入。 Bed gff 和 gtf 常用于分类问题，
+            而 wig big wig 和 bedGraph 用于回归问题。所有这些不同的文件可以一起用于多输入问题。
+              •标准输入由一系列特征和相应的标签组成。直接从 FASTA 文件中提取 DNA 序列，生成器将其作为字
+            符串或单热编码输入输出到模型。它还提取相应的标签（如 BED 、 GFF 或 GTF ）或连续数据文件（如
+            BIGWIG 、 BEDGRAP 或 WIG ）。为了在训练集和测试集之间实现分离，我们的生成器可以被限制为只来自特定染色体序列的生成序列。
+            
+            
+**Generator**
+
+              •Generator
+            是一类容易调优的生成器，它处理从数据生成网络输入所需的所有数据处理。
+              •multigenerator
+            同时在多个数据类型和多个物种上训练模型。 Multigenerator 拥有与
+            Generator 相同的功能。 不管输入的类型是单一序列还是多个序列和注释，
+            ModelWrapper 都接受这些输入，通过Generator 类生成适当的用户定义批处理和标签。
+
+
+**Keras_dna ModelWrapper**
+![40](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/af8e942a-d730-428b-b00e-6f9631f361a5)
+
+            其中Generator是用于整合raw数据的lable和序列。
+            
