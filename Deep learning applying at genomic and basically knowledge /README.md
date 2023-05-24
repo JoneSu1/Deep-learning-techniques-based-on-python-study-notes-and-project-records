@@ -372,3 +372,20 @@
             总结：
             •训练误差指的是训练集样本与结果的误差；
             •泛化误差指的是模型预测情况与真实样本的误差；
+
+
+
+**Deep learning based sequence model for predicting variants**
+
+**基因组学中快速实现深度学习模型的包装器keras_dna**
+
+            
+              通过Keras_dna ，可以轻松实现深度学习模型，以便从序列中预测基因组注
+            释。它可以处理输入和输出的大量文件类型。可以处理标准的生物信息文件
+            格式作为输入，如 bigwig gff bed wig bedGraph 或 fasta ，并返回用于模
+            型训练的标准化输入。
+              •使用Keras 模型 (Tensorflow 高级 API) 快速开发深度基因组应用程序，可以实现
+            现有的模型，同时也促进具有单个或多个目标或输入的模型开发。
+              •注释文件（如BED 、 GFF 、 GTF 、 BIGWIG 、 BEDGRAPH 或 WIG ）以及基因组文
+            件（ FASTA ）很容易集成到具有多种功能（序列窗口选择、多输入 物种预测）
+            以及评估（ AUROC 、 AUPRC 、相关性）的深度学习模型中。
