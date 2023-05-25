@@ -415,7 +415,76 @@
 
 
 **Keras_dna ModelWrapper**
+
 ![40](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/af8e942a-d730-428b-b00e-6f9631f361a5)
 
-            其中Generator是用于整合raw数据的lable和序列。
+**相关文献**
+https://pubmed.ncbi.nlm.nih.gov/33135730/
+
+            其中Generator是用于整合raw数据的lable和序列。并转化成网络输入需要的数据.
+            然后用Keras_DNA搭建神经网络，再进行训练.
             
+ **以下使用方法和介绍来自于文献中的GitHub库**
+ 
+            Keras_dna 是一种 API，可帮助快速实验将深度学习应用于基因组学。它可以快速为 keras 模型（tensorflow）提供基因组数据，
+            而无需费力的文件转换或存储大量转换后的数据。它读取最常见的生物信息学文件并创建适用于 keras 模型的生成器。
+
+              如果您需要一个库，请使用 Keras_dna：
+
+            允许快速使用标准生物信息学数据来提供 keras 模型（现在是 tensorflow 的标准）。
+            帮助格式化数据以满足模型的需要。
+            促进具有基因组学数据（相关性、AUPRC、AUROC）的模型的标准评估
+            
+  ---------------------------------------------------------------------------
+            
+              keras_dna 的核心类是Generator，用于为 keras 模型提供基因组数据，并将ModelWrapperkeras 模型附加到其 keras_dna Generator。
+            Generator创建与所需注释相对应的 DNA 序列批次。
+
+               第一个例子，Generator产生对应于给定基因组功能（此处为结合位点）的 DNA 序列的实例作为正类，其他序列作为负类。
+             基因组通过 fasta 文件提供，注释通过 gff 文件提供（可能是一张床），DNA 是单热编码的，我们想要靶向的基因组功能需要在列表中传递。
+             
+   -------------------------------------------------------------------------------
+   
+            **Code**
+            from keras_dna import Generator
+
+            generator = Generator(batch_size=64,
+                      fasta_file='species.fa',#导入fasta文件
+                      annotation_files=['annotation.gff'],#提供的注释分类文件
+                      annotation_list=['binding site'])# 在哪里结合的数据.
+                      
+  Generator拥有很多关键字来使数据格式适应keras模型和手头的任务（预测序列在不同细胞类型中的基因组功能，在几个不同的功能之间进行分类，从两个不同的输入进行预测，标记DNA序列具有它们的基因组功能和实验范围......）
+
+ModelWrapper是一个旨在将 keras 模型统一到其生成器的类，以简化模型的进一步使用（预测、评估）。
+
+                  from keras_dna import ModelWrapper, Generator
+                  from tensorflow.keras.models import Sequential()
+
+                  generator = Generator(batch_size=64,
+                                    fasta_file='species.fa',
+                                    annotation_files=['annotation.bw'],
+                                    window=100)
+                      
+                  model = Sequential()
+                  ### the model need to be compiled
+                  model.compile(loss='mse', optimizer='adam')
+ 
+                  wrapper = ModelWrapper(model=model,
+                                    generator_train=generator)
+
+在构建完模型后可以根据需要使用功能函数来进行模型的训练，评估，预测，已经包装.
+
+                  训练模型.train()
+
+                  wrapper.train(epochs=10)#epochs= （）这是让你确定进行训练的次数
+                  在染色体上评估模型.evaluate()
+
+                  wrapper.evaluate(incl_chromosomes=['chr1'])#评估loss值，在验证集上的测试
+                  预测染色体.predict()
+
+                  wrapper.predict(incl_chromosomes=['chr1'], chrom_size='species.chrom.sizes')#预测loss值
+                  将包装器保存在 hdf5 中.save()#当评估数据和预测数据都符合标准时候，就可以进行储存.
+
+                  wrapper.save(path='./path/to/wrapper', save_model=True)
+                  
+                  
