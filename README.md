@@ -9,4 +9,4 @@
 
 # Project record of applying machine learning in R
 
-[Git hub link]（https://github.com/JoneSu1/R-based-machine-learning-projects/tree/master）
+[Git hub link](https://github.com/JoneSu1/R-based-machine-learning-projects/tree/master)
