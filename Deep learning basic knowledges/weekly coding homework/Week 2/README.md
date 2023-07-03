@@ -542,3 +542,23 @@ X_flatten = X.reshape(X.shape[0], -1)将X重新形状为一个二维数组，其
 ![10](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/f951ef06-2e84-45fc-91d6-e49ca271e2d8)
 
 
+**Expected Output**: 
+
+<table style="width:35%">
+  <tr>
+    <td>train_set_x_flatten shape</td>
+    <td> (12288, 209)</td> 
+  </tr>
+  <tr>
+    <td>train_set_y shape</td>
+    <td>(1, 209)</td> 
+  </tr>
+  <tr>
+    <td>test_set_x_flatten shape</td>
+    <td>(12288, 50)</td> 
+  </tr>
+  <tr>
+    <td>test_set_y shape</td>
+    <td>(1, 50)</td> 
+  </tr>
+</table>
