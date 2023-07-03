@@ -625,8 +625,101 @@ The main steps for building a Neural Network are:
     - Update parameters (gradient descent)
 
 You often build 1-3 separately and integrate them into one function we call `model()`.
+构建神经网络的主要步骤是：
+1. 定义模型结构（如输入特征的数量）。
+2. 初始化模型的参数
+3. 循环：
+    - 计算当前损失值（向前传播）
+    - 计算当前梯度值（后向传播）。
+    - 更新参数（梯度下降法）
+
+你经常分别建立1-3个，并将它们整合到一个我们称之为`model()`的函数中。
+
 ### 4.1 - Helper functions
 
 <a name='ex-3'></a>
 ### Exercise 3 - sigmoid
 Using your code from "Python Basics", implement `sigmoid()`. As you've seen in the figure above, you need to compute $sigmoid(z) = \frac{1}{1 + e^{-z}}$ for $z = w^T x + b$ to make predictions. Use np.exp().
+
+### 第一步先构建出满足y_hat = a = sigmoid(z)的函数，在numpy中.
+
+# GRADED FUNCTION: sigmoid
+
+            def sigmoid(z):
+                """
+                Compute the sigmoid of z
+
+                Arguments:
+                z -- A scalar or numpy array of any size.
+
+                Return:
+                s -- sigmoid(z)
+                """
+
+                #(≈ 1 line of code)
+                # s = ...
+                # YOUR CODE STARTS HERE
+                s = 1/(1 + np.exp(-z))
+    
+                # YOUR CODE ENDS HERE
+    
+                return s
+
+![3](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/88ca8352-3999-4b93-a0b8-af89eab11b21)
+
+### 现在已经有了激活函数了，下一步就是调参数（paprameters）
+
+**调节参数的第一步，就是将W的向量初始化（initializing）,而这次使用不常用的0初始化，将向量中的参数都设为0，np.zeros实现** 
+
+- 把参数W和b设为0.
+- 需要注意的是，在设置b这个常数时，要设置成0.0
+
+              # GRADED FUNCTION: initialize_with_zeros
+
+              def initialize_with_zeros(dim):
+                  """
+                  This function creates a vector of zeros of shape (dim, 1) for w and initializes b to 0.
+    
+                  Argument:
+                  dim -- size of the w vector we want (or number of parameters in this case)
+    
+                  Returns:
+                  w -- initialized vector of shape (dim, 1)
+                  b -- initialized scalar (corresponds to the bias) of type float
+                  """
+    
+                  # (≈ 2 lines of code)
+                  # w = ...
+                  # b = ...
+                  # YOUR CODE STARTS HERE
+                  w = np.zeros((dim, 1))
+                  b = 0.0
+                  # YOUR CODE ENDS HERE
+
+                  return w, b
+
+![4](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/54f1cb8e-089d-42df-a1c8-6e72dc6605cb)
+
+### 4.3 - Forward and Backward propagation
+### 4.3 - 向前和向后传播
+
+现在已经将参数初始化，可以通过向前和向后传播来执行（step）参数的学习了.
+Now that your parameters are initialized, you can do the "forward" and "backward" propagation steps for learning the parameters.
+
+<a name='ex-5'></a>
+### Exercise 5 - propagate
+Implement a function `propagate()` that computes the cost function and its gradient.
+
+计算出成本函数的sloop斜率.
+
+**Hints**:
+
+Forward Propagation:
+- You get X
+- You compute $A = \sigma(w^T X + b) = (a^{(1)}, a^{(2)}, ..., a^{(m-1)}, a^{(m)})$
+- You calculate the cost function: $J = -\frac{1}{m}\sum_{i=1}^{m}(y^{(i)}\log(a^{(i)})+(1-y^{(i)})\log(1-a^{(i)}))$
+
+Here are the two formulas you will be using: 
+
+$$ \frac{\partial J}{\partial w} = \frac{1}{m}X(A-Y)^T\tag{7}$$
+$$ \frac{\partial J}{\partial b} = \frac{1}{m} \sum_{i=1}^m (a^{(i)}-y^{(i)})\tag{8}$$
