@@ -445,3 +445,19 @@ Let's get more familiar with the dataset. Load the data by running the following
 我们将得到train_set_x和test_set_x(标签train_set_y和test_set_y不需要任何预处理)。train_set_x_origin和test_set_x_origin
 的每一行都是一个表示图像的数组。您可以通过运行以下代码来可视化示例。您也可以随意更改索引值并重新运行以查看其他图像。
 
+代码解释：
+- index = 25：选择要显示的图像的索引号，这里选择了索引为25的图像。
+- plt.imshow(train_set_x_orig[index])：使用Matplotlib的imshow函数显示指定索引的图像。train_set_x_orig是一个包含训练图像数据的NumPy数组，
+ 通过使用索引号index可以获取到对应的图像数据。
+- print ("y = " + str(train_set_y[:, index]) + ", it's a '" + classes[np.squeeze(train_set_y[:, index])].decode("utf-8") + "' picture.")：
+ 打印出图像对应的标签信息。train_set_y是一个包含训练集标签的NumPy数组，通过使用索引号index可以获取到对应的标签数据。classes是一个包含类别名称的列表或数组，
+通过将标签索引号np.squeeze(train_set_y[:, index])作为索引，可以获取到对应的类别名称。最后将标签信息和类别名称打印出来。
+
+COding：
+
+      # Example of a picture
+      index = 25
+      plt.imshow(train_set_x_orig[index])
+      print ("y = " + str(train_set_y[:, index]) + ", it's a '" + classes[np.squeeze(train_set_y[:, index])].decode("utf-8") +  "' picture.")
+
+      ![7](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/8a7fddbd-a178-4262-bdc9-ba12f5cfc00b)
