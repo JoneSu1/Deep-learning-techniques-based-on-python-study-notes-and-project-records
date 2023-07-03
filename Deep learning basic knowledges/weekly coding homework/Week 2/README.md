@@ -203,4 +203,81 @@ Softmax 函数的梯度计算相对稳定，没有明显的梯度消失问题。
 **它特别像是多个按列排的array组合了起来，而softmax函数会将每一列看作一组，然后分别进行分类判断，分别进行归一化**
 ![4](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/4d0a9250-8477-497c-b446-8d7c2c01cb58)
 
+ 其中Softmax函数是直接以e为底的指数的形式，放大数据，将优势的数据放大，劣势的缩小。
+ Softmax 函数的定义是：softmax(x) = exp(x) / sum(exp(x))。
+在 softmax 函数中，我们使用指数函数来进行归一化操作。对于每个输入元素，我们将其应用指数函数，以增强大的元素并抑制小的元素。
+然后，我们将所有指数化值的总和作为分母，将每个指数化值除以总和以获得每个输入值对应的概率分布.
+
+、因为softmax是输出了一个概率分布，所以softmax的结果相加是等于1的.
+
+
+What you need to remember:
+np.exp(x) works for any np.array x and applies the exponential function to every coordinate
+the sigmoid function and its gradient
+image2vector is commonly used in deep learning
+np.reshape is widely used. In the future, you'll see that keeping your matrix/vector dimensions straight will go toward eliminating a lot of bugs.
+numpy has efficient built-in functions
+broadcasting is extremely useful
+
+Coding
+
+            # GRADED FUNCTION: softmax
+
+            def softmax(x):
+                """Calculates the softmax for each row of the input x.
+
+                Your code should work for a row vector and also for matrices of shape (m,n).
+            
+                Argument:
+                x -- A numpy matrix of shape (m,n)
+
+                Returns:
+            s -- A numpy matrix equal to the softmax of x, of shape (m,n)
+                """
+    
+                #(≈ 3 lines of code)
+                # Apply exp() element-wise to x. Use np.exp(...).
+                # x_exp = ...
+
+                # Create a vector x_sum that sums each row of x_exp. Use np.sum(..., axis = 1, keepdims = True).
+                # x_sum = ...
+    
+                # Compute softmax(x) by dividing x_exp by x_sum. It should automatically use numpy broadcasting.
+                # s = ...
+    
+                # YOUR CODE STARTS HERE
+                x_exp = np.exp(x)
+    
+                x_sum = np.sum(x_exp, axis = 1, keepdims = True)
+    
+                s = x_exp / x_sum
+    
+                # YOUR CODE ENDS HERE
+    
+                return s
+
+                t_x = np.array([[9, 2, 5, 0, 0],
+                [7, 5, 0, 0 ,0]])
+            print("softmax(x) = " + str(softmax(t_x)))
+
+            softmax_test(softmax)
+
+            Output
+
+            softmax(x) = [[9.80897665e-01 8.94462891e-04 1.79657674e-02 1.21052389e-04
+              1.21052389e-04]
+             [8.78679856e-01 1.18916387e-01 8.01252314e-04 8.01252314e-04
+              8.01252314e-04]]
+             All tests passed.
+
+### verctorization
+
+在深度学习中，你要处理非常大的数据集。因此，非计算最优函数可能成为算法中的巨大瓶颈，并可能导致模型需要很长时间才能运行。
+为了确保代码的计算效率，您将使用向量化。例如，试着分辨以下点/外/元素积的实现之间的区别。
+
+
+### 关于L1的loss值再numpy中的实现.
+
+实现L1损耗的numpy矢量化版本。你可能会发现函数abs(x) (x的绝对值)很有用，提醒一下，损失是用来评估模型的性能的。你的损失越大，你的预测(y)与真实值(y)的差异就越大。在深度学习中，你使用梯度下降(Gradient Descent)等优化算法来训练你的模型并最小化成本。L1损耗定义为:
+![5](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/2f42edf6-6f13-4f76-bdd2-77c1439e69c4)
 
