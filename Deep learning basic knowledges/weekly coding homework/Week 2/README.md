@@ -614,3 +614,19 @@ In this exercise, you will carry out the following steps:
     
     - 分析结果并得出结论
     
+## 4 - Building the parts of our algorithm ## 
+
+The main steps for building a Neural Network are:
+1. Define the model structure (such as number of input features) 
+2. Initialize the model's parameters
+3. Loop:
+    - Calculate current loss (forward propagation)
+    - Calculate current gradient (backward propagation)
+    - Update parameters (gradient descent)
+
+You often build 1-3 separately and integrate them into one function we call `model()`.
+### 4.1 - Helper functions
+
+<a name='ex-3'></a>
+### Exercise 3 - sigmoid
+Using your code from "Python Basics", implement `sigmoid()`. As you've seen in the figure above, you need to compute $sigmoid(z) = \frac{1}{1 + e^{-z}}$ for $z = w^T x + b$ to make predictions. Use np.exp().
