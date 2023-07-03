@@ -281,3 +281,42 @@ Coding
 实现L1损耗的numpy矢量化版本。你可能会发现函数abs(x) (x的绝对值)很有用，提醒一下，损失是用来评估模型的性能的。你的损失越大，你的预测(y)与真实值(y)的差异就越大。在深度学习中，你使用梯度下降(Gradient Descent)等优化算法来训练你的模型并最小化成本。L1损耗定义为:
 ![5](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/2f42edf6-6f13-4f76-bdd2-77c1439e69c4)
 
+所以再numpy中构建函数就需要用到abs（）绝对值函数， np.sum() 计算array元素之和的函数.
+
+Coding
+
+             # GRADED FUNCTION: L1
+
+             def L1(yhat, y):
+                 """
+                 Arguments:
+                 yhat -- vector of size m (predicted labels)
+                 y -- vector of size m (true labels)
+    
+                 Returns:
+                 loss -- the value of the L1 loss function defined above
+                 """
+    
+                 #(≈ 1 line of code)
+                 # loss = 
+                 # YOUR CODE STARTS HERE
+                 loss = np.sum(np.abs(y - yhat))
+    
+                 # YOUR CODE ENDS HERE
+                 
+                 return loss
+
+                 yhat = np.array([.9, 0.2, 0.1, .4, .9])
+             y = np.array([1, 0, 0, 1, 1])
+             print("L1 = " + str(L1(yhat, y)))
+
+             L1_test(L1)
+
+             output
+             L1 = 1.1
+              All tests passed.
+
+### L2 loss值的计算
+
+实现L2损耗的numpy矢量化版本。有几种实现L2损失的方法，但您可能会发现函数np.dot()很有用。
+提醒一下.![6](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/788fcc09-9530-4d20-b0a6-0d7be8ee4155)
