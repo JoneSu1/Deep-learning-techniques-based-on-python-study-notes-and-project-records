@@ -276,7 +276,7 @@ Coding
 为了确保代码的计算效率，您将使用向量化。例如，试着分辨以下点/外/元素积的实现之间的区别。
 
 
-### 关于L1的loss值再numpy中的实现.
+### 关于L1的loss值再numpy中的实现. （L1绝对值损失）
 
 实现L1损耗的numpy矢量化版本。你可能会发现函数abs(x) (x的绝对值)很有用，提醒一下，损失是用来评估模型的性能的。你的损失越大，你的预测(y)与真实值(y)的差异就越大。在深度学习中，你使用梯度下降(Gradient Descent)等优化算法来训练你的模型并最小化成本。L1损耗定义为:
 ![5](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/2f42edf6-6f13-4f76-bdd2-77c1439e69c4)
@@ -316,7 +316,86 @@ Coding
              L1 = 1.1
               All tests passed.
 
-### L2 loss值的计算
+### L2 loss值的计算，L2（平方损失）
 
 实现L2损耗的numpy矢量化版本。有几种实现L2损失的方法，但您可能会发现函数np.dot()很有用。
 提醒一下.![6](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/788fcc09-9530-4d20-b0a6-0d7be8ee4155)
+
+**由于是平方损失公式，所以我们需要用到np.square()函数来是input达到平方的效果，也需要使用np.sum（）达到累加的效果**
+
+Coding
+             # GRADED FUNCTION: L2
+
+             def L2(yhat, y):
+                 """
+                 Arguments:
+                 yhat -- vector of size m (predicted labels)
+                 y -- vector of size m (true labels)
+    
+                 Returns:
+                 loss -- the value of the L2 loss function defined above
+                 """
+    
+                 #(≈ 1 line of code)
+                 # loss = ...
+                 # YOUR CODE STARTS HERE
+    
+                 loss = np.sum(np.square(y - yhat))
+                 # YOUR CODE ENDS HERE
+    
+                 return loss
+
+                 yhat = np.array([.9, 0.2, 0.1, .4, .9])
+             y = np.array([1, 0, 0, 1, 1])
+
+             print("L2 = " + str(L2(yhat, y)))
+
+             L2_test(L2)
+
+             Output
+             L2 = 0.43
+              All tests passed.
+
+使用时候的提醒：
+选择使用 L1 Loss 还是 L2 Loss 取决于具体的应用场景和任务要求。
+
+
+L1 Loss 适用于以下情况：
+
+稀疏性要求：当希望模型的结果具有稀疏性时，即希望大部分权重为零，可以使用 L1 Loss。因为 L1 Loss 对于较小的权重值施加较大的惩罚，会促使模型学习到更多的零权重。
+
+特征选择：L1 Loss 可以用作特征选择的一种方法。通过最小化 L1 Loss，可以将与目标变量无关的特征的权重调整为零，从而实现特征选择的效果。
+
+鲁棒性：L1 Loss 对于异常值（离群点）具有较好的鲁棒性。由于 L1 Loss 是绝对值之和，对于较大的异常值，其误差项对总损失的贡献较大，从而使模型更加关注这些异常值。
+
+L2 Loss 适用于以下情况：
+
+平滑性要求：当希望模型的结果具有平滑性时，即希望权重分布相对均匀，可以使用 L2 Loss。因为 L2 Loss 对较大的权重施加较大的惩罚，可以减小权重的波动。
+
+回归问题：在回归问题中，L2 Loss 常用于衡量预测值与真实值之间的差异。通过最小化 L2 Loss，可以使预测值更接近真实值。
+
+模型复杂度控制：L2 Loss 在正则化（regularization）中起到控制模型复杂度的作用。通过在损失函数中添加 L2 Loss 项，可以限制模型权重的大小，避免过拟合问题。
+
+需要根据具体问题的要求和特点选择适合的损失函数。在某些情况下，也可以结合使用 L1 Loss 和 L2 Loss，形成 L1+L2 Loss，以综合考虑稀疏性和平滑性的需求。
+
+--------------------------------------------------
+### 实践使用神经网络的逻辑回归构建一个对猫进行分类的分类器.
+
+I will build a logical regression classifiler to recognize cats.
+
+You will learn to:
+
+Build the general architecture of a learning algorithm, including:
+Initializing parameters
+Calculating the cost function and its gradient
+Using an optimization algorithm (gradient descent)
+Gather all three functions above into a main model function, in the right order.
+
+<a name='1'></a>
+## 1 - Packages ##
+
+First, let's run the cell below to import all the packages that you will need during this assignment. 
+- [numpy](https://numpy.org/doc/1.20/) is the fundamental package for scientific computing with Python.
+- [h5py](http://www.h5py.org) is a common package to interact with a dataset that is stored on an H5 file.
+- [matplotlib](http://matplotlib.org) is a famous library to plot graphs in Python.
+- [PIL](https://pillow.readthedocs.io/en/stable/) and [scipy](https://www.scipy.org/) are used here to test your model with your own picture at the end.
