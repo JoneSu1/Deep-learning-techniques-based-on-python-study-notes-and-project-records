@@ -460,4 +460,4 @@ COding：
       plt.imshow(train_set_x_orig[index])
       print ("y = " + str(train_set_y[:, index]) + ", it's a '" + classes[np.squeeze(train_set_y[:, index])].decode("utf-8") +  "' picture.")
 
-      ![7](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/8a7fddbd-a178-4262-bdc9-ba12f5cfc00b)
+![7](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/8a7fddbd-a178-4262-bdc9-ba12f5cfc00b)
