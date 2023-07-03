@@ -510,3 +510,35 @@ Find the values for:
 ![9](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/8325807a-372d-4c7d-99c4-9174e66b4470)
 
 
+在这段代码中，X是一个多维数组（或称为矩阵）。X.shape返回一个表示X的维度的元组，其中X.shape[0]表示X的第一个维度的大小，即行数。
+
+X_flatten = X.reshape(X.shape[0], -1)将X重新形状为一个二维数组，其中X.shape[0]保持不变，而第二个维度的大小-1表示自动计算。
+这意味着X_flatten将具有与X相同的行数，但是其列数将根据X的大小自动确定。
+
+然后，.T操作符用于获取X_flatten的转置，即将行变为列，列变为行。最终，X_flatten被重新赋值为X的展平版本，并且已经转置了。
+**Notice：注意在转至的时候，进行转至的数据是图像数据**
+
+**Code**
+
+            # Reshape the training and test examples
+            #(≈ 2 lines of code)
+            # train_set_x_flatten = ...
+            # test_set_x_flatten = ...
+            # YOUR CODE STARTS HERE
+            train_set_x_flatten = train_set_x_orig.reshape(train_set_x_orig.shape[0], -1).T
+            test_set_x_flatten = test_set_x_orig.reshape(test_set_x_orig.shape[0], -1).T
+
+            # YOUR CODE ENDS HERE
+
+            # Check that the first 10 pixels of the second image are in the correct place
+            assert np.alltrue(train_set_x_flatten[0:10, 1] == [196, 192, 190, 193, 186, 182, 188, 179, 174, 213]), "Wrong solution. Use (X.shape[0], -1).T."
+            assert np.alltrue(test_set_x_flatten[0:10, 1] == [115, 110, 111, 137, 129, 129, 155, 146, 145, 159]), "Wrong solution. Use (X.shape[0], -1).T."
+
+            print ("train_set_x_flatten shape: " + str(train_set_x_flatten.shape))
+            print ("train_set_y shape: " + str(train_set_y.shape))
+            print ("test_set_x_flatten shape: " + str(test_set_x_flatten.shape))
+            print ("test_set_y shape: " + str(test_set_y.shape))
+            
+![10](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/f951ef06-2e84-45fc-91d6-e49ca271e2d8)
+
+
