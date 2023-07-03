@@ -839,3 +839,12 @@ $$ \frac{\partial J}{\partial b} = \frac{1}{m} \sum_{i=1}^m (a^{(i)}-y^{(i)})\ta
 ![5](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/48a66280-cc87-4b99-9791-5f5c39b6b898)
 
      
+<a name='4-4'></a>
+### 4.4 - Optimization
+- You have initialized your parameters.
+- You are also able to compute a cost function and its gradient.
+- Now, you want to update the parameters using gradient descent.
+
+<a name='ex-6'></a>
+### Exercise 6 - optimize
+Write down the optimization function. The goal is to learn $w$ and $b$ by minimizing the cost function $J$. For a parameter $\theta$, the update rule is $ \theta = \theta - \alpha \text{ } d\theta$, where $\alpha$ is the learning rate.
