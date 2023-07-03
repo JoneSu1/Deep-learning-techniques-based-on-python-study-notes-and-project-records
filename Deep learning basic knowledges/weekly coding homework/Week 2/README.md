@@ -73,3 +73,74 @@ CODE
                 sigmoid_derivative_test(sigmoid_derivative)
                   Output
                   sigmoid_derivative(t_x) = [0.19661193 0.10499359 0.04517666]
+
+###### np.reshape 在深度学习中的重要性
+
+![2](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/edb7a24d-1713-41a7-b243-8c3e8da1ee76)
+
+![3](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/4bc643f4-17de-4ad9-905e-a0e6222fe71f)
+
+**Notice**
+
+在转换3维array的时候，v = v.reshape((v.shape[0] * v.shape[1], v.shape[2])) 在括号最后要加上1，表示转换成一个列向量.
+
+CODE
+
+             # GRADED FUNCTION:image2vector
+
+             def image2vector(image):
+                 """
+                 Argument:
+                 image -- a numpy array of shape (length, height, depth)
+    
+                 Returns:
+                 v -- a vector of shape (length*height*depth, 1)
+                 """
+    
+                 # (≈ 1 line of code)
+                 # v =
+                 # YOUR CODE STARTS HERE
+                 v = image.reshape(image.shape[0] * image.shape[1] * image.shape[2], 1)
+    
+                 # YOUR CODE ENDS HERE
+    
+                 return v
+                 # This is a 3 by 3 by 2 array, typically images will be (num_px_x, num_px_y,3) where 3 represents the RGB values
+                 t_image = np.array([[[ 0.67826139,  0.29380381],
+                                      [ 0.90714982,  0.52835647],
+                                      [ 0.4215251 ,  0.45017551]],
+
+                                    [[ 0.92814219,  0.96677647],
+                                     [ 0.85304703,  0.52351845],
+                                     [ 0.19981397,  0.27417313]],
+normalization                                    [[ 0.60659855,  0.00533165],
+                                     [ 0.10820313,  0.49978937],
+                                     [ 0.34144279,  0.94630077]]])
+
+                 print ("image2vector(image) = " + str(image2vector(t_image)))
+
+                 image2vector_test(image2vector)
+
+                 Output
+                 image2vector(image) = [[0.67826139]
+                  [0.29380381]
+                  [0.90714982]
+                  [0.52835647]
+                  [0.4215251 ]
+                  [0.45017551]
+                  [0.92814219]
+                  [0.96677647]
+                  [0.85304703]
+                  [0.52351845]
+                  [0.19981397]
+                  [0.27417313]
+                  [0.60659855]
+                  [0.00533165]
+                  [0.10820313]
+                  [0.49978937]
+                  [0.34144279]
+                  [0.94630077]]
+                  All tests passed.
+
+#### 由于我们有时处理的数据量太大，在进行gradient 之前进行normolization可以加快.
+
