@@ -589,29 +589,28 @@ X_flatten = X.reshape(X.shape[0], -1)将X重新形状为一个二维数组，其
 现在是时候设计一个简单的算法来区分猫咪图像和非猫咪图像了。
 
 You will build a Logistic Regression, using a Neural Network mindset. The following Figure explains why **Logistic Regression is actually a very simple Neural Network!**
+![1](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/64254c03-e57d-4f6b-9be8-2c39d43fe7d5)
+![2](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/a63426db-6913-4b18-bd5f-3b3b1f629399)
 
-<img src="images/LogReg_kiank.png" style="width:650px;height:400px;">
 
-**Mathematical expression of the algorithm**:
-
-For one example $x^{(i)}$:
-$$z^{(i)} = w^T x^{(i)} + b \tag{1}$$
-$$\hat{y}^{(i)} = a^{(i)} = sigmoid(z^{(i)})\tag{2}$$ 
-$$ \mathcal{L}(a^{(i)}, y^{(i)}) =  - y^{(i)}  \log(a^{(i)}) - (1-y^{(i)} )  \log(1-a^{(i)})\tag{3}$$
-
-The cost is then computed by summing over all training examples:
-$$ J = \frac{1}{m} \sum_{i=1}^m \mathcal{L}(a^{(i)}, y^{(i)})\tag{6}$$
 
 **Key steps**:
 In this exercise, you will carry out the following steps: 
     - Initialize the parameters of the model
+    
     - Learn the parameters for the model by minimizing the cost  
+    
     - Use the learned parameters to make predictions (on the test set)
+    
     - Analyse the results and conclude
     
 在这个练习中，你将进行以下步骤： 
+
     - 初始化模型的参数
+    
     - 通过最小化成本来学习模型的参数  
+    
     - 使用学到的参数进行预测（在测试集上）。
+    
     - 分析结果并得出结论
     
