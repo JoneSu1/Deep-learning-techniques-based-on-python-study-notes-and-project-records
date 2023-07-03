@@ -739,3 +739,103 @@ $$ \frac{\partial J}{\partial b} = \frac{1}{m} \sum_{i=1}^m (a^{(i)}-y^{(i)})\ta
   
 - 返回梯度和成本：将计算得到的梯度和成本作为输出，用于参数更新和模型训练。
 - 通过前向传播和后向传播，可以计算出成本函数的值，并根据梯度来更新模型的参数，使模型能够逐步优化并提高对数据的预测能力。
+
+由于前面已经提前定义了sigmoid函数 sigmoid(x) = 1/ 1 + np.exp(-x). 所以在下面的forward和backward 的公式构建中就直接使用了.
+**前向传播**
+ A = sigmoid(np.dot(w.T, X) + b)
+ cost = -1/m * np.sum(Y*np.log(A) + (1-Y)*np.log(1-A))
+ 
+ **后向传播**
+
+    dw = 1/m * np.dot(X, (A-Y).T)
+    db = 1/m * np.sum(A-Y)
+    
+    # YOUR CODE ENDS HERE
+    cost = np.squeeze(np.array(cost))
+
+    
+    grads = {"dw": dw,
+             "db": db}
+    
+    return grads, cost
+
+**完整的coding**
+
+# GRADED FUNCTION: propagate
+
+      def propagate(w, b, X, Y):
+          """
+          Implement the cost function and its gradient for the propagation explained above
+
+          Arguments:
+          w -- weights, a numpy array of size (num_px * num_px * 3, 1)
+          b -- bias, a scalar
+          X -- data of size (num_px * num_px * 3, number of examples)
+          Y -- true "label" vector (containing 0 if non-cat, 1 if cat) of size (1, number of examples)
+
+          Return:
+          grads -- dictionary containing the gradients of the weights and bias
+                  (dw -- gradient of the loss with respect to w, thus same shape as w)
+                  (db -- gradient of the loss with respect to b, thus same shape as b)
+          cost -- negative log-likelihood cost for logistic regression
+    
+          Tips:
+                - Write your code step by step for the propagation. np.log(), np.dot()
+          """
+    
+          m = X.shape[1]
+    
+          # FORWARD PROPAGATION (FROM X TO COST)
+          #(≈ 2 lines of code)
+          # compute activation
+          # A = ...
+          # compute cost by using np.dot to perform multiplication. 
+          # And don't use loops for the sum.
+          # cost = ...                                
+          # YOUR CODE STARTS HERE
+          A = sigmoid(np.dot(w.T, X) + b)
+          cost = -1/m * np.sum(Y*np.log(A) + (1-Y)*np.log(1-A))
+    
+          # YOUR CODE ENDS HERE
+
+          # BACKWARD PROPAGATION (TO FIND GRAD)
+          #(≈ 2 lines of code)
+          # dw = ...
+          # db = ...
+          # YOUR CODE STARTS HERE
+          dw = 1/m * np.dot(X, (A-Y).T)
+          db = 1/m * np.sum(A-Y)
+    
+          # YOUR CODE ENDS HERE
+          cost = np.squeeze(np.array(cost))
+
+    
+          grads = {"dw": dw,
+                   "db": db}
+    
+          return grads, cost
+          
+**np.squeeze() 函数将数组中维度为1的维度去除，返回一个形状更简洁的数组。
+这样做的目的是为了确保 cost 是一个标量（即没有任何维度），而不是一个带有多余维度的数组。这在后续的计算和比较中可能更方便和直观。**
+
+
+            w =  np.array([[1.], [2]]) # 权重矩阵
+            b = 1.5 # 偏置
+            X = np.array([[1., -2., -1.], [3., 0.5, -3.2]]) # 输入数据
+            Y = np.array([[1, 1, 0]]) # 真实标签
+            grads, cost = propagate(w, b, X, Y)  #调用propagate函数进行前向传播和反向传播
+
+            assert type(grads["dw"]) == np.ndarray
+            assert grads["dw"].shape == (2, 1)
+            assert type(grads["db"]) == np.float64
+
+                  #输出梯度和成本的结果：
+            print ("dw = " + str(grads["dw"]))
+            print ("db = " + str(grads["db"]))
+            print ("cost = " + str(cost))
+
+            propagate_test(propagate)
+
+![5](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/48a66280-cc87-4b99-9791-5f5c39b6b898)
+
+     
