@@ -841,10 +841,17 @@ $$ \frac{\partial J}{\partial b} = \frac{1}{m} \sum_{i=1}^m (a^{(i)}-y^{(i)})\ta
      
 <a name='4-4'></a>
 ### 4.4 - Optimization
+优化：需要算出了现在的成本函数和它的梯度，才能用下降法来跟新参数.
+
 - You have initialized your parameters.
 - You are also able to compute a cost function and its gradient.
 - Now, you want to update the parameters using gradient descent.
 
+- 你已经初始化了你的参数。
+- 你也能够计算出成本函数和它的梯度。
+- 现在，你想用梯度下降法来更新参数。
 <a name='ex-6'></a>
 ### Exercise 6 - optimize
-Write down the optimization function. The goal is to learn $w$ and $b$ by minimizing the cost function $J$. For a parameter $\theta$, the update rule is $ \theta = \theta - \alpha \text{ } d\theta$, where $\alpha$ is the learning rate.
+Write down the optimization function. The goal is to learn  𝑤  and  𝑏  by minimizing the cost function  𝐽 . For a parameter  𝜃 , the update rule is  𝜃=𝜃−𝛼 𝑑𝜃 , where  𝛼  is the learning rate.
+
+写下优化函数。目标是通过最小化成本函数𝐽来学习𝑤和𝑏。对于一个参数𝜃，更新规则是𝜃=𝜃-𝛼 𝑑𝜃 ，其中𝛼是学习率
