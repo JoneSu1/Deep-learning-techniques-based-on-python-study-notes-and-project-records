@@ -1,0 +1,33 @@
+####介绍构建sigmoid函数的方法（numpy）
+
+如果只是需要对单个数字，而不是数组进行sigmoid求值，可以使用python内置的library： math.exp（）来进行
+
+      import math
+      """
+      Compute sigmoid of x.
+
+      Arguments:
+      x -- A scalar
+
+      Return:
+      s -- sigmoid(x)
+      """
+      def basic_sigmoid(x):
+
+        s = 1 / (1 + math.exp(-x))
+        return s
+
+      print("basic_sigmoid(1) =", basic_sigmoid(1))
+
+如果是相对数列（verctor）进行求sigmoid， 就需要用到library： numpy中的，np.exp()
+
+
+        import numpy as np
+
+        # example of np.exp
+        t_x = np.array([1, 2, 3])
+        print(np.exp(t_x)) # result is (exp(1), exp(2), exp(3))
+
+        output
+        
+        [ 2.71828183  7.3890561  20.08553692]
