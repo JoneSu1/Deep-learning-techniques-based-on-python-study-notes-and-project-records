@@ -35,4 +35,41 @@
 ----------------------------------------------------------
 
 ###降维 Sigmoid Gradient
+![1](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/5c749a00-16a8-4504-bcbf-887ed1652db5)
 
+
+      当计算出激活函数sigmoid的sloop或者说derivative之后就可以根据这个来对参数进行调整并优化模型.
+
+CODE
+
+            # GRADED FUNCTION: sigmoid_derivative
+
+            def sigmoid_derivative(x):
+                """
+                Compute the gradient (also called the slope or derivative) of the sigmoid function with respect to its input x.
+                You can store the output of the sigmoid function into variables and then use it to calculate the gradient.
+    
+                Arguments:
+                x -- A scalar or numpy array
+
+                Return:
+                ds -- Your computed gradient.
+                """
+    
+                #(≈ 2 lines of code)
+                # s = 
+                # ds = 
+                # YOUR CODE STARTS HERE
+                s = 1 / (1 + np.exp(-x))
+                ds = s * (1 - s)
+    
+                # YOUR CODE ENDS HERE
+    
+                return ds
+
+                t_x = np.array([1, 2, 3])
+                print ("sigmoid_derivative(t_x) = " + str(sigmoid_derivative(t_x)))
+
+                sigmoid_derivative_test(sigmoid_derivative)
+                  Output
+                  sigmoid_derivative(t_x) = [0.19661193 0.10499359 0.04517666]
