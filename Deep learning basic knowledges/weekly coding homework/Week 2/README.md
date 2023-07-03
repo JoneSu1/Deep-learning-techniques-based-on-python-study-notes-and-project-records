@@ -113,7 +113,7 @@ CODE
                                     [[ 0.92814219,  0.96677647],
                                      [ 0.85304703,  0.52351845],
                                      [ 0.19981397,  0.27417313]],
-normalization                                    [[ 0.60659855,  0.00533165],
+                                    [[ 0.60659855,  0.00533165],
                                      [ 0.10820313,  0.49978937],
                                      [ 0.34144279,  0.94630077]]])
 
@@ -143,4 +143,64 @@ normalization                                    [[ 0.60659855,  0.00533165],
                   All tests passed.
 
 #### 由于我们有时处理的数据量太大，在进行gradient 之前进行normolization可以加快.
+
+由于我们会把数据都归到一列或者一行，所以在进行归一化的时候.
+是先对array中的数，进行取平方和再开根。 使用的是np中的x_nor = np.linalg.norm(x, ord=2, axis=1, keepdims=True).
+其中ord=2表示取平方和，再开根号.
+axis=1表示，计算行。如果axis=0则表示计算列.
+keepdims=True: 指定是否保持结果数组的维度。设置为 True 时，结果数组会保持原始输入的维度，其中被归约的维度会被保留为长度为 1 的维度。
+
+当得到了x_nor这一个标准值之后. 我们用向量x除以x_nor来保证x向量中的每一个元素都是标准值的.
+
+Code
+
+            # GRADED FUNCTION: normalize_rows
+
+            def normalize_rows(x):
+                """
+                Implement a function that normalizes each row of the matrix x (to have unit length).
+    
+                Argument:
+                x -- A numpy matrix of shape (n, m)
+    
+                Returns:
+                x -- The normalized (by row) numpy matrix. You are allowed to modify x.
+                """
+    
+                #(≈ 2 lines of code)
+                # Compute x_norm as the norm 2 of x. Use np.linalg.norm(..., ord = 2, axis = ..., keepdims = True)
+                # x_norm =
+                # Divide x by its norm.
+                # x =
+                # YOUR CODE STARTS HERE
+                x_norm = np.linalg.norm(x, ord= 2, axis = 1, keepdims = True)
+                x = x/x_norm
+    
+                # YOUR CODE ENDS HERE
+
+                return x
+
+                x = np.array([[0, 3, 4],
+                          [1, 6, 4]])
+            print("normalizeRows(x) = " + str(normalize_rows(x)))
+
+            normalizeRows_test(normalize_rows)
+
+            Output
+            normalizeRows(x) = [[0.         0.6        0.8       ]
+             [0.13736056 0.82416338 0.54944226]]
+             All tests passed.
+
+### 谈论多分类问题的激活函数，softmax，刚刚讨论的是用于二分类的sigmoid函数.
+.
+Softmax 函数的输出范围也是 (0, 1)，但它是将一组实数转换为概率分布，输出的每个元素表示对应类别的概率，并且所有元素的和等于 1。它常用于多类别分类问题。
+
+Sigmoid 函数在输入很大或很小的情况下，梯度会趋近于零，称为梯度消失问题。这可能导致网络训练过程中的梯度不稳定性。
+Softmax 函数的梯度计算相对稳定，没有明显的梯度消失问题。
+总的来说，Sigmoid 函数适用于二分类问题，而 Softmax 函数适用于多类别分类问题。Softmax 函数提供了更明确的类别概率信息，适用于多类别分类任务。
+在深度学习中，Softmax 函数通常用于最后一层的输出层，而 Sigmoid 函数可以在中间层或输出层中使用。
+
+**它特别像是多个按列排的array组合了起来，而softmax函数会将每一列看作一组，然后分别进行分类判断，分别进行归一化**
+![4](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/4d0a9250-8477-497c-b446-8d7c2c01cb58)
+
 
