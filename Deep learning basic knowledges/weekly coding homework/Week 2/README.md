@@ -562,3 +562,56 @@ X_flatten = X.reshape(X.shape[0], -1)将X重新形状为一个二维数组，其
     <td>(1, 50)</td> 
   </tr>
 </table>
+
+**转至之后，每一列代表一张图像**
+
+为了表示彩色图像，必须为每个像素指定红、绿、蓝通道(RGB)，因此像素值实际上是一个由三个数字组成的向量，范围从0到255。
+
+机器学习中一个常见的预处理步骤是集中和标准化数据集，这意味着您从每个示例中减去整个numpy数组的平均值，然后将每个示例除以整个numpy数组的标准差
+。但是对于图片数据集，将数据集的每一行除以255(像素通道的最大值)更简单、更方便，而且效果几乎一样好。让我们标准化我们的数据集。
+
+**所以我们在转至完图像shape之后，就可以对像素的数值进行标准化，像素最大值255，那就都除255**
+
+             train_set_x = train_set_x_flatten / 255.
+             test_set_x = test_set_x_flatten / 255.
+
+记住的是：
+
+预处理一个新数据集的常见步骤是：
+
+弄清问题的尺寸和形状（m_train, m_test, num_px, ...)
+重塑数据集，使每个例子现在是一个大小为（num_px * num_px * 3, 1）的向量。（reshape）
+对数据进行 "标准化 "处理. （除以像素的最大值255）
+
+<a name='3'></a>
+## 3 - General Architecture of the learning algorithm ##
+
+现在是时候设计一个简单的算法来区分猫咪图像和非猫咪图像了。
+
+You will build a Logistic Regression, using a Neural Network mindset. The following Figure explains why **Logistic Regression is actually a very simple Neural Network!**
+
+<img src="images/LogReg_kiank.png" style="width:650px;height:400px;">
+
+**Mathematical expression of the algorithm**:
+
+For one example $x^{(i)}$:
+$$z^{(i)} = w^T x^{(i)} + b \tag{1}$$
+$$\hat{y}^{(i)} = a^{(i)} = sigmoid(z^{(i)})\tag{2}$$ 
+$$ \mathcal{L}(a^{(i)}, y^{(i)}) =  - y^{(i)}  \log(a^{(i)}) - (1-y^{(i)} )  \log(1-a^{(i)})\tag{3}$$
+
+The cost is then computed by summing over all training examples:
+$$ J = \frac{1}{m} \sum_{i=1}^m \mathcal{L}(a^{(i)}, y^{(i)})\tag{6}$$
+
+**Key steps**:
+In this exercise, you will carry out the following steps: 
+    - Initialize the parameters of the model
+    - Learn the parameters for the model by minimizing the cost  
+    - Use the learned parameters to make predictions (on the test set)
+    - Analyse the results and conclude
+    
+在这个练习中，你将进行以下步骤： 
+    - 初始化模型的参数
+    - 通过最小化成本来学习模型的参数  
+    - 使用学到的参数进行预测（在测试集上）。
+    - 分析结果并得出结论
+    
