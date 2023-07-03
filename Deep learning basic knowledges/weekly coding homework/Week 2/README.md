@@ -399,3 +399,49 @@ First, let's run the cell below to import all the packages that you will need du
 - [h5py](http://www.h5py.org) is a common package to interact with a dataset that is stored on an H5 file.
 - [matplotlib](http://matplotlib.org) is a famous library to plot graphs in Python.
 - [PIL](https://pillow.readthedocs.io/en/stable/) and [scipy](https://www.scipy.org/) are used here to test your model with your own picture at the end.
+
+-NumPy：NumPy 是科学计算的基础包，提供了强大的数组操作功能。在神经网络中，NumPy 用于处理和操作多维数组，执行向量化计算，
+以及进行矩阵运算和数学函数的计算。它为神经网络的数据处理和数值计算提供了高效的工具。
+
+-h5py：h5py 是一个常用的与存储在 H5 文件中的数据集进行交互的库。在神经网络中，可以使用 h5py 读取和写入包含大量数据的数据集，
+以便进行模型的训练和评估。它提供了对 H5 文件的高级接口，使得数据的读取和写入更加方便和高效。
+
+-Matplotlib：Matplotlib 是一个著名的绘图库，用于在 Python 中绘制各种类型的图形和可视化。在神经网络中，
+Matplotlib 可以用于绘制损失函数的曲线图、展示模型的性能指标、可视化数据集等。它提供了丰富的绘图功能，可以帮助我们更好地理解和展示神经网络的结果和过程。
+
+-PIL（Python Imaging Library）和 SciPy：PIL 是一个图像处理库，而 SciPy 是一个科学计算库。在神经网络中，PIL 和 SciPy 可以用于处理图像数据，
+进行图像的加载、预处理、转换等操作。例如，可以使用 PIL 将图像转换为适用于神经网络的数组表示，或者使用 SciPy 进行图像的滤波、缩放、旋转等处理操作。
+
+            import numpy as np
+            import copy
+            import matplotlib.pyplot as plt
+            import h5py
+            import scipy
+            from PIL import Image
+            from scipy import ndimage
+            from lr_utils import load_dataset
+            from public_tests import *
+
+            %matplotlib inline
+            %load_ext autoreload
+            %autoreload 2
+
+<a name='2'></a>
+## 2 - Overview of the Problem set ##
+
+**Problem Statement**: You are given a dataset ("data.h5") containing:
+    - a training set of m_train images labeled as cat (y=1) or non-cat (y=0)
+    - a test set of m_test images labeled as cat or non-cat
+    - each image is of shape (num_px, num_px, 3) where 3 is for the 3 channels (RGB). Thus, each image is square (height = num_px) and (width = num_px).
+
+You will build a simple image-recognition algorithm that can correctly classify pictures as cat or non-cat.
+
+Let's get more familiar with the dataset. Load the data by running the following code.
+
+       # Loading the data (cat/non-cat)
+       train_set_x_orig, train_set_y, test_set_x_orig, test_set_y, classes = load_dataset()
+
+我们在图像数据集(训练和测试)的末尾添加了“_origin”，因为我们要对它们进行预处理。预处理之后，
+我们将得到train_set_x和test_set_x(标签train_set_y和test_set_y不需要任何预处理)。train_set_x_origin和test_set_x_origin
+的每一行都是一个表示图像的数组。您可以通过运行以下代码来可视化示例。您也可以随意更改索引值并重新运行以查看其他图像。
+
