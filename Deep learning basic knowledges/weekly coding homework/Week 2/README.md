@@ -501,3 +501,12 @@ Find the values for:
 
 ![8](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/edf556c3-286c-4728-b4f3-c153a23ad593)
 
+**而现在，这些origin图都是3维数组的形式(num_px, num_px, 3) ，为了方便我们要reshape，test和train_dataset，变成（num_px  ∗  num_px  ∗  3, 1)..**
+在此之后，我们的训练(和测试)数据集是一个numpy数组，其中每列表示一个扁平的图像。应该有m_train(分别为m_test)列.
+
+重塑训练和测试数据集，使大小为(num_px, num_px, 3)的图像被平面化为形状为(num_px∗num_px∗3,1)的单个向量。
+当你想要将形状为(A,b,c,d)的矩阵X平坦化为形状为(b∗c∗d, A)的矩阵X_flatten时，一个技巧是:
+
+![9](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/8325807a-372d-4c7d-99c4-9174e66b4470)
+
+
