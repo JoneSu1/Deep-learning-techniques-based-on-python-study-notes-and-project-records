@@ -461,3 +461,43 @@ COding：
       print ("y = " + str(train_set_y[:, index]) + ", it's a '" + classes[np.squeeze(train_set_y[:, index])].decode("utf-8") +  "' picture.")
 
 ![7](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/8a7fddbd-a178-4262-bdc9-ba12f5cfc00b)
+
+深度学习中的许多软件bug来自于矩阵/向量维度不合适。如果你能够保持你的矩阵/向量维度的正确性，
+你就能够在消除许多漏洞方面取得长足的进步。
+### Exercise 1
+Find the values for:
+    - m_train (number of training examples)
+    - m_test (number of test examples)
+    - num_px (= height = width of a training image)
+
+记住，train_set_x_origin是shape (m_train, num_px, num_px, 3)的numpy数组。
+例如，您可以通过写入train_set_x_origin .shape[0]来访问m_train。
+
+- m_train = train_set_x_orig.shape[0]：获取训练集的样本数量，即训练集的行数。
+- m_test = test_set_x_orig.shape[0]：获取测试集的样本数量，即测试集的行数。
+- num_px = train_set_x_orig.shape[1]：获取每个图像的高度/宽度，即训练集图像的列数（假设图像是正方形，所以宽度和高度是相等的）。
+
+ Code
+
+             #(≈ 3 lines of code)
+             # m_train = 
+             # m_test = 
+             # num_px = 
+             # YOUR CODE STARTS HERE
+             m_train = train_set_x_orig.shape[0]
+             m_test = test_set_x_orig.shape[0]
+             num_px = train_set_x_orig.shape[1]
+
+             # YOUR CODE ENDS HERE
+
+             print ("Number of training examples: m_train = " + str(m_train))
+             print ("Number of testing examples: m_test = " + str(m_test))
+             print ("Height/Width of each image: num_px = " + str(num_px))
+             print ("Each image is of size: (" + str(num_px) + ", " + str(num_px) + ", 3)")
+             print ("train_set_x shape: " + str(train_set_x_orig.shape))
+             print ("train_set_y shape: " + str(train_set_y.shape))
+             print ("test_set_x shape: " + str(test_set_x_orig.shape))
+             print ("test_set_y shape: " + str(test_set_y.shape))
+
+![8](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/edf556c3-286c-4728-b4f3-c153a23ad593)
+
