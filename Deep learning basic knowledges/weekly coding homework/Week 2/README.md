@@ -875,6 +875,12 @@ Write down the optimization function. The goal is to learn  𝑤  and  𝑏  by 
 返回params、grads和costs作为输出。
 该函数的作用是通过梯度下降算法迭代优化参数，使得损失函数逐渐减小，从而提高模型的性能。
 
+我们遍历预测概率向量 A 中的每个元素。如果概率大于阈值 0.5，我们将对应的预测标签设置为 1（表示猫），
+否则设置为 0（表示非猫）。最终，我们得到了预测标签向量 Y_prediction。
+
+最后，我们返回预测标签向量 Y_prediction，其中每个元素为 0 或 1，表示对应输入样本的预测结果。
+
+总结来说，predict 函数通过使用训练好的模型参数对输入数据进行前向传播，并根据阈值将预测概率转换为二分类的预测标签。这样，我们就可以利用这个函数来对新的数据进行分类预测。
 **Code**
 
 
@@ -1020,4 +1026,19 @@ The previous function will output the learned w and b. We are able to use w and 
 
   ![7](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/ad61fa61-ad74-4467-b904-fa0931d65619)
 
-  
+<font color='blue'>
+    
+**What to remember:**
+    
+You've implemented several functions that:
+- Initialize (w,b)
+- Optimize the loss iteratively to learn parameters (w,b):
+    - Computing the cost and its gradient 
+    - Updating the parameters using gradient descent
+- Use the learned (w,b) to predict the labels for a given set of examples
+
+  - 初始化(w,b)
+- 迭代优化损失，学习参数（w,b）：
+    - 计算成本和它的梯度 
+    - 使用梯度下降法更新参数
+- 使用学到的(w,b)来预测给定例子集的标签  
