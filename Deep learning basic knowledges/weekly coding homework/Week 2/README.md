@@ -1150,3 +1150,78 @@ logistic_regression_model = model(train_set_x, train_set_y, test_set_x, test_set
 对于这个简单的模型来说，这实际上还不错。但是不用担心，下周你将建立一个更好的分类器
 
 另外，你还可以看到，这个模型显然是对训练数据的过度拟合。在本专业的后期，你将学习如何减少过拟合，例如通过使用正则化。使用下面的代码（并改变索引变量），你可以看一下对测试集的图片的预测。
+
+
+在计算出了，迭代数之后，我们可以把cost计算的值进行可是化，
+首先提出在dictionary（logistic_regression_model）里面存着的cost值，logistic_regression_model["cost"]，
+然后，使用python常用的科学画图library：metplotlib.pyplot来绘制曲线图，其中plt.plot() 用于绘制折线图，plt.scatter() 用于绘制散点图，plt.bar() 用于条形图，
+ plt.ylabel('cost') 设置纵轴标签为 "cost"，表示成本。
+
+使用 plt.xlabel('iterations (per hundreds)') 设置横轴标签为 "iterations (per hundreds)"，表示迭代次数（每百次迭代为一个单位）。
+
+使用 plt.title("Learning rate =" + str(logistic_regression_model["learning_rate"])) 设置图表标题，其中包括学习率 learning_rate 的值。
+
+最后，使用 plt.show() 显示绘制的学习曲线图。
+
+**Code**
+
+            # Plot learning curve (with costs)
+           costs = np.squeeze(logistic_regression_model['costs'])
+           plt.plot(costs)
+           plt.ylabel('cost')
+           plt.xlabel('iterations (per hundreds)')
+           plt.title("Learning rate =" + str(logistic_regression_model["learning_rate"]))
+           plt.show()
+
+![10](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/226ac320-d9f5-4ff2-a59a-0810bfa60fa2)
+
+**解释**： 你可以看到成本在下降。这表明参数正在被学习。然而，你看到你可以在训练集上更多地训练模型。尝试增加上面单元格中的迭代次数，然后重新运行单元格。
+
+你可能会看到，训练集的准确率上升了，但测试集的准确率下降了。这就是所谓的过度拟合。
+
+<a name='6'></a>
+## 6 - Further analysis (optional/ungraded exercise) ##
+
+Congratulations on building your first image classification model. Let's analyze it further, and examine possible choices for the learning rate $\alpha$. 
+
+进一步分析（可选/不评分的练习）。
+恭喜你建立了你的第一个图像分类模型。让我们进一步分析它，并研究学习率𝛼的可能选择。
+
+
+#### Choice of learning rate ####
+
+**Reminder**:
+In order for Gradient Descent to work you must choose the learning rate wisely. The learning rate $\alpha$  determines how rapidly we update the parameters. If the learning rate is too large we may "overshoot" the optimal value. Similarly, if it is too small we will need too many iterations to converge to the best values. That's why it is crucial to use a well-tuned learning rate.
+
+Let's compare the learning curve of our model with several choices of learning rates. Run the cell below. This should take about 1 minute. Feel free also to try different values than the three we have initialized the `learning_rates` variable to contain, and see what happens. 
+
+**学习率的选择**
+**提醒**： 为了使梯度下降法发挥作用，你必须明智地选择学习率。学习率𝛼决定了我们更新参数的速度。如果学习率过大，我们可能会 "超调 "出最优值。同样地，如果它太小，
+我们将需要太多的迭代来收敛到最佳值。这就是为什么使用一个精心调校的学习率是至关重要的。
+
+让我们比较一下我们的模型的学习曲线与几种学习率的选择。运行下面的单元。这应该需要1分钟左右。你也可以自由地尝试不同的值，而不是我们初始化的学习率变量所包含的三个值，看看会发生什么。
+
+
+
+
+What to remember from this assignment:
+
+Preprocessing the dataset is important.
+You implemented each function separately: initialize(), propagate(), optimize(). Then you built a model().
+Tuning the learning rate (which is an example of a "hyperparameter") can make a big difference to the algorithm. You will see more examples of this later in this course!
+Finally, if you'd like, we invite you to try different things on this Notebook. Make sure you submit before trying anything. Once you submit, things you can play with include:
+
+- Play with the learning rate and the number of iterations
+- Try different initialization methods and compare the results
+- Test other preprocessings (center the data, or divide each row by its standard deviation)
+
+这个任务中需要记住的东西：
+
+对数据集的预处理很重要。
+你分别实现了每个函数：初始化（）、传播（）、优化（）。然后你建立了一个模型（）。
+调整学习率（这是一个 "超参数 "的例子）可以对算法产生很大的影响。在本课程的后面，你会看到更多这样的例子!
+最后，如果你愿意，我们邀请你在这个笔记本上尝试不同的东西。请确保在尝试任何事情之前提交。一旦你提交，你可以玩的东西包括：
+
+- 玩弄学习率和迭代次数
+- 尝试不同的初始化方法并比较结果
+- 测试其他预处理（将数据居中，或将每一行除以其标准差）。
