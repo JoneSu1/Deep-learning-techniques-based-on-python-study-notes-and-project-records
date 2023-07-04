@@ -1042,3 +1042,111 @@ You've implemented several functions that:
     - 计算成本和它的梯度 
     - 使用梯度下降法更新参数
 - 使用学到的(w,b)来预测给定例子集的标签  
+
+
+<a name='5'></a>
+## 5 - Merge all functions into a model ##
+
+You will now see how the overall model is structured by putting together all the building blocks (functions implemented in the previous parts) together, in the right order.
+
+
+现在你将看到，通过将所有的构件（前面几部分实现的功能）按照正确的顺序组合在一起，整个模型是如何结构化的。
+
+<a name='ex-8'></a>
+### Exercise 8 - model
+Implement the model function. Use the following notation:
+    - Y_prediction_test for your predictions on the test set
+    - Y_prediction_train for your predictions on the train set
+    - parameters, grads, costs for the outputs of optimize()
+
+
+实现模型函数。使用以下符号：
+    - Y_prediction_test表示你对测试集的预测。
+    - Y_prediction_train表示你对训练集的预测。
+    - parameters, grads, costs表示优化()的输出。
+
+
+**code**
+
+            def model(X_train, Y_train, X_test, Y_test, num_iterations=2000, learning_rate=0.5, print_cost=False):
+                """
+            Builds the logistic regression model by calling the function you've implemented previously
+    
+                Arguments:
+                X_train -- training set represented by a numpy array of shape (num_px * num_px * 3, m_train)
+                Y_train -- training labels represented by a numpy array (vector) of shape (1, m_train)
+                X_test -- test set represented by a numpy array of shape (num_px * num_px * 3, m_test)
+                Y_test -- test labels represented by a numpy array (vector) of shape (1, m_test)
+                num_iterations -- hyperparameter representing the number of iterations to optimize the parameters
+                learning_rate -- hyperparameter representing the learning rate used in the update rule of optimize()
+                print_cost -- Set to True to print the cost every 100 iterations
+    
+                Returns:
+                d -- dictionary containing information about the model.
+                """
+                # Initialize parameters with zeros
+                w, b = initialize_with_zeros(X_train.shape[0])
+    
+                # Gradient descent
+                params, grads, costs = optimize(w, b, X_train, Y_train, num_iterations, learning_rate, print_cost)
+    
+                # Retrieve parameters w and b from dictionary "params"
+                w = params["w"]
+                b = params["b"]
+    
+                # Predict test/train set examples
+                Y_prediction_test = predict(w, b, X_test)
+                Y_prediction_train = predict(w, b, X_train)
+    
+                # Print train/test Errors
+                if print_cost:
+                    print("train accuracy: {} %".format(100 - np.mean(np.abs(Y_prediction_train - Y_train)) * 100))
+                    print("test accuracy: {} %".format(100 - np.mean(np.abs(Y_prediction_test - Y_test)) * 100))
+            
+                d = {"costs": costs,
+                     "Y_prediction_test": Y_prediction_test, 
+                     "Y_prediction_train": Y_prediction_train, 
+                     "w": w, 
+                     "b": b,
+                     "learning_rate": learning_rate,
+                     "num_iterations": num_iterations}
+    
+                return d
+
+判断模型的测试函数如下：
+    
+![8](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/33d7d07a-cc5e-4b26-a0bf-5429936508e5)
+
+**解释**
+
+这段代码实现了一个完整的逻辑回归模型。它首先使用 initialize_with_zeros 函数初始化参数 w 和 b，然后调用 optimize 函数进行梯度下降优化，
+得到优化后的参数 w 和 b，同时记录了每次迭代的成本函数值。接着，利用优化后的参数对训练集和测试集进行预测，并计算准确率。最后，将成本函数值、预测结果、参数等信息保存在字典 d 中并返回。
+
+而其中用到的function都是之前定义好了的.
+
+使用 model 函数，可以构建逻辑回归模型并进行训练和预测。设置合适的迭代次数、学习率和打印标志，可以控制模型的训练过程和输出。
+
+### 在完成了，model函数的整合之后，就可以带入数据进行预测了。
+
+logistic_regression_model = model(train_set_x, train_set_y, test_set_x, test_set_y, num_iterations=2000, learning_rate=0.005, print_cost=True)
+
+这行代码是在调用 model 函数来构建逻辑回归模型，并使用训练集和测试集进行训练和测试。
+
+具体而言，model 函数接受训练集 train_set_x 和训练标签 train_set_y，以及测试集 test_set_x 和测试标签 test_set_y 作为输入。
+它还接受一些超参数，如迭代次数 num_iterations 和学习率 learning_rate，以及一个布尔值 print_cost，用于控制是否打印成本（损失）。
+
+在模型函数内部，首先会初始化参数 w 和 b。然后通过调用 optimize 函数进行梯度下降优化，利用训练集对参数进行更新，迭代指定次数。
+
+接下来，从优化后的参数中提取权重 w 和偏置 b。然后，利用训练集和测试集进行预测，得到对训练集和测试集的预测结果。
+
+最后，如果 print_cost 参数设置为 True，则会打印出每100次迭代后的成本（损失）。同时，返回一个字典 logistic_regression_model，其中包含训练过程中的成本列表、
+对测试集和训练集的预测结果、最终的权重和偏置等信息。
+
+通过运行这段代码，可以构建逻辑回归模型，并查看训练过程中的成本变化以及模型在训练集和测试集上的准确性。
+
+![9](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/286a8b53-fa2d-42fd-895a-e9766bbd6d8f)
+
+评论： 训练精度接近100%。这是一个很好的理智检查：你的模型在工作，并且有足够高的能力来适应训练数据。测试准确率为70%。考虑到我们使用的数据集很小，而且逻辑回归是一个线性分类器，
+对于这个简单的模型来说，这实际上还不错。但是不用担心，下周你将建立一个更好的分类器
+
+另外，你还可以看到，这个模型显然是对训练数据的过度拟合。在本专业的后期，你将学习如何减少过拟合，例如通过使用正则化。使用下面的代码（并改变索引变量），你可以看一下对测试集的图片的预测。
