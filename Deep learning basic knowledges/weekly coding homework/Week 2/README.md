@@ -855,3 +855,95 @@ $$ \frac{\partial J}{\partial b} = \frac{1}{m} \sum_{i=1}^m (a^{(i)}-y^{(i)})\ta
 Write down the optimization function. The goal is to learn  𝑤  and  𝑏  by minimizing the cost function  𝐽 . For a parameter  𝜃 , the update rule is  𝜃=𝜃−𝛼 𝑑𝜃 , where  𝛼  is the learning rate.
 
 写下优化函数。目标是通过最小化成本函数𝐽来学习𝑤和𝑏。对于一个参数𝜃，更新规则是𝜃=𝜃-𝛼 𝑑𝜃 ，其中𝛼是学习率
+
+**代码解释：初始化参数和损失列表：**
+
+使用copy.deepcopy()函数复制w和b，以防止原始参数被修改。
+创建一个空列表costs，用于存储每次迭代计算的损失值。
+进行迭代更新：
+
+在循环中，进行以下操作：
+计算当前参数下的损失和梯度：调用propagate()函数，传入当前的参数w、b、输入数据X和标签Y，得到梯度grads和损失cost。
+从grads中获取dw和db，即损失对参数的偏导数。
+使用梯度下降法更新参数：根据梯度下降法的更新规则，更新w和b。
+记录损失值：如果当前迭代次数可以被100整除，将当前的损失值cost添加到costs列表中。
+如果print_cost为True，则打印每100次迭代后的损失值。
+返回结果：
+
+将更新后的参数w和b打包到params字典中。
+将最终的梯度dw和db打包到grads字典中。
+返回params、grads和costs作为输出。
+该函数的作用是通过梯度下降算法迭代优化参数，使得损失函数逐渐减小，从而提高模型的性能。
+
+**Code**
+
+
+            # GRADED FUNCTION: optimize
+
+def optimize(w, b, X, Y, num_iterations=100, learning_rate=0.009, print_cost=False):
+    """
+    This function optimizes w and b by running a gradient descent algorithm
+    
+    Arguments:
+    w -- weights, a numpy array of size (num_px * num_px * 3, 1)
+    b -- bias, a scalar
+    X -- data of shape (num_px * num_px * 3, number of examples)
+    Y -- true "label" vector (containing 0 if non-cat, 1 if cat), of shape (1, number of examples)
+    num_iterations -- number of iterations of the optimization loop
+    learning_rate -- learning rate of the gradient descent update rule
+    print_cost -- True to print the loss every 100 steps
+    
+    Returns:
+    params -- dictionary containing the weights w and bias b
+    grads -- dictionary containing the gradients of the weights and bias with respect to the cost function
+    costs -- list of all the costs computed during the optimization, this will be used to plot the learning curve.
+    
+    Tips:
+    You basically need to write down two steps and iterate through them:
+        1) Calculate the cost and the gradient for the current parameters. Use propagate().
+        2) Update the parameters using gradient descent rule for w and b.
+    """
+    
+    w = copy.deepcopy(w)
+    b = copy.deepcopy(b)
+    
+    costs = []
+    
+    for i in range(num_iterations):
+        # (≈ 1 lines of code)
+        # Cost and gradient calculation 
+        # grads, cost = ...
+        # YOUR CODE STARTS HERE
+        grads, cost = propagate(w, b, X, Y)
+        
+        # YOUR CODE ENDS HERE
+        
+        # Retrieve derivatives from grads
+        dw = grads["dw"]
+        db = grads["db"]
+        
+        # update rule (≈ 2 lines of code)
+        # w = ...
+        # b = ...
+        # YOUR CODE STARTS HERE
+        w = w - learning_rate * dw
+        b = b - learning_rate * db
+        # YOUR CODE ENDS HERE
+        
+        # Record the costs
+        if i % 100 == 0:
+            costs.append(cost)
+        
+            # Print the cost every 100 training iterations
+            if print_cost:
+                print ("Cost after iteration %i: %f" %(i, cost))
+    
+          params = {"w": w,
+              "b": b}
+    
+          grads = {"dw": dw,
+             "db": db}
+    
+          return params, grads, costs
+
+![6](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/25340f70-ffbf-4b77-85d1-031520e51f8c)
