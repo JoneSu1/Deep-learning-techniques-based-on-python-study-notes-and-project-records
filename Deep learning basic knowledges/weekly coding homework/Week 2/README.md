@@ -947,3 +947,27 @@ def optimize(w, b, X, Y, num_iterations=100, learning_rate=0.009, print_cost=Fal
           return params, grads, costs
 
 ![6](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/25340f70-ffbf-4b77-85d1-031520e51f8c)
+
+
+<a name='ex-7'></a>
+### Exercise 7 - predict
+The previous function will output the learned w and b. We are able to use w and b to predict the labels for a dataset X. Implement the `predict()` function. There are two steps to computing predictions:
+
+前面的函数将输出学到的w和b。我们能够使用w和b来预测数据集X的标签。实现`predict()`函数。计算预测结果有两个步骤：
+
+1. Calculate $\hat{Y} = A = \sigma(w^T X + b)$
+
+2. Convert the entries of a into 0 (if activation <= 0.5) or 1 (if activation > 0.5), stores the predictions in a vector `Y_prediction`. If you wish, you can use an `if`/`else` statement in a `for` loop (though there is also a way to vectorize this). 
+
+1. 计算 𝑌̂ =𝐴=𝜎(𝑤𝑇𝑋+𝑏)
+    
+2. 将a的条目转换成0（如果激活度<=0.5）或1（如果激活度>0.5），将预测结果存储在一个向量Y_prediction中。
+ 如果你愿意，你可以在for循环中使用if/else语句（虽然也有一种方法可以将其矢量化）。
+
+**在optimization之后进行预测的目的**
+- 在深度学习完成优化后，进行预测（predict）的目的是使用训练好的模型对新的输入样本进行分类或回归预测。通过对新样本进行预测，
+  我们可以了解模型在未见过的数据上的表现，并应用模型进行实际的预测任务。
+
+- 在优化过程中，我们通过梯度下降等优化算法调整模型的参数，使其在训练集上的损失最小化。然而，优化仅仅是为了拟合训练数据，
+  而不一定能够泛化到新的未见过的数据上。因此，我们需要通过预测来评估模型的泛化能力。
+   
