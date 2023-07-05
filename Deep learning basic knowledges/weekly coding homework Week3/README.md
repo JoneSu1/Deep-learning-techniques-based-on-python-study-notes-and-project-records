@@ -298,3 +298,92 @@ $$\hat{Y} = A^{[2]} = \sigma(Z^{[2]})\tag{4}$$
     1. Retrieve each parameter from the dictionary "parameters" (which is the output of `initialize_parameters()` by using `parameters[".."]`.
     2. Implement Forward Propagation. Compute $Z^{[1]}, A^{[1]}, Z^{[2]}$ and $A^{[2]}$ (the vector of all your predictions on all the examples in the training set).
 - Values needed in the backpropagation are stored in "cache". The cache will be given as an input to the backpropagation function.
+
+这次的hidden layer中使用的是，numpy library中的np.tanh()函数，并且tanh as the active function for hidden layer.
+
+
+**Coding**
+
+        # GRADED FUNCTION:forward_propagation
+
+        def forward_propagation(X, parameters):
+            """
+            Argument:
+            X -- input data of size (n_x, m)
+            parameters -- python dictionary containing your parameters (output of initialization function)
+    
+            Returns:
+            A2 -- The sigmoid output of the second activation
+            cache -- a dictionary containing "Z1", "A1", "Z2" and "A2"
+            """
+            # Retrieve each parameter from the dictionary "parameters"
+            #(≈ 4 lines of code)
+            # W1 = ...
+            # b1 = ...
+            # W2 = ...
+            # b2 = ...
+            # YOUR CODE STARTS HERE
+            W1 = parameters["W1"]
+            b1 = parameters["b1"]
+            W2 = parameters["W2"]
+            b2 = parameters["b2"]
+    
+            # YOUR CODE ENDS HERE
+    
+            # Implement Forward Propagation to calculate A2 (probabilities)
+            # (≈ 4 lines of code)
+            # Z1 = ...
+            # A1 = ...
+            # Z2 = ...
+            # A2 = ...
+            # YOUR CODE STARTS HERE
+            Z1 = np.dot(W1,X) + b1
+            A1 = np.tanh(Z1)
+            Z2 = np.dot(W2,A1) + b2
+            A2 = 1/(1+np.exp(-Z2))
+    
+            # YOUR CODE ENDS HERE
+    
+            assert(A2.shape == (1, X.shape[1]))
+    
+            cache = {"Z1": Z1,
+                     "A1": A1,
+                     "Z2": Z2,
+                     "A2": A2}
+    
+            return A2, cache
+
+**以下是从测试数集中提取的**
+
+![19](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/11dbc883-2b95-4071-85f0-751a2dec57d9)
+
+<a name='4-4'></a>
+### 4.4 - Compute the Cost
+
+Now that you've computed $A^{[2]}$ (in the Python variable "`A2`"), which contains $a^{[2](i)}$ for all examples, you can compute the cost function as follows:
+
+$$J = - \frac{1}{m} \sum\limits_{i = 1}^{m} \large{(} \small y^{(i)}\log\left(a^{[2] (i)}\right) + (1-y^{(i)})\log\left(1- a^{[2] (i)}\right) \large{)} \small\tag{13}$$
+
+<a name='ex-5'></a>
+### Exercise 5 - compute_cost 
+
+Implement `compute_cost()` to compute the value of the cost $J$.
+
+**Instructions**:
+- There are many ways to implement the cross-entropy loss. This is one way to implement one part of the equation without for loops:
+$- \sum\limits_{i=1}^{m}  y^{(i)}\log(a^{[2](i)})$:
+```python
+logprobs = np.multiply(np.log(A2),Y)
+cost = - np.sum(logprobs)          
+```
+
+- Use that to build the whole expression of the cost function.
+
+**Notes**: 
+
+- You can use either `np.multiply()` and then `np.sum()` or directly `np.dot()`).  
+- If you use `np.multiply` followed by `np.sum` the end result will be a type `float`, whereas if you use `np.dot`, the result will be a 2D numpy array.  
+- You can use `np.squeeze()` to remove redundant dimensions (in the case of single float, this will be reduced to a zero-dimension array). 
+- You can also cast the array as a type `float` using `float()`.
+
+
