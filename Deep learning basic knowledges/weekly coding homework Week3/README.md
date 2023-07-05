@@ -52,4 +52,32 @@ First import all the packages that you will need during this assignment.
 
 ![11](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/d987eef8-ce10-478c-b68d-e768e25673da)
 
+![12](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/5c910039-0b9e-4964-aa43-995ec9941fcf)
+
+You have:
+
+- a numpy-array (matrix) X that contains your features (x1, x2)
+- a numpy-array (vector) Y that contains your labels (red:0, blue:1).
+First, get a better sense of what your data is like.
+
+### 判断X（特征）和Y(标签)的数量有多少
+
+         # (≈ 3 lines of code)
+         # shape_X = ...
+         # shape_Y = ...
+         # training set size
+         # m = ...
+         # YOUR CODE STARTS HERE
+         shape_X = X.shape
+         shape_Y = Y.shape
+         m = X.shape[1]
+         # YOUR CODE ENDS HERE
+
+         print ('The shape of X is: ' + str(shape_X))
+         print ('The shape of Y is: ' + str(shape_Y))
+         print ('I have m = %d training examples!' % (m))
+
+![13](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/5e8b8865-ba73-45a1-b3de-b83cc5ea7932)
+
+
 
