@@ -574,6 +574,8 @@ $\frac{\partial \mathcal{J} _i }{ \partial b_1 } = \sum_i{\frac{\partial \mathca
 Implement the update rule. Use gradient descent. You have to use (dW1, db1, dW2, db2) in order to update (W1, b1, W2, b2).
 
 **General gradient descent rule**: $\theta = \theta - \alpha \frac{\partial J }{ \partial \theta }$ where $\alpha$ is the learning rate and $\theta$ represents a parameter.
+一般梯度下降规则：𝜃=𝜃-𝛼∂𝐽，其中𝛼是学习率，𝜃代表一个参数。
+
 ![sgd](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/8e182d5c-4264-4883-a50f-4f28c0da1ddb)
 ![sgd_bad](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/7b63007a-c389-4500-b9d9-c40e872767ba)
 
@@ -583,3 +585,261 @@ Implement the update rule. Use gradient descent. You have to use (dW1, db1, dW2,
 **Hint**
 
 - Use `copy.deepcopy(...)` when copying lists or dictionaries that are passed as parameters to functions. It avoids input parameters being modified within the function. In some scenarios, this could be inefficient, but it is required for grading purposes.
+
+图2：梯度下降算法的学习率好（收敛）和学习率不好（发散）。图片由Adam Harley提供。
+好的那个图，学习率明显低0.005，而学习率不好的这个高0.05.
+温馨提示
+
+在复制作为参数传递给函数的列表或字典时，使用copy.deepcopy(...)。它可以避免输入参数在函数中被修改。在某些情况下，这可能是低效的，但为了评分的目的，这是必须的。
+
+
+**Coding**
+
+        # GRADED FUNCTION: update_parameters
+
+        def update_parameters(parameters, grads, learning_rate = 1.2):
+            """
+            Updates parameters using the gradient descent update rule given above
+    
+            Arguments:
+            parameters -- python dictionary containing your parameters 
+            grads -- python dictionary containing your gradients 
+    
+            Returns:
+            parameters -- python dictionary containing your updated parameters 
+            """
+            # Retrieve a copy of each parameter from the dictionary "parameters". Use copy.deepcopy(...) for W1 and W2
+            #(≈ 4 lines of code)
+            # W1 = ...
+            # b1 = ...
+            # W2 = ...
+            # b2 = ...
+            # YOUR CODE STARTS HERE
+            W1 = copy.deepcopy(parameters["W1"])
+            b1 = copy.deepcopy(parameters["b1"])
+            W2 = copy.deepcopy(parameters["W2"])
+            b2 = copy.deepcopy(parameters["b2"])
+
+    
+            # YOUR CODE ENDS HERE
+    
+            # Retrieve each gradient from the dictionary "grads"
+            #(≈ 4 lines of code)
+            # dW1 = ...
+            # db1 = ...
+            # dW2 = ...
+            # db2 = ...
+            # YOUR CODE STARTS HERE
+            dW1 = copy.deepcopy(grads["dW1"])
+            db1 = copy.deepcopy(grads["db1"])
+            dW2 = copy.deepcopy(grads["dW2"])
+            db2 = copy.deepcopy(grads["db2"])
+
+            # YOUR CODE ENDS HERE
+    
+            # Update rule for each parameter
+            #(≈ 4 lines of code)
+            # W1 = ...
+            # b1 = ...
+            # W2 = ...
+            # b2 = ...
+            # YOUR CODE STARTS HERE
+            W1 = W1 - learning_rate * dW1
+            b1 = b1 - learning_rate * db1
+            W2 = W2 - learning_rate * dW2
+            b2 = b2 - learning_rate * db2
+    
+            # YOUR CODE ENDS HERE
+    
+            parameters = {"W1": W1,
+                          "b1": b1,
+                          "W2": W2,
+                          "b2": b2}
+    
+            return parameters
+![23](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/f5ea6f73-4e44-48b4-8627-0356c1d5507d)
+
+**现在已经得到了数据和neural network的shape，以及定义了随机化 initialize 的parameters：W1,W2，以及bias：b1，b2, 同时定义了forward和backward propagation的函数，最后还定义出了更新W,的函数**
+下一步就是集成（integration）所有函数到nn.model()中.
+
+
+我们首先根据输入数据的维度和隐藏层大小，
+使用 initialize_parameters 函数初始化模型参数。然后，在循环中进行以下步骤：
+
+正向传播：使用 forward_propagation 函数计算输出 A2 和缓存 cache。
+成本函数：使用 compute_cost 函数计算成本。
+反向传播：使用 backward_propagation 函数计算梯度 grads。
+参数更新：使用 update_parameters 函数更新参数 parameters。
+如果需要，每隔1000次迭代打印成本。
+最后，返回学习到的参数 parameters，这些参数可以用于预测。
+
+
+在代码中，np.random.seed(3) 的作用是设置随机数生成器的种子，以确保在每次运行代码时都能得到相同的随机数序列。
+种子值为3只是一个随机选择的常数，你可以选择任何其他整数作为种子值，只要你在不同地方使用相同的种子值，就能得到相同的随机数序列。
+这在调试和复现实验结果时非常有用，因为它确保代码的随机部分是确定性的。
+
+至于最后的 if 函数，它用于在每次迭代的时候打印成本（代价）。print_cost 是一个布尔值参数，如果设置为 True，则在每1000次迭代时会输出当前迭代次数和对应的成本值。
+这样做是为了方便用户实时监测模型的训练进度和成本的变化情况，以便在需要的时候进行调整和优化。如果不需要在每次迭代时打印成本，可以将 print_cost 参数设置为 False，则不会输出成本信息。
+
+![24](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/c3fc61d6-568a-4847-8394-86430ed3e426)
+
+**进行测试，使用predic功能**
+
+<a name='5'></a>
+## 5 - Test the Model
+
+<a name='5-1'></a>
+### 5.1 - Predict
+
+<a name='ex-9'></a>
+### Exercise 9 - predict
+
+Predict with your model by building `predict()`.
+Use forward propagation to predict results.
+
+**Reminder**: predictions = $y_{prediction} = \mathbb 1 \text{{activation > 0.5}} = \begin{cases}
+      1 & \text{if}\ activation > 0.5 \\
+      0 & \text{otherwise}
+    \end{cases}$  
+    
+As an example, if you would like to set the entries of a matrix X to 0 and 1 based on a threshold you would do: ```X_new = (X > threshold)```
+
+通过建立predict()，用你的模型进行预测。使用前向传播法来预测结果，得到A2就可以了，因为输出层A2是sigmoid函数，是逻辑判断的。
+
+举个例子，如果你想根据一个阈值将一个矩阵X的条目设置为0和1，你会这样做： X_new = (X > threshold)
+所以在这里面可以用 predictions = (A2 > 0.5)
+
+在这行代码中，X_new = (X > threshold) 是一个布尔表达式，它对输入矩阵 X 进行元素级比较，并生成一个相同形状的布尔矩阵 X_new。
+
+具体来说，(X > threshold) 表达式将对 X 中的每个元素执行比较操作，如果元素的值大于 threshold，则对应位置的结果为 True，否则为 False。生成的布尔矩阵 X_new 与 X 具有相同的形状，但其元素的值为布尔类型。
+
+这种操作常用于将连续值转换为二进制标志或进行阈值处理。例如，可以使用 (X > 0.5) 将连续值矩阵 X 转换为二进制标志矩阵，其中大于 0.5 的元素为 True，小于等于 0.5 的元素为 False。
+
+注意，X 和 threshold 的形状需要相匹配，否则可能会引发错误。
+
+      # GRADED FUNCTION: predict
+
+      def predict(parameters, X):
+          """
+          Using the learned parameters, predicts a class for each example in X
+    
+          Arguments:
+          parameters -- python dictionary containing your parameters 
+          X -- input data of size (n_x, m)
+    
+          Returns
+          predictions -- vector of predictions of our model (red: 0 / blue: 1)
+          """
+    
+          # Computes probabilities using forward propagation, and classifies to 0/1 using 0.5 as the threshold.
+          #(≈ 2 lines of code)
+          # A2, cache = ...
+          # predictions = ...
+          # YOUR CODE STARTS HERE
+          A2, cache = forward_propagation(X, parameters)
+          predictions = (A2 > 0.5)
+    
+          # YOUR CODE ENDS HERE
+    
+          return predictions
+
+通过例子来判断是否工作
+![25](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/ac056690-2c8f-4fc7-8af9-c8ed10f524a9)
+
+<a name='5-2'></a>
+### 5.2 - Test the Model on the Planar Dataset
+
+It's time to run the model and see how it performs on a planar dataset. Run the following code to test your model with a single hidden layer of $n_h$ hidden units!
+
+5.2 - 在平面数据集上测试模型
+现在是时候运行模型，看看它在平面数据集上的表现了。运行下面的代码，用𝑛ℎ隐藏单元的单一隐藏层测试你的模型!
+
+        # Build a model with a n_h-dimensional hidden layer
+        parameters = nn_model(X, Y, n_h = 4, num_iterations = 10000, print_cost=True)
+
+        # Plot the decision boundary
+        plot_decision_boundary(lambda x: predict(parameters, x.T), X, Y)
+        plt.title("Decision Boundary for hidden layer size " + str(4))
+![26](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/e351c335-8031-4e61-b43a-72512b107913)
+
+
+    这段代码中，我们使用了之前定义的 nn_model 函数来建立一个具有 n_h 维度隐藏层的神经网络模型。参数 X 和 Y 是输入数据和标签，n_h 是隐藏层的维度，num_iterations 是梯度下降优化的迭代次数。
+
+首先，我们调用 nn_model 函数，它会进行以下步骤：
+
+初始化参数：根据输入数据的维度和隐藏层维度，使用随机值初始化权重和偏置。
+在梯度下降循环中，进行前向传播、计算损失、反向传播和参数更新的步骤。
+在循环的每次迭代中，我们会计算损失并打印出来（由 print_cost=True 控制），以便观察损失函数的变化情况。
+
+接着，我们调用 plot_decision_boundary 函数来绘制决策边界。这个函数的参数是一个函数和数据集 X 和 Y。它会根据这个函数预测的结果，绘制出数据点和决策边界。我们使用 lambda x: predict(parameters, x.T) 作为函数，其中 predict(parameters, x.T) 用于预测输入数据 x.T 的标签。然后，我们将 X 和 Y 数据集传递给 plot_decision_boundary 函数，它会根据模型的预测结果绘制决策边界。
+
+最后，我们使用 plt.title 给绘制的图像添加标题，指明了隐藏层的维度 n_h 是多少。
+
+**计算出准确度**
+
+        # Print accuracy
+        predictions = predict(parameters, X)
+        print ('Accuracy: %d' % float((np.dot(Y, predictions.T) + np.dot(1 - Y, 1 - predictions.T)) / float(Y.size) * 100) + '%')
+        
+![27](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/7820a56e-c9b0-497e-8a33-65aa0d3ca2dc)
+
+这段代码用于计算并打印模型的准确率。
+
+首先，我们调用 predict 函数，传入参数 parameters 和输入数据 X，得到对输入数据的预测结果 predictions。
+
+接下来，我们使用向量化的方法计算准确率。通过 np.dot(Y, predictions.T)，我们计算了预测值和真实标签的点积，
+得到预测正确的样本数量。通过 np.dot(1 - Y, 1 - predictions.T)，我们计算了预测值和真实标签取反的点积，
+得到预测错误的样本数量。将这两个数量相加，除以总样本数量 Y.size，再乘以 100，即可得到准确率的百分比。
+
+最后，使用 print 函数打印准确率的结果。
+
+综上所述，这段代码的目的是计算并打印模型在训练数据上的准确率。
+
+        
+
+综上所述，这段代码的目的是建立一个具有 n_h 维度隐藏层的神经网络模型，并可视化模型的决策边界，从而查看模型在训练数据上的分类效果。
+
+
+与逻辑回归相比，准确率确实很高。该模型已经学会了花瓣的模式! 与逻辑回归不同，神经网络甚至能够学习高度非线性的决策边界。
+
+下面是对你刚刚完成的所有工作的一个简单回顾：
+
+建立了一个完整的带有隐藏层的2类分类神经网络
+很好地利用了一个非线性单元
+计算了交叉熵损失
+实现了前向和后向传播
+看到了改变隐藏层大小的影响，包括过拟合。
+你已经创建了一个能够学习模式的神经网络! 优秀的工作。下面是一些可选的练习，以尝试其他隐藏层大小和其他数据集。
+
+**可以通过以下代码来测试，我们的模型在几个神经元被包含在hidden layer中的时候，结果最准确**
+
+       # This may take about 2 minutes to run
+
+       plt.figure(figsize=(16, 32))
+       hidden_layer_sizes = [1, 2, 3, 4, 5, 20]
+       # hidden_layer_sizes = [1, 2, 3, 4, 5, 20, 50]
+       for i, n_h in enumerate(hidden_layer_sizes):
+           plt.subplot(5, 2, i+1)
+           plt.title('Hidden Layer of size %d' % n_h)
+           parameters = nn_model(X, Y, n_h, num_iterations = 5000)
+           plot_decision_boundary(lambda x: predict(parameters, x.T), X, Y)
+           predictions = predict(parameters, X)
+           accuracy = float((np.dot(Y,predictions.T) + np.dot(1 - Y, 1 - predictions.T)) / float(Y.size)*100)
+           print ("Accuracy for {} hidden units: {} %".format(n_h, accuracy))
+
+  ![28](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/543f3a93-83f5-4793-ac70-a3b82c7a1ec7)
+  
+![29](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/e6fa4501-6f89-4ec2-be73-16e687bc9dbb)
+
+
+### 解释：
+
+- 较大的模型（有更多的隐藏单元）能够更好地适应训练集，直到最终最大的模型过度适应数据。
+- 最好的隐藏层大小似乎是n_h=5左右。事实上，在此附近的数值似乎可以很好地拟合数据，而不会产生明显的过拟合。
+- 稍后，你将熟悉正则化，它可以让你使用非常大的模型（如n_h=50）而不至于过度拟合。
+
+
+
+当你把tanh激活改为sigmoid激活或ReLU激活时会发生什么？
+玩弄一下学习率。会发生什么？
+如果我们改变数据集呢？(见下面第7部分！)
