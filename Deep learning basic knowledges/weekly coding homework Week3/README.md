@@ -1,4 +1,4 @@
-### 实现一个具有单一隐藏层的2类分类神经网络###
+ ### 实现一个具有单一隐藏层的2类分类神经网络###
 
 - 使用具有非线性激活函数的单元，如tanh
 - 计算交叉熵损失
@@ -441,3 +441,48 @@ cost = float(np.squeeze(cost)): 这行代码通过压缩操作将形状为（1�
 **代码测试输出，结果是从测试文件中来的**
 
 ![20](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/87196a98-196a-4965-801d-9d567c30a30e)
+
+**forward propagate结果得到cost之后，就需要进行backward propagate去获得W1,b1,W2,b2和gradient准备去进行 gradient descent**
+
+
+<a name='4-5'></a>
+### 4.5 - Implement Backpropagation
+
+Using the cache computed during forward propagation, you can now implement backward propagation.
+
+<a name='ex-6'></a>
+### Exercise 6 -  backward_propagation
+
+Implement the function `backward_propagation()`.
+
+**Instructions**:
+Backpropagation is usually the hardest (most mathematical) part in deep learning. To help you, here again is the slide from the lecture on backpropagation. You'll want to use the six equations on the right of this slide, since you are building a vectorized implementation.  
+
+<img src="images/grad_summary.png" style="width:600px;height:300px;">
+<caption><center><font color='purple'><b>Figure 1</b>: Backpropagation. Use the six equations on the right.</font></center></caption>
+
+<!--
+$\frac{\partial \mathcal{J} }{ \partial z_{2}^{(i)} } = \frac{1}{m} (a^{[2](i)} - y^{(i)})$
+
+$\frac{\partial \mathcal{J} }{ \partial W_2 } = \frac{\partial \mathcal{J} }{ \partial z_{2}^{(i)} } a^{[1] (i) T} $
+
+$\frac{\partial \mathcal{J} }{ \partial b_2 } = \sum_i{\frac{\partial \mathcal{J} }{ \partial z_{2}^{(i)}}}$
+
+$\frac{\partial \mathcal{J} }{ \partial z_{1}^{(i)} } =  W_2^T \frac{\partial \mathcal{J} }{ \partial z_{2}^{(i)} } * ( 1 - a^{[1] (i) 2}) $
+
+$\frac{\partial \mathcal{J} }{ \partial W_1 } = \frac{\partial \mathcal{J} }{ \partial z_{1}^{(i)} }  X^T $
+
+$\frac{\partial \mathcal{J} _i }{ \partial b_1 } = \sum_i{\frac{\partial \mathcal{J} }{ \partial z_{1}^{(i)}}}$
+
+- Note that $*$ denotes elementwise multiplication.
+- The notation you will use is common in deep learning coding:
+    - dW1 = $\frac{\partial \mathcal{J} }{ \partial W_1 }$
+    - db1 = $\frac{\partial \mathcal{J} }{ \partial b_1 }$
+    - dW2 = $\frac{\partial \mathcal{J} }{ \partial W_2 }$
+    - db2 = $\frac{\partial \mathcal{J} }{ \partial b_2 }$
+    
+!-->
+
+- Tips:
+    - To compute dZ1 you'll need to compute $g^{[1]'}(Z^{[1]})$. Since $g^{[1]}(.)$ is the tanh activation function, if $a = g^{[1]}(z)$ then $g^{[1]'}(z) = 1-a^2$. So you can compute 
+    $g^{[1]'}(Z^{[1]})$ using `(1 - np.power(A1, 2))`.
