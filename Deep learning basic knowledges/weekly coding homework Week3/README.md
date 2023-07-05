@@ -220,7 +220,81 @@ Implement the function `initialize_parameters()`.
 - You will initialize the bias vectors as zeros. 
     - Use: `np.zeros((a,b))` to initialize a matrix of shape (a,b) with zeros.
  
-    - 
+**代码解释**
 
+
+W1 = np.random.randn(n_h, n_x) * 0.01 
+**其中，n_h是这个array的行，表示的是特征，所以表示这个layer神经元的数量，而n_x表示的是列，也就是上一个层级input到这个层级的数量**
+  
+b1 = np.zeros((n_h,1))
+**b是一个常数列，他是不受上一层级影像的，所以后面是1**
+W2 = np.random.randn(n_y, n_h) * 0.01
+ b2 = np.zeros((n_y,1))
+
+
+        # GRADED FUNCTION: initialize_parameters
+
+        def initialize_parameters(n_x, n_h, n_y):
+            """
+            Argument:
+            n_x -- size of the input layer
+            n_h -- size of the hidden layer
+            n_y -- size of the output layer
+    
+            Returns:
+            params -- python dictionary containing your parameters:
+                            W1 -- weight matrix of shape (n_h, n_x)
+                            b1 -- bias vector of shape (n_h, 1)
+                            W2 -- weight matrix of shape (n_y, n_h)
+                            b2 -- bias vector of shape (n_y, 1)
+            """    
+            #(≈ 4 lines of code)
+            # W1 = ...
+            # b1 = ...
+            # W2 = ...
+            # b2 = ...
+            # YOUR CODE STARTS HERE
+            W1 = np.random.randn(n_h, n_x) * 0.01
+            b1 = np.zeros((n_h,1))
+            W2 = np.random.randn(n_y, n_h) * 0.01
+            b2 = np.zeros((n_y,1))
+    
+            # YOUR CODE ENDS HERE
+
+            parameters = {"W1": W1,
+                          "b1": b1,
+                          "W2": W2,
+                          "b2": b2}
+    
+            return parameters
 
      
+![18](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/12dba306-5c22-457e-830b-fe96df0940b0)
+
+
+在定义完层级，
+定义完initailize函数之后，就可以定义forward propagate 函数了.
+
+<a name='4-3'></a>
+### 4.3 - The Loop 
+
+<a name='ex-4'></a>
+### Exercise 4 - forward_propagation
+
+Implement `forward_propagation()` using the following equations:
+
+$$Z^{[1]} =  W^{[1]} X + b^{[1]}\tag{1}$$ 
+$$A^{[1]} = \tanh(Z^{[1]})\tag{2}$$
+$$Z^{[2]} = W^{[2]} A^{[1]} + b^{[2]}\tag{3}$$
+$$\hat{Y} = A^{[2]} = \sigma(Z^{[2]})\tag{4}$$
+
+
+**Instructions**:
+
+- Check the mathematical representation of your classifier in the figure above.
+- Use the function `sigmoid()`. It's built into (imported) this notebook.
+- Use the function `np.tanh()`. It's part of the numpy library.
+- Implement using these steps:
+    1. Retrieve each parameter from the dictionary "parameters" (which is the output of `initialize_parameters()` by using `parameters[".."]`.
+    2. Implement Forward Propagation. Compute $Z^{[1]}, A^{[1]}, Z^{[2]}$ and $A^{[2]}$ (the vector of all your predictions on all the examples in the training set).
+- Values needed in the backpropagation are stored in "cache". The cache will be given as an input to the backpropagation function.
