@@ -457,8 +457,9 @@ Implement the function `backward_propagation()`.
 
 **Instructions**:
 Backpropagation is usually the hardest (most mathematical) part in deep learning. To help you, here again is the slide from the lecture on backpropagation. You'll want to use the six equations on the right of this slide, since you are building a vectorized implementation.  
+![21](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/b67ab817-cb16-455c-b245-d1653ef49575)
 
-<img src="images/grad_summary.png" style="width:600px;height:300px;">
+
 <caption><center><font color='purple'><b>Figure 1</b>: Backpropagation. Use the six equations on the right.</font></center></caption>
 
 <!--
@@ -486,3 +487,97 @@ $\frac{\partial \mathcal{J} _i }{ \partial b_1 } = \sum_i{\frac{\partial \mathca
 - Tips:
     - To compute dZ1 you'll need to compute $g^{[1]'}(Z^{[1]})$. Since $g^{[1]}(.)$ is the tanh activation function, if $a = g^{[1]}(z)$ then $g^{[1]'}(z) = 1-a^2$. So you can compute 
     $g^{[1]'}(Z^{[1]})$ using `(1 - np.power(A1, 2))`.
+
+
+为了计算dZ1，你需要计算𝑔[1]′（𝑍[1]）。由于𝑔[1](.)是tanh激活函数，如果𝑎=𝑔[1](𝑧)，那么𝑔[1]′(𝑧)=1-𝑎2 。所以你可以用（1-np.power(A1, 2)）来计算𝑔[1]′（𝑍[1]）。
+
+比较重要的就是，在tanh作为hidden layer的激活函数，而sigmoid做为output layer的激活函数，
+在进行backpropagation的时候，先计算出output 部分的dW2, db2,dZ2.
+然后再用dZ2的结果算出dZ1,由于hidden是用tanh(),所以计算时候， dZ1 = W[2]TdZ2 * g[1]'(Z1)
+根据推导：g[1]'(Z1) = 1 - a^2.
+而在Numpy中的np.power(数组，次方数)可以帮助我们对一个数组内的每一个元素都进行次方运算.
+
+**Code**
+
+       # GRADED FUNCTION: backward_propagation
+
+       def backward_propagation(parameters, cache, X, Y):
+           """
+           Implement the backward propagation using the instructions above.
+    
+           Arguments:
+           parameters -- python dictionary containing our parameters 
+           cache -- a dictionary containing "Z1", "A1", "Z2" and "A2".
+           X -- input data of shape (2, number of examples)
+           Y -- "true" labels vector of shape (1, number of examples)
+    
+           Returns:
+           grads -- python dictionary containing your gradients with respect to different parameters
+           """
+           m = X.shape[1]
+    
+           # First, retrieve W1 and W2 from the dictionary "parameters".
+           #(≈ 2 lines of code)
+           # W1 = ...
+           # W2 = ...
+           # YOUR CODE STARTS HERE
+           W1 = parameters["W1"]
+           W2 = parameters["W2"]
+    
+           # YOUR CODE ENDS HERE
+        
+           # Retrieve also A1 and A2 from dictionary "cache".
+           #(≈ 2 lines of code)
+           # A1 = ...
+           # A2 = ...
+           # YOUR CODE STARTS HERE
+           A1 = cache["A1"]
+           A2 = cache["A2"]
+    
+           # YOUR CODE ENDS HERE
+    
+           # Backward propagation: calculate dW1, db1, dW2, db2. 
+           #(≈ 6 lines of code, corresponding to 6 equations on slide above)
+           # dZ2 = ...
+           # dW2 = ...
+           # db2 = ...
+           # dZ1 = ...
+           # dW1 = ...
+           # db1 = ...
+           # YOUR CODE STARTS HERE
+           dZ2 = A2 - Y
+           dW2 = 1/m * np.dot(dZ2, A1.T)
+           db2 = 1/m * np.sum(dZ2, axis=1, keepdims=True)
+           dZ1 = np.dot(W2.T, dZ2) * (1 - np.power(A1, 2))
+           dW1 = 1/m * np.dot(dZ1, X.T)
+           db1 = 1/m * np.sum(dZ1, axis=1, keepdims=True)
+    
+           # YOUR CODE ENDS HERE
+    
+           grads = {"dW1": dW1,
+                    "db1": db1,
+                    "dW2": dW2,
+                    "db2": db2}
+           
+           return grads
+
+![22](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/66d78cc7-716e-4fe7-9fd9-78bcd57a5354)
+
+**在得到了backward propagation之后就可以进行参数更新了，gradient descent**
+
+<a name='4-6'></a>
+### 4.6 - Update Parameters 
+
+<a name='ex-7'></a>
+### Exercise 7 - update_parameters
+
+Implement the update rule. Use gradient descent. You have to use (dW1, db1, dW2, db2) in order to update (W1, b1, W2, b2).
+
+**General gradient descent rule**: $\theta = \theta - \alpha \frac{\partial J }{ \partial \theta }$ where $\alpha$ is the learning rate and $\theta$ represents a parameter.
+
+<img src="images/sgd.gif" style="width:400;height:400;"> <img src="images/sgd_bad.gif" style="width:400;height:400;">
+<caption><center><font color='purple'><b>Figure 2</b>: The gradient descent algorithm with a good learning rate (converging) and a bad learning rate (diverging). Images courtesy of Adam Harley.</font></center></caption>
+
+**Hint**
+
+- Use `copy.deepcopy(...)` when copying lists or dictionaries that are passed as parameters to functions. It avoids input parameters being modified within the function. In some scenarios, this could be inefficient, but it is required for grading purposes.
