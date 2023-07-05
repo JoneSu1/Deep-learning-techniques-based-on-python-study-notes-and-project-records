@@ -370,8 +370,8 @@ $$J = - \frac{1}{m} \sum\limits_{i = 1}^{m} \large{(} \small y^{(i)}\log\left(a^
 Implement `compute_cost()` to compute the value of the cost $J$.
 
 **Instructions**:
-- There are many ways to implement the cross-entropy loss. This is one way to implement one part of the equation without for loops:
-$- \sum\limits_{i=1}^{m}  y^{(i)}\log(a^{[2](i)})$:
+- There are many ways to implement the cross-entropy loss. This is one way to implement one part of the equation without for loops:  −∑𝑖=1𝑚𝑦(𝑖)log(𝑎[2](𝑖)) :
+  
 ```python
 logprobs = np.multiply(np.log(A2),Y)
 cost = - np.sum(logprobs)          
@@ -387,3 +387,57 @@ cost = - np.sum(logprobs)
 - You can also cast the array as a type `float` using `float()`.
 
 
+- 你可以使用np.multiply()然后np.sum()或者直接使用np.dot())。
+- 如果你使用np.multiply，然后再使用np.sum，最终的结果将是一个浮点类型，而如果你使用np.dot，结果将是一个2D的numpy数组。
+- 你可以使用np.squeeze()来去除多余的维度（如果是单一的float，这将被减少为一个零维数组）。
+- 你也可以使用float()将数组转换为float类型。
+
+  代码解释：
+
+logprobs = np.multiply(np.log(A2), Y) + np.multiply(np.log(1 - A2), 1 - Y): 这行代码计算了A2的对数与Y的元素级乘积，以及(1 - A2)的对数与(1 - Y)的元素级乘积。它计算了预测值（A2）和真实值（Y）的对数概率。
+
+cost = - np.sum(logprobs) / m: 这行代码通过对所有对数概率进行求和并除以示例数量m，计算了平均交叉熵成本。负号用于翻转求和的符号，因为交叉熵成本在方程中定义为负数。
+
+cost = float(np.squeeze(cost)): 这行代码通过压缩操作将形状为（1，1）的二维数组的成本转换为标量值。np.squeeze()函数会删除大小为1的任何维度，所以它将[[17]]转换为17（标量值）。
+
+最后，cost变量作为函数的输出返回。
+
+总体而言，compute_cost函数计算了预测值（A2）和真实值（Y）之间的交叉熵成本。这个成本用于评估神经网络在训练过程中的性能。
+
+**Coding**
+
+        # GRADED FUNCTION: compute_cost
+
+       def compute_cost(A2, Y):
+           """
+           Computes the cross-entropy cost given in equation (13)
+    
+           Arguments:
+           A2 -- The sigmoid output of the second activation, of shape (1, number of examples)
+           Y -- "true" labels vector of shape (1, number of examples)
+
+           Returns:
+           cost -- cross-entropy cost given equation (13)
+    
+           """
+    
+           m = Y.shape[1] # number of examples
+
+           # Compute the cross-entropy cost
+           # (≈ 2 lines of code)
+           # logprobs = ...
+           # cost = ...
+           # YOUR CODE STARTS HERE
+           logprobs = np.multiply(np.log(A2), Y) + np.multiply(np.log(1 - A2), 1 - Y)
+           cost = - np.sum(logprobs) / m
+    
+           # YOUR CODE ENDS HERE
+    
+           cost = float(np.squeeze(cost))  # makes sure cost is the dimension we expect. 
+                                           # E.g., turns [[17]] into 17 
+           
+           return cost
+
+**代码测试输出，结果是从测试文件中来的**
+
+![20](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/87196a98-196a-4965-801d-9d567c30a30e)
