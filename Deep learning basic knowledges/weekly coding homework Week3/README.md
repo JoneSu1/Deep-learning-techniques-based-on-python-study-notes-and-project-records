@@ -180,3 +180,47 @@ m表示样本的数量，那么输入层的神经元数量就是n_x。
     
     # YOUR CODE ENDS HERE
     return (n_x, n_h, n_y)
+
+     # 获取layer_sizes的测试案例， 这个案例中的数据和之前的那个无关
+     t_X, t_Y = layer_sizes_test_case()
+
+     # 计算层的大小
+     (n_x, n_h, n_y) = layer_sizes(t_X, t_Y)
+
+     # 打印输入层的大小
+     print("输入层的大小为：n_x = " + str(n_x))
+
+     # 打印隐藏层的大小
+     print("隐藏层的大小为：n_h = " + str(n_h))
+
+     # 打印输出层的大小
+     print("输出层的大小为：n_y = " + str(n_y))
+
+     # 运行layer_sizes的测试
+     layer_sizes_test(layer_sizes)
+
+![17](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/6fb1cf5e-6790-44bb-8c29-6a7e1d9f8b46)
+
+
+### 在确定完shallow神经网络的structure之后，就是对数据进行initializing。
+
+一般使用随机还原法，np.random.randn(a,b) * 0.01，不适用归0法是因为，如果hidden layer都是归0则，隐藏层没意义了.
+<a name='4-2'></a>
+### 4.2 - Initialize the model's parameters ####
+
+<a name='ex-3'></a>
+### Exercise 3 -  initialize_parameters
+
+Implement the function `initialize_parameters()`.
+
+**Instructions**:
+- Make sure your parameters' sizes are right. Refer to the neural network figure above if needed.
+- You will initialize the weights matrices with random values. 
+    - Use: `np.random.randn(a,b) * 0.01` to randomly initialize a matrix of shape (a,b).
+- You will initialize the bias vectors as zeros. 
+    - Use: `np.zeros((a,b))` to initialize a matrix of shape (a,b) with zeros.
+ 
+    - 
+
+
+     
