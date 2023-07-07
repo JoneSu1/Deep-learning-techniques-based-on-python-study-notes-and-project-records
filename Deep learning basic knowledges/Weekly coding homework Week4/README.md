@@ -73,7 +73,7 @@ def tanh_backward(dA, cache):
 
     return dZ
 ```
-
+- 然后根据sigmoid_backward算出的dZ值，带入linear_back的公式（dZ,activation_cache）算出dW，db,dA_prev.
 <a name='1'></a>
 ## 1 - Packages
 
