@@ -273,5 +273,44 @@ Implement initialization for an L-layer Neural Network.
         parameters["b" + str(L)] = np.zeros((layer_dims[1], 1))
 ```
 **也是相同的，我们需要按照W,b这两个paramertes的位置来写initiation的代码**
+而由于是有多层layer，我们需要使用for loop函数来帮助我们。
+首先把shape of layer储存到vertor：layer_dims中，
+使用for  l in range(1, L):
+
+**COding**
+
+```python
+# GRADED FUNCTION: initialize_parameters_deep
+
+def initialize_parameters_deep(layer_dims):
+    """
+    Arguments:
+    layer_dims -- python array (list) containing the dimensions of each layer in our network
+    
+    Returns:
+    parameters -- python dictionary containing your parameters "W1", "b1", ..., "WL", "bL":
+                    Wl -- weight matrix of shape (layer_dims[l], layer_dims[l-1])
+                    bl -- bias vector of shape (layer_dims[l], 1)
+    """
+    
+    np.random.seed(3)
+    parameters = {}
+    L = len(layer_dims) # number of layers in the network
+
+    for l in range(1, L):
+        #(≈ 2 lines of code)
+        # parameters['W' + str(l)] = ...
+        # parameters['b' + str(l)] = ...
+        # YOUR CODE STARTS HERE
+        parameters['W' + str(l)] = np.random.randn(layer_dims[l],layer_dims[l-1])*0.01
+        parameters['b' + str(l)] = np.zeros((layer_dims[l],1))
+        # YOUR CODE ENDS HERE
+        
+        assert(parameters['W' + str(l)].shape == (layer_dims[l], layer_dims[l - 1]))
+        assert(parameters['b' + str(l)].shape == (layer_dims[l], 1))
+
+        
+    return parameters
+```
 
 
