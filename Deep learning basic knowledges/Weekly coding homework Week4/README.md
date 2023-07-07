@@ -1,4 +1,78 @@
 ### 构建一个2层hidden的神经网络和一个L神经网络.
+**在多层神经网络构建时候，最方便的方法**
+
+- 先定义一个能处理l层paramerters的initialization的function
+- 再定义一个线性的forward方程
+- 然后再根据需要的激活函数来构建联合方程（如果是sigmoid--relu）就再里面添加逻辑判断，activation == ？，然后来套刚才的forward方程=Z
+  然后再A = g(Z)来保证不同的激活函数的工作.
+- 通过 forward 中的cache（包含Z,W,b）可以计算cost.
+- 然后进入backward的部分，同样先定义backward的线性方程
+  ``` Python
+  dW = 1/m*np.dot(dZ,A_prev.T)
+  db = 1/m*np.sum(dZ,axis = 1, keep.dims=True)#记得是横向求和，并且保留dimension.
+  dA_prev = np.dot(W.T,dZ)
+  #而关于dZ的求值，不同的激活函数，有不同的结果
+  #如果激活函数是softmax 和 sigmoid
+  dZ = A - Y
+  #如果激活函数是tanh和Relu
+  dZ = dA * relu_derivative(Z)
+ #其中，dA 是当前层的激活值的导数，relu_derivative 是 ReLU/tanh 函数的导数。
+ ```
+- 在设定好linear_backward函数后，我们需要根据用到的激活函数来设置前置激活函数：
+ ``` Python
+#sigmoid_backward（）
+def sigmoid_backward(dA, cache):
+    """
+    Implement the backward propagation for a single sigmoid unit.
+
+    Arguments:
+    dA -- post-activation gradient, same shape as A
+    cache -- 'Z' stored during forward propagation
+
+    Returns:
+    dZ -- gradient of the cost with respect to Z
+    """
+    Z = cache
+    A = 1 / (1 + np.exp(-Z))
+    dZ = dA * A * (1 - A)
+
+    return dZ
+#relu_backward
+def relu_backward(dA, cache):
+    """
+    Implement the backward propagation for a single ReLU unit.
+
+    Arguments:
+    dA -- post-activation gradient, same shape as A
+    cache -- 'Z' stored during forward propagation
+
+    Returns:
+    dZ -- gradient of the cost with respect to Z
+    """
+    Z = cache
+    dZ = np.array(dA, copy=True)  # 转换为与dA相同形状的数组
+
+    # 当Z小于等于0时，将dZ置为0
+    dZ[Z <= 0] = 0
+
+    return dZ
+#tanh_backward()
+def tanh_backward(dA, cache):
+    """
+    Implement the backward propagation for a single tanh unit.
+
+    Arguments:
+    dA -- post-activation gradient, same shape as A
+    cache -- 'A' stored during forward propagation
+
+    Returns:
+    dZ -- gradient of the cost with respect to Z
+    """
+    A = cache
+    dZ = dA * (1 - np.power(A, 2))
+
+    return dZ
+```
 
 <a name='1'></a>
 ## 1 - Packages
@@ -312,5 +386,46 @@ def initialize_parameters_deep(layer_dims):
         
     return parameters
 ```
+![34](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/457dcea7-d819-48dc-a175-066a813d8265)
 
+<a name='4'></a>
+## 4 - Forward Propagation Module
+
+<a name='4-1'></a>
+### 4.1 - Linear Forward 
+
+Now that you have initialized your parameters, you can do the forward propagation module. Start by implementing some basic functions that you can use again later when implementing the model. Now, you'll complete three functions in this order:
+
+- LINEAR
+- LINEAR -> ACTIVATION where ACTIVATION will be either ReLU or Sigmoid. 
+- [LINEAR -> RELU] $\times$ (L-1) -> LINEAR -> SIGMOID (whole model)
+
+The linear forward module (vectorized over all the examples) computes the following equations:
+
+4 - 前向传播模块
+
+4.1 - 线性前向
+现在你已经初始化了你的参数，你可以做前向传播模块了。从实现一些基本函数开始，你可以在以后实现模型时再次使用。现在，你将按照这个顺序完成三个函数：
+
+LINEAR
+LINEAR -> ACTIVATION，其中ACTIVATION将是ReLU或Sigmoid。
+[LINEAR -> RELU] × (L-1) -> LINEAR -> SIGMOID (整个模型)
+线性前向模块（对所有的例子进行矢量计算）计算出以下方程：
+
+$$Z^{[l]} = W^{[l]}A^{[l-1]} +b^{[l]}\tag{4}$$
+
+where $A^{[0]} = X$. 
+
+<a name='ex-3'></a>
+### Exercise 3 - linear_forward 
+
+Build the linear part of forward propagation.
+
+**Reminder**:
+The mathematical representation of this unit is $Z^{[l]} = W^{[l]}A^{[l-1]} +b^{[l]}$. You may also find `np.dot()` useful. If your dimensions don't match, printing `W.shape` may help.
+
+练习3 - linear_forward
+建立前向传播的线性部分。
+
+提醒一下： 这个单元的数学表示是：𝑍[𝑙]=𝑊[𝑙]𝐴[𝑙-1]+𝑏[𝑙] 。你可能还会发现np.dot()很有用。如果你的尺寸不匹配，打印W.shape可能有帮助。
 
