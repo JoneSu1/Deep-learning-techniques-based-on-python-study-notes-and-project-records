@@ -68,3 +68,210 @@ Each small helper function will have detailed instructions to walk you through t
     - 将[LINEAR->RELU]向后堆叠L-1次，并在一个新的L_model_backward函数中加入[LINEAR->SIGMOID]向后。
 - 最后，更新参数
 
+![31](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/03f77573-0c8c-4ce3-b75c-57fb89397fc3)
+
+**Note**:
+
+For every forward function, there is a corresponding backward function. This is why at every step of your forward module you will be storing some values in a cache. These cached values are useful for computing gradients. 
+
+In the backpropagation module, you can then use the cache to calculate the gradients. Don't worry, this assignment will show you exactly how to carry out each of these steps! 
+
+**注意**：
+
+对于每个前向函数，都有一个相应的后向函数。这就是为什么在正向模块的每一步，你都要在缓存中存储一些数值。这些缓存的值对计算梯度很有用。
+
+在反向传播模块中，你就可以使用缓存来计算梯度。别担心，本作业将向你展示如何进行这些步骤的具体操作! 
+
+<a name='3'></a>
+## 3 - Initialization
+
+You will write two helper functions to initialize the parameters for your model. The first function will be used to initialize parameters for a two layer model. The second one generalizes this initialization process to $L$ layers.
+
+<a name='3-1'></a>
+### 3.1 - 2-layer Neural Network
+
+<a name='ex-1'></a>
+### Exercise 1 - initialize_parameters
+
+Create and initialize the parameters of the 2-layer neural network.
+
+**Instructions**:
+
+- The model's structure is: *LINEAR -> RELU -> LINEAR -> SIGMOID*. 
+- Use this random initialization for the weight matrices: `np.random.randn(d0, d1, ..., dn) * 0.01` with the correct shape. The documentation for [np.random.randn](https://numpy.org/doc/stable/reference/random/generated/numpy.random.randn.html)
+- Use zero initialization for the biases: `np.zeros(shape)`. The documentation for [np.zeros](https://numpy.org/doc/stable/reference/generated/numpy.zeros.html)
+
+
+3 - 初始化
+你将写两个辅助函数来初始化你的模型的参数。第一个函数将用于初始化两层模型的参数。第二个函数将这个初始化过程推广到𝐿层。
+
+
+3.1 - 2层神经网络
+
+练习1 - 初始化_参数
+创建并初始化2层神经网络的参数。
+
+说明：
+
+该模型的结构是： 线性->Rellu->线性->Sigmoid。
+对权重矩阵使用这个随机初始化：np.random.randn(d0, d1, ..., dn) * 0.01，形状正确。np.random.randn的文档
+对偏差使用零初始化：np.zeros(shape)。np.zeros的文档
+
+**根据paramertes在shallow network中和layer shape的关系来撰写initialization function**
+![32](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/42bfc2f8-b1f8-4691-bb58-680c308fa1af)
+
+**CDOE**
+# GRADED FUNCTION: initialize_parameters
+
+``` Python
+def initialize_parameters(n_x, n_h, n_y):
+    """
+    Argument:
+    n_x -- size of the input layer
+    n_h -- size of the hidden layer
+    n_y -- size of the output layer
+    
+    Returns:
+    parameters -- python dictionary containing your parameters:
+                    W1 -- weight matrix of shape (n_h, n_x)
+                    b1 -- bias vector of shape (n_h, 1)
+                    W2 -- weight matrix of shape (n_y, n_h)
+                    b2 -- bias vector of shape (n_y, 1)
+    """
+    
+    np.random.seed(1)
+    
+    #(≈ 4 lines of code)
+    # W1 = ...
+    # b1 = ...
+    # W2 = ...
+    # b2 = ...
+    # YOUR CODE STARTS HERE
+    W1 = np.random.randn(n_h,n_x)*0.01
+    b1 = np.zeros((n_h,1))
+    W2 = np.random.randn(n_y,n_h)*0.01
+    b2 = np.zeros((n_y,1))
+    
+    # YOUR CODE ENDS HERE
+    
+    parameters = {"W1": W1,
+                  "b1": b1,
+                  "W2": W2,
+                  "b2": b2}
+    
+    return parameters
+```
+
+![33](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/8979a802-0801-4a73-853b-056a4764c5f6)
+
+
+      
+<a name='3-2'></a>
+### 3.2 - L-layer Neural Network
+
+The initialization for a deeper L-layer neural network is more complicated because there are many more weight matrices and bias vectors. When completing the `initialize_parameters_deep` function, you should make sure that your dimensions match between each layer. Recall that $n^{[l]}$ is the number of units in layer $l$. For example, if the size of your input $X$ is $(12288, 209)$ (with $m=209$ examples) then:
+
+更深的L层神经网络的初始化更为复杂，因为有更多的权重矩阵和偏置向量。在完成 initialize_parameters_deep 函数时，
+你应该确保你的尺寸在每一层之间都是匹配的。回顾一下，𝑛[𝑙]是层𝑙的单位数。例如，如果你的输入𝑋的尺寸是（12288,209）（以𝑚=209为例），那么：
+
+<table style="width:100%">
+    <tr>
+        <td>  </td> 
+        <td> <b>Shape of W</b> </td> 
+        <td> <b>Shape of b</b>  </td> 
+        <td> <b>Activation</b> </td>
+        <td> <b>Shape of Activation</b> </td> 
+    <tr>
+    <tr>
+        <td> <b>Layer 1</b> </td> 
+        <td> $(n^{[1]},12288)$ </td> 
+        <td> $(n^{[1]},1)$ </td> 
+        <td> $Z^{[1]} = W^{[1]}  X + b^{[1]} $ </td> 
+        <td> $(n^{[1]},209)$ </td> 
+    <tr>
+    <tr>
+        <td> <b>Layer 2</b> </td> 
+        <td> $(n^{[2]}, n^{[1]})$  </td> 
+        <td> $(n^{[2]},1)$ </td> 
+        <td>$Z^{[2]} = W^{[2]} A^{[1]} + b^{[2]}$ </td> 
+        <td> $(n^{[2]}, 209)$ </td> 
+    <tr>
+       <tr>
+        <td> $\vdots$ </td> 
+        <td> $\vdots$  </td> 
+        <td> $\vdots$  </td> 
+        <td> $\vdots$</td> 
+        <td> $\vdots$  </td> 
+    <tr>  
+   <tr>
+       <td> <b>Layer L-1</b> </td> 
+        <td> $(n^{[L-1]}, n^{[L-2]})$ </td> 
+        <td> $(n^{[L-1]}, 1)$  </td> 
+        <td>$Z^{[L-1]} =  W^{[L-1]} A^{[L-2]} + b^{[L-1]}$ </td> 
+        <td> $(n^{[L-1]}, 209)$ </td> 
+   <tr>
+   <tr>
+       <td> <b>Layer L</b> </td> 
+        <td> $(n^{[L]}, n^{[L-1]})$ </td> 
+        <td> $(n^{[L]}, 1)$ </td>
+        <td> $Z^{[L]} =  W^{[L]} A^{[L-1]} + b^{[L]}$</td>
+        <td> $(n^{[L]}, 209)$  </td> 
+    <tr>
+</table>
+
+Remember that when you compute $W X + b$ in python, it carries out broadcasting. For example, if: 
+
+$$ W = \begin{bmatrix}
+    w_{00}  & w_{01} & w_{02} \\
+    w_{10}  & w_{11} & w_{12} \\
+    w_{20}  & w_{21} & w_{22} 
+\end{bmatrix}\;\;\; X = \begin{bmatrix}
+    x_{00}  & x_{01} & x_{02} \\
+    x_{10}  & x_{11} & x_{12} \\
+    x_{20}  & x_{21} & x_{22} 
+\end{bmatrix} \;\;\; b =\begin{bmatrix}
+    b_0  \\
+    b_1  \\
+    b_2
+\end{bmatrix}\tag{2}$$
+
+Then $WX + b$ will be:
+
+$$ WX + b = \begin{bmatrix}
+    (w_{00}x_{00} + w_{01}x_{10} + w_{02}x_{20}) + b_0 & (w_{00}x_{01} + w_{01}x_{11} + w_{02}x_{21}) + b_0 & \cdots \\
+    (w_{10}x_{00} + w_{11}x_{10} + w_{12}x_{20}) + b_1 & (w_{10}x_{01} + w_{11}x_{11} + w_{12}x_{21}) + b_1 & \cdots \\
+    (w_{20}x_{00} + w_{21}x_{10} + w_{22}x_{20}) + b_2 &  (w_{20}x_{01} + w_{21}x_{11} + w_{22}x_{21}) + b_2 & \cdots
+\end{bmatrix}\tag{3}  $$
+
+
+<a name='ex-2'></a>
+### Exercise 2 -  initialize_parameters_deep
+
+Implement initialization for an L-layer Neural Network. 
+
+**Instructions**:
+- The model's structure is *[LINEAR -> RELU] $ \times$ (L-1) -> LINEAR -> SIGMOID*. I.e., it has $L-1$ layers using a ReLU activation function followed by an output layer with a sigmoid activation function.
+- Use random initialization for the weight matrices. Use `np.random.randn(d0, d1, ..., dn) * 0.01`.
+- Use zeros initialization for the biases. Use `np.zeros(shape)`.
+- You'll store $n^{[l]}$, the number of units in different layers, in a variable `layer_dims`. For example, the `layer_dims` for last week's Planar Data classification model would have been [2,4,1]: There were two inputs, one hidden layer with 4 hidden units, and an output layer with 1 output unit. This means `W1`'s shape was (4,2), `b1` was (4,1), `W2` was (1,4) and `b2` was (1,1). Now you will generalize this to $L$ layers! 
+- Here is the implementation for $L=1$ (one layer neural network). It should inspire you to implement the general case (L-layer neural network).
+
+  练习 2 - initialize_parameters_deep
+实现L层神经网络的初始化。
+
+指示：
+
+该模型的结构是*[LINEAR -> RELU] × (L-1) -> LINEAR -> SIGMOID*。也就是说，它有𝐿-1个使用ReLU激活函数的层，然后是一个使用sigmoid激活函数的输出层。
+对权重矩阵使用随机初始化。使用np.random.randn(d0, d1, ..., dn) * 0.01。
+对偏置使用零的初始化。使用 np.zeros(shape)。
+你将把𝑛[𝑙]，不同层的单元数，存储在变量 layer_dims 中。例如，上周的平面数据分类模型的 layer_dims 应该是 [2,4,1]： 有两个输入，一个有4个隐藏单元的隐藏层，以及一个有1个输出单元的输出层。这意味着W1的形状是（4,2），b1是（4,1），W2是（1,4），b2是（1,1）。现在，你将把它推广到𝐿层!
+下面是对𝐿=的实现。
+
+```python
+    if L == 1:
+        parameters["W" + str(L)] = np.random.randn(layer_dims[1], layer_dims[0]) * 0.01
+        parameters["b" + str(L)] = np.zeros((layer_dims[1], 1))
+```
+**也是相同的，我们需要按照W,b这两个paramertes的位置来写initiation的代码**
+
+
