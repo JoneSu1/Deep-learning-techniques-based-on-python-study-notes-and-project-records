@@ -1001,7 +1001,7 @@ def L_model_backward(AL, Y, caches):
 
 <a name='6-4'></a>
 ### 6.4 - Update Parameters
-
+**update_parameters(params, grads, learning_rate):**
 In this section, you'll update the parameters of the model, using gradient descent: 
 
 $$ W^{[l]} = W^{[l]} - \alpha \text{ } dW^{[l]} \tag{16}$$
@@ -1013,3 +1013,70 @@ $$ b^{[l]} = b^{[l]} - \alpha \text{ } db^{[l]} \tag{17}$$
 where $\alpha$ is the learning rate. 
 
 After computing the updated parameters, store them in the parameters dictionary. 
+
+
+Exercise 10 - update_parameters
+Implement update_parameters() to update your parameters using gradient descent.
+
+Instructions: Update parameters using gradient descent on every  𝑊[𝑙]  and  𝑏[𝑙]  for  𝑙=1,2,...,𝐿 .
+```python
+# GRADED FUNCTION: update_parameters
+
+def update_parameters(params, grads, learning_rate):
+    """
+    Update parameters using gradient descent
+    
+    Arguments:
+    params -- python dictionary containing your parameters 
+    grads -- python dictionary containing your gradients, output of L_model_backward
+    
+    Returns:
+    parameters -- python dictionary containing your updated parameters 
+                  parameters["W" + str(l)] = ... 
+                  parameters["b" + str(l)] = ...
+    """
+    parameters = params.copy()
+    L = len(parameters) // 2 # number of layers in the neural network
+
+    # Update rule for each parameter. Use a for loop.
+    #(≈ 2 lines of code)
+    for l in range(L):
+        # parameters["W" + str(l+1)] = ...
+        # parameters["b" + str(l+1)] = ...
+        # YOUR CODE STARTS HERE
+        parameters["W" + str(l+1)] = params["W"+ str(l+1)] - learning_rate * grads["dW"+ str(l+1)]
+        parameters["b" + str(l+1)] = params["b"+ str(l+1)] - learning_rate * grads["db"+ str(l+1)]
+        # YOUR CODE ENDS HERE
+    return parameters
+```
+
+
+### Congratulations! 
+
+You've just implemented all the functions required for building a deep neural network, including: 
+
+- Using non-linear units improve your model
+- Building a deeper neural network (with more than 1 hidden layer)
+- Implementing an easy-to-use neural network class
+
+This was indeed a long assignment, but the next part of the assignment is easier. ;) 
+
+In the next assignment, you'll be putting all these together to build two models:
+
+- A two-layer neural network
+- An L-layer neural network
+
+You will in fact use these models to classify cat vs non-cat images! (Meow!) Great work and see you next time. 
+
+你刚刚实现了构建一个深度神经网络所需的所有功能，包括：
+
+- 使用非线性单元改善你的模型
+- 构建一个更深的神经网络（有1个以上的隐藏层）
+- 实现一个易于使用的神经网络类
+- 这的确是一个很长的作业，但下一部分作业更容易。;)
+
+在接下来的作业中，你将把所有这些放在一起，建立两个模型：
+
+一个两层的神经网络
+一个L层的神经网络
+事实上，你们将使用这些模型来对猫和非猫的图像进行分类 (Meow!) 干得好，下次见。
