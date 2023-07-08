@@ -115,8 +115,13 @@ def tanh_backward(dA, cache):
         grads["db" + str(l + 1)] = db_temp
         # YOUR CODE ENDS HERE
 ```
-- 在得到  dZ值和gradient function之后，就要用for loop写出能更新每一个layer参数的代码：并定义成update_paramete（）function
-  
+- 在得到  dZ值和gradient function之后，就要用for loop写出能更新每一个layer参数的代码：并定义成update_parameters（params, grads, learning_rate）function
+  ```Python
+   parameters = params.copy()#
+   L = len(parameters) // 2 # number of layers in the neural network,因为parameters里面有W,b。他们的数量是layers的两倍.
+   parameters["W" + str(l+1)] = params["W"+ str(l+1)] - learning_rate * grads["dW"+ str(l+1)]# l+1是为了避开input那一层
+   parameters["b" + str(l+1)] = params["b"+ str(l+1)] - learning_rate * grads["db"+ str(l+1)]
+  ```
 <a name='1'></a>
 ## 1 - Packages
 
@@ -472,3 +477,140 @@ The mathematical representation of this unit is $Z^{[l]} = W^{[l]}A^{[l-1]} +b^{
 
 提醒一下： 这个单元的数学表示是：𝑍[𝑙]=𝑊[𝑙]𝐴[𝑙-1]+𝑏[𝑙] 。你可能还会发现np.dot()很有用。如果你的尺寸不匹配，打印W.shape可能有帮助。
 
+```Python
+# GRADED FUNCTION: linear_forward
+
+def linear_forward(A, W, b):
+    """
+    Implement the linear part of a layer's forward propagation.
+
+    Arguments:
+    A -- activations from previous layer (or input data): (size of previous layer, number of examples)
+    W -- weights matrix: numpy array of shape (size of current layer, size of previous layer)
+    b -- bias vector, numpy array of shape (size of the current layer, 1)
+
+    Returns:
+    Z -- the input of the activation function, also called pre-activation parameter 
+    cache -- a python tuple containing "A", "W" and "b" ; stored for computing the backward pass efficiently
+    """
+    
+    #(≈ 1 line of code)
+    # Z = ...
+    # YOUR CODE STARTS HERE
+    Z = np.dot(W,A) + b
+    
+    # YOUR CODE ENDS HERE
+    cache = (A, W, b)
+    
+    return Z, cache
+```
+![35](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/0a5c99c2-83cf-497c-bac9-aedf2903c067)
+
+
+<a name='4-2'></a>
+### 4.2 - Linear-Activation Forward
+**def linear_forward(A, W, b):**
+关于如何构sigmoid（Z）和relu（Z）公式在上面
+In this notebook, you will use two activation functions:
+
+- **Sigmoid**: $\sigma(Z) = \sigma(W A + b) = \frac{1}{ 1 + e^{-(W A + b)}}$. You've been provided with the `sigmoid` function which returns **two** items: the activation value "`a`" and a "`cache`" that contains "`Z`" (it's what we will feed in to the corresponding backward function). To use it you could just call: 
+``` python
+A, activation_cache = sigmoid(Z)
+```
+
+- **ReLU**: The mathematical formula for ReLu is $A = RELU(Z) = max(0, Z)$. You've been provided with the `relu` function. This function returns **two** items: the activation value "`A`" and a "`cache`" that contains "`Z`" (it's what you'll feed in to the corresponding backward function). To use it you could just call:
+``` python
+A, activation_cache = relu(Z)
+```
+
+For added convenience, you're going to group two functions (Linear and Activation) into one function (LINEAR->ACTIVATION). Hence, you'll implement a function that does the LINEAR forward step, followed by an ACTIVATION forward step.
+
+<a name='ex-4'></a>
+### Exercise 4 - linear_activation_forward
+
+Implement the forward propagation of the *LINEAR->ACTIVATION* layer. Mathematical relation is: $A^{[l]} = g(Z^{[l]}) = g(W^{[l]}A^{[l-1]} +b^{[l]})$ where the activation "g" can be sigmoid() or relu(). Use `linear_forward()` and the correct activation function.
+
+为了方便起见，你要把两个函数（线性和激活）组合成一个函数（线性->激活）。因此，你要实现一个函数，先做线性前进步骤，然后再做激活前进步骤。
+
+
+练习4 - 线性激活_前向
+实现LINEAR->ACTIVATION层的前向传播。数学关系是：𝐴[𝑙]=𝑔(𝑍[𝑙])=𝑔(𝑊[𝑙]𝐴[𝑙-1]+𝑏[𝑙]) 其中激活的g可以是sigmoid（）或是relu（）。使用 linear_forward() 和正确的激活函数。
+
+**linear_activation_forward(A_prev, W, b, activation):**
+``` Python
+# GRADED FUNCTION: linear_activation_forward
+
+def linear_activation_forward(A_prev, W, b, activation):
+    """
+    Implement the forward propagation for the LINEAR->ACTIVATION layer
+
+    Arguments:
+    A_prev -- activations from previous layer (or input data): (size of previous layer, number of examples)
+    W -- weights matrix: numpy array of shape (size of current layer, size of previous layer)
+    b -- bias vector, numpy array of shape (size of the current layer, 1)
+    activation -- the activation to be used in this layer, stored as a text string: "sigmoid" or "relu"
+
+    Returns:
+    A -- the output of the activation function, also called the post-activation value 
+    cache -- a python tuple containing "linear_cache" and "activation_cache";
+             stored for computing the backward pass efficiently
+    """
+    
+    if activation == "sigmoid":
+        #(≈ 2 lines of code)
+        # Z, linear_cache = ...
+        # A, activation_cache = ...
+        # YOUR CODE STARTS HERE
+        Z, linear_cache = linear_forward(A_prev,W,b)
+        A, activation_cache = sigmoid(Z)
+        
+        # YOUR CODE ENDS HERE
+    
+    elif activation == "relu":
+        #(≈ 2 lines of code)
+        # Z, linear_cache = ...
+        # A, activation_cache = ...
+        # YOUR CODE STARTS HERE
+        Z, linear_cache = linear_forward(A_prev,W,b)
+        A, activation_cache = relu(Z)
+        
+        # YOUR CODE ENDS HERE
+    cache = (linear_cache, activation_cache)
+
+    return A, cache
+```
+![36](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/3f43dd6d-0c12-46e5-9736-cbb94d7bd9cd)
+
+注意：在深度学习中，"[LINEAR->ACTIVATION]"的计算被算作神经网络的单层，而不是两层。
+
+**在定义完了forward的激活函数之后，就可以通过for loop函数定义出forward的L modle了**
+<a name='4-3'></a>
+### 4.3 - L-Layer Model 
+
+For even *more* convenience when implementing the $L$-layer Neural Net, you will need a function that replicates the previous one (`linear_activation_forward` with RELU) $L-1$ times, then follows that with one `linear_activation_forward` with SIGMOID.
+4.3 - L层模型
+为了在实现𝐿层神经网络时更加方便，你需要一个函数来复制前一个函数（带RELU的线性激活_前向）𝐿-1次，然后再用一个带SIGMOID的线性激活_前向函数。
+![37](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/80806f63-27b5-41ea-b1b7-9990794c17c4)
+
+<a name='ex-5'></a>
+### Exercise 5 -  L_model_forward
+
+Implement the forward propagation of the above model.
+
+**Instructions**: In the code below, the variable `AL` will denote $A^{[L]} = \sigma(Z^{[L]}) = \sigma(W^{[L]} A^{[L-1]} + b^{[L]})$. (This is sometimes also called `Yhat`, i.e., this is $\hat{Y}$.) 
+
+**Hints**:
+- Use the functions you've previously written 
+- Use a for loop to replicate [LINEAR->RELU] (L-1) times
+  
+练习5 - L_model_forward
+实现上述模型的向前传播。
+
+说明： 在下面的代码中，变量AL表示𝐴[𝐿]=𝜎(𝑍[𝐿])=𝜎(𝑊[𝐿]𝐴[𝐿-1]+𝑏[𝐿] ) 。(这有时也被称为Yhat，即这是𝑌̂。）
+
+提示：
+
+- 使用你以前写过的函数
+- 使用for循环来复制[LINEAR->RELU]（L-1）次
+- 不要忘记跟踪 "缓存 "列表中的缓存。要在列表中添加一个新的值c，你可以使用list.append(c)。
+- Don't forget to keep track of the caches in the "caches" list. To add a new value `c` to a `list`, you can use `list.append(c)`.
