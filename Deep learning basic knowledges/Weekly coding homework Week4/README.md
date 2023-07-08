@@ -2,10 +2,13 @@
 **在多层神经网络构建时候，最方便的方法**
 
 - 先定义一个能处理l层paramerters的initialization的function
-- 再定义一个线性的forward方程
+**initialize_parameters(n_x, n_h, n_y)**
+  - 再定义一个线性的forward方程
+   **initialize_parameters_deep(layer_dims)得到存储着参数的parameters**
 - 然后再根据需要的激活函数来构建联合方程（如果是sigmoid--relu）就再里面添加逻辑判断，activation == ？，然后来套刚才的forward方程=Z
   然后再A = g(Z)来保证不同的激活函数的工作.
   同样，需要先定义sigmoid和relu的helper函数，由于这个L神经网络的组成是L-1个relu，1个sigmoid的output.
+**linear_forward(A, W, b):得到Z值和存着参数的cache**
   ``` Python
   #当激活函数是sigmoid时候
   sigmoid = 1/(1+np.exp(-Z))
@@ -14,11 +17,13 @@
   reture Z
   ```
 - 通过 forward 中的cache（包含Z,W,b）可以计算cost.
+ **linear_activation_forward(A_prev, W, b, activation):得到A,和包含着激活函数类别的cache**
   而costfunction是： $$-\frac{1}{m} \sum\limits_{i = 1}^{m} (y^{(i)}\log\left(a^{[L] (i)}\right) + (1-y^{(i)})\log\left(1- a^{[L](i)}\right)) \tag{7}$$
   其中Y*log（AL）因为都是array，想元素成元素，就得使用np.multiply（）函数.
          cost = -1/m * np.sum(np.multiply(Y, np.log(AL)) + np.multiply(1-Y, np.log(1-AL)))
     得到cost 值之后，就可以进入backward propagation
 - 然后进入backward的部分，同样先定义backward的线性方程
+  **L_model_forward(X, parameters):AL值和cache**
   ``` Python
   dW = 1/m*np.dot(dZ,A_prev.T)
   db = 1/m*np.sum(dZ,axis = 1, keep.dims=True)#记得是横向求和，并且保留dimension.
