@@ -774,12 +774,9 @@ Suppose you have already calculated the derivative $dZ^{[l]} = \frac{\partial \m
 ![42](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/0d0d5f29-5bd6-4f52-b336-770d1b12e6ef)
 
 The three outputs $(dW^{[l]}, db^{[l]}, dA^{[l-1]})$ are computed using the input $dZ^{[l]}$.
-
-Here are the formulas you need:
-$$ dW^{[l]} = \frac{\partial \mathcal{J} }{\partial W^{[l]}} = \frac{1}{m} dZ^{[l]} A^{[l-1] T} \tag{8}$$
-$$ db^{[l]} = \frac{\partial \mathcal{J} }{\partial b^{[l]}} = \frac{1}{m} \sum_{i = 1}^{m} dZ^{[l](i)}\tag{9}$$
-$$ dA^{[l-1]} = \frac{\partial \mathcal{L} }{\partial A^{[l-1]}} = W^{[l] T} dZ^{[l]} \tag{10}$$
+三个输出（𝑑𝑊[𝑙],𝑑𝑏[𝑙],𝑑𝐴[𝑙-1]）是使用输入𝑑𝑍[𝑙] 计算的。
 
 
-$A^{[l-1] T}$ is the transpose of $A^{[l-1]}$. 
+Here are the formulas you need: 
+![43](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/a1397593-e378-47d5-afc6-660f8cc2be74)
 
