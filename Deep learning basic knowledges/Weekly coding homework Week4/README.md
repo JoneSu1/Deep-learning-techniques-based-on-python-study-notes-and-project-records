@@ -1006,6 +1006,7 @@ In this section, you'll update the parameters of the model, using gradient desce
 
 $$ W^{[l]} = W^{[l]} - \alpha \text{ } dW^{[l]} \tag{16}$$
 $$ b^{[l]} = b^{[l]} - \alpha \text{ } db^{[l]} \tag{17}$$
+![2](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/0182df52-5583-40fe-9b0f-d29ef1b26c99)
 
 where $\alpha$ is the learning rate. 
 
