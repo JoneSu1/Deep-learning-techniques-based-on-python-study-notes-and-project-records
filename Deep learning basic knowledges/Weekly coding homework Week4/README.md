@@ -5,7 +5,7 @@
 - 再定义一个线性的forward方程
 - 然后再根据需要的激活函数来构建联合方程（如果是sigmoid--relu）就再里面添加逻辑判断，activation == ？，然后来套刚才的forward方程=Z
   然后再A = g(Z)来保证不同的激活函数的工作.
-  同样，需要先定义sigmoid和relu的helper函数
+  同样，需要先定义sigmoid和relu的helper函数，由于这个L神经网络的组成是L-1个relu，1个sigmoid的output.
   ``` Python
   #当激活函数是sigmoid时候
   sigmoid = 1/(1+np.exp(-Z))
@@ -586,10 +586,11 @@ def linear_activation_forward(A_prev, W, b, activation):
 **在定义完了forward的激活函数之后，就可以通过for loop函数定义出forward的L modle了**
 <a name='4-3'></a>
 ### 4.3 - L-Layer Model 
-
+**L_model_forward(X, parameters):**
 For even *more* convenience when implementing the $L$-layer Neural Net, you will need a function that replicates the previous one (`linear_activation_forward` with RELU) $L-1$ times, then follows that with one `linear_activation_forward` with SIGMOID.
 4.3 - L层模型
-为了在实现𝐿层神经网络时更加方便，你需要一个函数来复制前一个函数（带RELU的线性激活_前向）𝐿-1次，然后再用一个带SIGMOID的线性激活_前向函数。
+
+为了在实现𝐿层神经网络时更加方便，你需要一个函数来复制前一个函数（带RELU的线性激活_前向）𝐿-1次，然后再用一个带SIGMOID的线性激活_前向函数。 
 ![37](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/80806f63-27b5-41ea-b1b7-9990794c17c4)
 
 <a name='ex-5'></a>
@@ -614,3 +615,171 @@ Implement the forward propagation of the above model.
 - 使用for循环来复制[LINEAR->RELU]（L-1）次
 - 不要忘记跟踪 "缓存 "列表中的缓存。要在列表中添加一个新的值c，你可以使用list.append(c)。
 - Don't forget to keep track of the caches in the "caches" list. To add a new value `c` to a `list`, you can use `list.append(c)`.
+  
+它接收了输入X，并输出了一个包含你的预测的行向量𝐴[𝐿]！你实现了一个完全的前向传播，它接受输入X并输出一个包含你的预测的行向量𝐴[𝐿]。
+它还在 "缓存 "中记录了所有的中间值。使用𝐴[𝐿]，你可以计算你的预测的成本。
+```Python
+# GRADED FUNCTION: L_model_forward
+
+def L_model_forward(X, parameters):
+    """
+    Implement forward propagation for the [LINEAR->RELU]*(L-1)->LINEAR->SIGMOID computation
+    
+    Arguments:
+    X -- data, numpy array of shape (input size, number of examples)
+    parameters -- output of initialize_parameters_deep()
+    
+    Returns:
+    AL -- activation value from the output (last) layer
+    caches -- list of caches containing:
+                every cache of linear_activation_forward() (there are L of them, indexed from 0 to L-1)
+    """
+
+    caches = []
+    A = X
+    L = len(parameters) // 2                  # number of layers in the neural network
+    
+    # Implement [LINEAR -> RELU]*(L-1). Add "cache" to the "caches" list.
+    # The for loop starts at 1 because layer 0 is the input
+    for l in range(1, L):
+        A_prev = A 
+        #(≈ 2 lines of code)
+        # A, cache = ...
+        # caches ...
+        # YOUR CODE STARTS HERE
+        
+        A, cache = linear_activation_forward(A_prev, parameters['W' + str(l)], parameters['b' + str(l)], activation='relu')
+        caches.append(cache)
+        # YOUR CODE ENDS HERE
+    
+    # Implement LINEAR -> SIGMOID. Add "cache" to the "caches" list.
+    #(≈ 2 lines of code)
+    # AL, cache = ...
+    # caches ...
+    # YOUR CODE STARTS HERE
+    AL, cache = linear_activation_forward(A, parameters['W' + str(L)], parameters['b' + str(L)], activation='sigmoid')
+    caches.append(cache)
+    # YOUR CODE ENDS HERE
+          
+    return AL, caches
+```
+![38](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/0c1abbde-90f5-4910-a276-612627390908)
+
+**已经定义出了可以计算每一层的激活函数值的函数L_modle_forward(X,parameters)**
+下一步就可以计算出forward propagation的cost函数了.
+<a name='5'></a>
+## 5 - Cost Function
+**compute_cost（AL,Y）**
+
+Now you can implement forward and backward propagation! You need to compute the cost, in order to check whether your model is actually learning.
+
+<a name='ex-6'></a>
+### Exercise 6 - compute_cost
+Compute the cross-entropy cost $J$, using the following formula: $$-\frac{1}{m} \sum\limits_{i = 1}^{m} (y^{(i)}\log\left(a^{[L] (i)}\right) + (1-y^{(i)})\log\left(1- a^{[L](i)}\right)) \tag{7}$$
+
+5 - 成本函数
+现在你可以实现前向和后向传播了！你需要计算成本！你需要计算成本，以便检查你的模型是否真的在学习。
+
+
+练习6 - 计算成本（compute_cost
+计算交叉熵成本𝐽 ，使用以下公式：
+
+# GRADED FUNCTION: compute_cost
+```Python
+def compute_cost(AL, Y):
+    """
+    Implement the cost function defined by equation (7).
+
+    Arguments:
+    AL -- probability vector corresponding to your label predictions, shape (1, number of examples)
+    Y -- true "label" vector (for example: containing 0 if non-cat, 1 if cat), shape (1, number of examples)
+
+    Returns:
+    cost -- cross-entropy cost
+    """
+    
+    m = Y.shape[1]
+
+    # Compute loss from aL and y.
+    # (≈ 1 lines of code)
+    # cost = ...
+    # YOUR CODE STARTS HERE
+    
+    cost = -1/m * np.sum(np.multiply(Y, np.log(AL)) + np.multiply(1-Y, np.log(1-AL)))
+    # YOUR CODE ENDS HERE
+    
+    cost = np.squeeze(cost)      # To make sure your cost's shape is what we expect (e.g. this turns [[17]] into 17).
+
+    
+    return cost
+```
+![40](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/00dda6af-340b-46df-a2ef-36828cef57b3)
+
+**现在前向的参数已经都存到cache中了，可以计算backward的了**
+**同样也是定义backward的函数，求dZ,dW,db,dAprev**
+<a name='6'></a>
+## 6 - Backward Propagation Module
+
+Just as you did for the forward propagation, you'll implement helper functions for backpropagation. Remember that backpropagation is used to calculate the gradient of the loss function with respect to the parameters. 
+
+6 - 后向传播模块
+就像你为正向传播所做的那样，你将为反向传播实现辅助函数。记住，反向传播是用来计算损失函数相对于参数的梯度的。
+
+![41](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/a8dc8786-d63f-497a-862e-bd5555af3514)
+
+
+**Reminder**: 
+
+<!-- 
+For those of you who are experts in calculus (which you don't need to be to do this assignment!), the chain rule of calculus can be used to derive the derivative of the loss $\mathcal{L}$ with respect to $z^{[1]}$ in a 2-layer network as follows:
+
+$$\frac{d \mathcal{L}(a^{[2]},y)}{{dz^{[1]}}} = \frac{d\mathcal{L}(a^{[2]},y)}{{da^{[2]}}}\frac{{da^{[2]}}}{{dz^{[2]}}}\frac{{dz^{[2]}}}{{da^{[1]}}}\frac{{da^{[1]}}}{{dz^{[1]}}} \tag{8} $$
+
+In order to calculate the gradient $dW^{[1]} = \frac{\partial L}{\partial W^{[1]}}$, use the previous chain rule and you do $dW^{[1]} = dz^{[1]} \times \frac{\partial z^{[1]} }{\partial W^{[1]}}$. During backpropagation, at each step you multiply your current gradient by the gradient corresponding to the specific layer to get the gradient you wanted.
+
+Equivalently, in order to calculate the gradient $db^{[1]} = \frac{\partial L}{\partial b^{[1]}}$, you use the previous chain rule and you do $db^{[1]} = dz^{[1]} \times \frac{\partial z^{[1]} }{\partial b^{[1]}}$.
+
+This is why we talk about **backpropagation**.
+!-->
+
+Now, similarly to forward propagation, you're going to build the backward propagation in three steps:
+1. LINEAR backward
+2. LINEAR -> ACTIVATION backward where ACTIVATION computes the derivative of either the ReLU or sigmoid activation
+3. [LINEAR -> RELU] $\times$ (L-1) -> LINEAR -> SIGMOID backward (whole model)
+
+
+现在，与前向传播类似，你要分三步建立后向传播：
+
+- 向后的LINEAR
+- LINEAR -> ACTIVATION向后，其中ACTIVATION计算ReLU或sigmoid激活的导数
+- [LINEAR -> RELU] × (L-1) -> LINEAR -> SIGMOID 向后（整个模型）。
+ 
+在接下来的练习中，你需要记住：：
+
+b是一个1列n行的矩阵(np.ndarray)，即：b = [[1.0], [2.0]] (记住b是一个常数)
+np.sum对ndarray的元素进行求和。
+axis=1或axis=0分别指定是按行还是按列进行求和
+keepdims指定是否必须保留矩阵的原始尺寸。
+
+<a name='6-1'></a>
+### 6.1 - Linear Backward
+
+For layer $l$, the linear part is: $Z^{[l]} = W^{[l]} A^{[l-1]} + b^{[l]}$ (followed by an activation).
+
+Suppose you have already calculated the derivative $dZ^{[l]} = \frac{\partial \mathcal{L} }{\partial Z^{[l]}}$. You want to get $(dW^{[l]}, db^{[l]}, dA^{[l-1]})$.
+6.1 - 线性后退
+对于层𝑙，线性部分是：  𝑍[𝑙]=𝑊[𝑙]𝐴[𝑙-1]+𝑏[𝑙]（后面是一个激活）。
+
+假设你已经计算了导数𝑑𝑍[𝑙]=∂∂𝑍[𝑙] 。你想得到（𝑑𝑊[𝑙],𝑑𝑏[𝑙],𝑑𝐴[𝑙-1]） 。
+![42](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/0d0d5f29-5bd6-4f52-b336-770d1b12e6ef)
+
+The three outputs $(dW^{[l]}, db^{[l]}, dA^{[l-1]})$ are computed using the input $dZ^{[l]}$.
+
+Here are the formulas you need:
+$$ dW^{[l]} = \frac{\partial \mathcal{J} }{\partial W^{[l]}} = \frac{1}{m} dZ^{[l]} A^{[l-1] T} \tag{8}$$
+$$ db^{[l]} = \frac{\partial \mathcal{J} }{\partial b^{[l]}} = \frac{1}{m} \sum_{i = 1}^{m} dZ^{[l](i)}\tag{9}$$
+$$ dA^{[l-1]} = \frac{\partial \mathcal{L} }{\partial A^{[l-1]}} = W^{[l] T} dZ^{[l]} \tag{10}$$
+
+
+$A^{[l-1] T}$ is the transpose of $A^{[l-1]}$. 
+
