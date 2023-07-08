@@ -675,7 +675,9 @@ Now you can implement forward and backward propagation! You need to compute the 
 
 <a name='ex-6'></a>
 ### Exercise 6 - compute_cost
-Compute the cross-entropy cost $J$, using the following formula: $$-\frac{1}{m} \sum\limits_{i = 1}^{m} (y^{(i)}\log\left(a^{[L] (i)}\right) + (1-y^{(i)})\log\left(1- a^{[L](i)}\right)) \tag{7}$$
+Compute the cross-entropy cost $J$, using the following formula: 
+![44](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/a5fe96a5-5faf-45c6-a82c-d4712b3ccb60)
+
 
 5 - 成本函数
 现在你可以实现前向和后向传播了！你需要计算成本！你需要计算成本，以便检查你的模型是否真的在学习。
@@ -763,7 +765,7 @@ keepdims指定是否必须保留矩阵的原始尺寸。
 
 <a name='6-1'></a>
 ### 6.1 - Linear Backward
-
+**linear_backward(dZ, cache)**
 For layer $l$, the linear part is: $Z^{[l]} = W^{[l]} A^{[l-1]} + b^{[l]}$ (followed by an activation).
 
 Suppose you have already calculated the derivative $dZ^{[l]} = \frac{\partial \mathcal{L} }{\partial Z^{[l]}}$. You want to get $(dW^{[l]}, db^{[l]}, dA^{[l-1]})$.
@@ -780,3 +782,148 @@ The three outputs $(dW^{[l]}, db^{[l]}, dA^{[l-1]})$ are computed using the inpu
 Here are the formulas you need: 
 ![43](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/a1397593-e378-47d5-afc6-660f8cc2be74)
 
+
+练习7 - linear_backward
+使用上面的3个公式来实现 linear_backward()。
+
+提示：
+
+在numpy中，你可以使用A.T或A.transpose()来获得一个ndarray A的转置。
+```Python
+# GRADED FUNCTION: linear_backward
+
+def linear_backward(dZ, cache):
+    """
+    Implement the linear portion of backward propagation for a single layer (layer l)
+
+    Arguments:
+    dZ -- Gradient of the cost with respect to the linear output (of current layer l)
+    cache -- tuple of values (A_prev, W, b) coming from the forward propagation in the current layer
+
+    Returns:
+    dA_prev -- Gradient of the cost with respect to the activation (of the previous layer l-1), same shape as A_prev
+    dW -- Gradient of the cost with respect to W (current layer l), same shape as W
+    db -- Gradient of the cost with respect to b (current layer l), same shape as b
+    """
+    A_prev, W, b = cache
+    m = A_prev.shape[1]
+
+    ### START CODE HERE ### (≈ 3 lines of code)
+    # dW = ...
+    # db = ... sum by the rows of dZ with keepdims=True
+    # dA_prev = ...
+    # YOUR CODE STARTS HERE
+    
+    dW = 1/m *np.dot(dZ,A_prev.T)
+    db = 1/m * np.sum(dZ,axis = 1, keepdims=True)
+    dA_prev = np.dot(W.T, dZ)
+    # YOUR CODE ENDS HERE
+    
+    return dA_prev, dW, db
+```
+
+ ![45](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/00095ca8-189c-4d30-bf57-25ff90d1ce6c)
+
+ **定义完了backward function下一步就是定义激活函数了**
+<a name='6-2'></a>
+### 6.2 - Linear-Activation Backward
+**linear_activation_backward(dA, cache, activation)**
+关于如何构建出backward的helper函数在上面.
+Next, you will create a function that merges the two helper functions: **`linear_backward`** and the backward step for the activation **`linear_activation_backward`**. 
+
+To help you implement `linear_activation_backward`, two backward functions have been provided:
+- **`sigmoid_backward`**: Implements the backward propagation for SIGMOID unit. You can call it as follows:
+
+```python
+dZ = sigmoid_backward(dA, activation_cache)
+```
+
+- **`relu_backward`**: Implements the backward propagation for RELU unit. You can call it as follows:
+
+```python
+dZ = relu_backward(dA, activation_cache)
+```
+
+If $g(.)$ is the activation function, 
+`sigmoid_backward` and `relu_backward` compute $$dZ^{[l]} = dA^{[l]} * g'(Z^{[l]}). \tag{11}$$  
+
+<a name='ex-8'></a>
+### Exercise 8 -  linear_activation_backward
+Implement the backpropagation for the *LINEAR->ACTIVATION* layer.
+
+```python
+# GRADED FUNCTION: linear_activation_backward
+
+def linear_activation_backward(dA, cache, activation):
+    """
+    Implement the backward propagation for the LINEAR->ACTIVATION layer.
+    
+    Arguments:
+    dA -- post-activation gradient for current layer l 
+    cache -- tuple of values (linear_cache, activation_cache) we store for computing backward propagation efficiently
+    activation -- the activation to be used in this layer, stored as a text string: "sigmoid" or "relu"
+    
+    Returns:
+    dA_prev -- Gradient of the cost with respect to the activation (of the previous layer l-1), same shape as A_prev
+    dW -- Gradient of the cost with respect to W (current layer l), same shape as W
+    db -- Gradient of the cost with respect to b (current layer l), same shape as b
+    """
+    linear_cache, activation_cache = cache
+    
+    if activation == "relu":
+        #(≈ 2 lines of code)
+        # dZ =  ...
+        # dA_prev, dW, db =  ...
+        # YOUR CODE STARTS HERE
+        dZ = relu_backward(dA, activation_cache)
+        dA_prev, dW, db = linear_backward(dZ, linear_cache)
+        
+        # YOUR CODE ENDS HERE
+        
+    elif activation == "sigmoid":
+        #(≈ 2 lines of code)
+        # dZ =  ...
+        # dA_prev, dW, db =  ...
+        # YOUR CODE STARTS HERE
+        dZ = sigmoid_backward(dA, activation_cache)
+        dA_prev, dW, db = linear_backward(dZ, linear_cache)
+        
+        # YOUR CODE ENDS HERE
+    
+    return dA_prev, dW, db
+
+```
+![46](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/3b09bd6b-2143-4fe8-9104-d30f87ef9965)
+
+
+<a name='6-3'></a>
+### 6.3 - L-Model Backward 
+
+Now you will implement the backward function for the whole network! 
+
+Recall that when you implemented the `L_model_forward` function, at each iteration, you stored a cache which contains (X,W,b, and z). In the back propagation module, you'll use those variables to compute the gradients. Therefore, in the `L_model_backward` function, you'll iterate through all the hidden layers backward, starting from layer $L$. On each step, you will use the cached values for layer $l$ to backpropagate through layer $l$. Figure 5 below shows the backward pass. 
+
+6.3 - L-模型后退
+现在你将实现整个网络的后向函数!
+
+回想一下，当你实现L_model_forward函数时，在每次迭代时，你存储了一个包含(X,W,b,和z)的缓存。在反向传播模块中，你将使用这些变量来计算梯度。因此，在L_model_backward函数中，你将从𝐿层开始，向后迭代所有隐藏层。在每一步中，你将使用层𝑙的缓存值来反向传播层𝑙。下面的图5显示了后向传递。
+![47](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/ad181ebc-fd26-4a45-ad73-e298e6e8d5aa)
+![48](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/d1c2cff4-27d8-4e10-b051-3866fb4ee1be)
+
+
+
+初始化反向传播：
+
+要通过这个网络进行反向传播，你知道，输出是：  𝐴[𝐿]=𝜎(𝑍[𝐿]) 。因此，你的代码需要计算dAL =∂∂𝐴[𝐿]。要做到这一点，请使用这个公式（使用微积分得出，同样，你不需要深入了解！）：
+
+dAL = - (np.divide(Y, AL) - np.divide(1-Y, 1-AL)) # 成本相对于AL的导数
+然后你可以使用这个激活后的梯度dAL来继续往后走。如图5所示，你现在可以将dAL送入你实现的LINEAR->SIGMOID向后函数中（它将使用L_model_forward函数存储的缓存值）。
+
+之后，你将不得不使用for循环，用LINEAR->RELU后向函数遍历所有其他层。你应该将每个dA、dW和db存储在grads字典中。要做到这一点，请使用这个公式：
+
+𝑔𝑟𝑎𝑑𝑠["𝑑𝑊"+𝑠𝑡𝑟(𝑙)]=𝑑𝑊[𝑙](15)
+例如，对于𝑙=3，这将把𝑑𝑊[𝑙]存入grads["dW3"]。
+
+
+练习9 - L_model_backward
+对*[LINEAR->RELU] × (L-1) -> LINEAR -> SIGMOID*模型实施反向传播。
