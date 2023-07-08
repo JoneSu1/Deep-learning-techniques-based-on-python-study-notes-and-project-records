@@ -5,7 +5,19 @@
 - 再定义一个线性的forward方程
 - 然后再根据需要的激活函数来构建联合方程（如果是sigmoid--relu）就再里面添加逻辑判断，activation == ？，然后来套刚才的forward方程=Z
   然后再A = g(Z)来保证不同的激活函数的工作.
+  同样，需要先定义sigmoid和relu的helper函数
+  ``` Python
+  #当激活函数是sigmoid时候
+  sigmoid = 1/(1+np.exp(-Z))
+  #当激活函数是relu的时候
+  relu = np.maximum(0,Z)
+  reture Z
+  ```
 - 通过 forward 中的cache（包含Z,W,b）可以计算cost.
+  而costfunction是： $$-\frac{1}{m} \sum\limits_{i = 1}^{m} (y^{(i)}\log\left(a^{[L] (i)}\right) + (1-y^{(i)})\log\left(1- a^{[L](i)}\right)) \tag{7}$$
+  其中Y*log（AL）因为都是array，想元素成元素，就得使用np.multiply（）函数.
+         cost = -1/m * np.sum(np.multiply(Y, np.log(AL)) + np.multiply(1-Y, np.log(1-AL)))
+    得到cost 值之后，就可以进入backward propagation
 - 然后进入backward的部分，同样先定义backward的线性方程
   ``` Python
   dW = 1/m*np.dot(dZ,A_prev.T)
@@ -37,6 +49,8 @@ def sigmoid_backward(dA, cache):
     dZ = dA * A * (1 - A)
 
     return dZ
+
+
 #relu_backward
 def relu_backward(dA, cache):
     """
@@ -56,6 +70,8 @@ def relu_backward(dA, cache):
     dZ[Z <= 0] = 0
 
     return dZ
+
+
 #tanh_backward()
 def tanh_backward(dA, cache):
     """
@@ -74,6 +90,33 @@ def tanh_backward(dA, cache):
     return dZ
 ```
 - 然后根据sigmoid_backward算出的dZ值，带入linear_back的公式（dZ,activation_cache）算出dW，db,dA_prev.
+
+- 下一步就是计算出dZ值，以及定义出gradient descent function.
+  其中需要记住的是：dAL = - (np.divide(Y, AL) - np.divide(1 - Y, 1 - AL)) # derivative of cost with respect to AL
+**以及，在L=number of layer时候，A只有L-1个，W有L个，b也有L个**
+  然后因为是backward propagation所以是从大的layer倒着算gra的
+   for l in reversed(range(L-1))，所以我们需要使用reversed（range（））这个函数，帮我们取l值，从L-1开始取.
+  然后这是L层nn的back_ward propagation函数设置。
+``` python
+      for l in reversed(range(L-1)): #这里的l in reversed(range(L-1)),其中L是layer数，而L-1是为了去掉input层
+        # lth layer: (RELU -> LINEAR) gradients.
+        # Inputs: "grads["dA" + str(l + 1)], current_cache". Outputs: "grads["dA" + str(l)] , grads["dW" + str(l + 1)] , grads["db" + str(l + 1)] 
+        #(approx. 5 lines)
+        # current_cache = ...
+        # dA_prev_temp, dW_temp, db_temp = ...
+        # grads["dA" + str(l)] = ...
+        # grads["dW" + str(l + 1)] = ...
+        # grads["db" + str(l + 1)] = ...
+        # YOUR CODE STARTS HERE
+        current_cache = caches[l]
+        dA_prev_temp, dW_temp, db_temp = linear_activation_backward(grads["dA" + str(l + 1)], current_cache, activation = "relu")
+        grads["dA" + str(l)] = dA_prev_temp #这里是l而不是l+1是因为 dA是前一个layer里面的A的导数.
+        grads["dW" + str(l + 1)] = dW_temp
+        grads["db" + str(l + 1)] = db_temp
+        # YOUR CODE ENDS HERE
+```
+- 在得到  dZ值和gradient function之后，就要用for loop写出能更新每一个layer参数的代码：并定义成update_paramete（）function
+  
 <a name='1'></a>
 ## 1 - Packages
 
