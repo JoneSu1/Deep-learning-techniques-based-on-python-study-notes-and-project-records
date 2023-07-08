@@ -898,7 +898,7 @@ def linear_activation_backward(dA, cache, activation):
 
 <a name='6-3'></a>
 ### 6.3 - L-Model Backward 
-
+**L_model_backward(AL, Y, caches）**
 Now you will implement the backward function for the whole network! 
 
 Recall that when you implemented the `L_model_forward` function, at each iteration, you stored a cache which contains (X,W,b, and z). In the back propagation module, you'll use those variables to compute the gradients. Therefore, in the `L_model_backward` function, you'll iterate through all the hidden layers backward, starting from layer $L$. On each step, you will use the cached values for layer $l$ to backpropagate through layer $l$. Figure 5 below shows the backward pass. 
@@ -927,3 +927,86 @@ dAL = - (np.divide(Y, AL) - np.divide(1-Y, 1-AL)) # 成本相对于AL的导数
 
 练习9 - L_model_backward
 对*[LINEAR->RELU] × (L-1) -> LINEAR -> SIGMOID*模型实施反向传播。
+
+```python
+# GRADED FUNCTION: L_model_backward
+
+def L_model_backward(AL, Y, caches):
+    """
+    Implement the backward propagation for the [LINEAR->RELU] * (L-1) -> LINEAR -> SIGMOID group
+    
+    Arguments:
+    AL -- probability vector, output of the forward propagation (L_model_forward())
+    Y -- true "label" vector (containing 0 if non-cat, 1 if cat)
+    caches -- list of caches containing:
+                every cache of linear_activation_forward() with "relu" (it's caches[l], for l in range(L-1) i.e l = 0...L-2)
+                the cache of linear_activation_forward() with "sigmoid" (it's caches[L-1])
+    
+    Returns:
+    grads -- A dictionary with the gradients
+             grads["dA" + str(l)] = ... 
+             grads["dW" + str(l)] = ...
+             grads["db" + str(l)] = ... 
+    """
+    grads = {}
+    L = len(caches) # the number of layers
+    m = AL.shape[1]
+    Y = Y.reshape(AL.shape) # after this line, Y is the same shape as AL
+    
+    # Initializing the backpropagation
+    #(1 line of code)
+    # dAL = ...
+    # YOUR CODE STARTS HERE
+    dAL = - (np.divide(Y, AL) - np.divide(1 - Y, 1 - AL))    
+    # YOUR CODE ENDS HERE
+    
+    # Lth layer (SIGMOID -> LINEAR) gradients. Inputs: "dAL, current_cache". Outputs: "grads["dAL-1"], grads["dWL"], grads["dbL"]
+    #(approx. 5 lines)
+    # current_cache = ...
+    # dA_prev_temp, dW_temp, db_temp = ...
+    # grads["dA" + str(L-1)] = ...
+    # grads["dW" + str(L)] = ...
+    # grads["db" + str(L)] = ...
+    # YOUR CODE STARTS HERE#这是定义的最后输出的sigmoid的参数
+    current_cache = caches[L-1]
+    grads["dA" + str(L-1)], grads["dW" + str(L)], grads["db" + str(L)] = linear_activation_backward(dAL, current_cache, activation = "sigmoid")
+    print("dA"+ str(L-1)+" = "+str(grads["dA" + str(L-1)]))
+    print("dW"+ str(L)+" = "+str(grads["dW" + str(L)]))
+    print("db"+ str(L)+" = "+str(grads["db" + str(L)]))
+    # YOUR CODE ENDS HERE
+    
+    # Loop from l=L-2 to l=0 #这是在定义1到L-1的relu的参数
+    for l in reversed(range(L-1)):
+        # lth layer: (RELU -> LINEAR) gradients.
+        # Inputs: "grads["dA" + str(l + 1)], current_cache". Outputs: "grads["dA" + str(l)] , grads["dW" + str(l + 1)] , grads["db" + str(l + 1)] 
+        #(approx. 5 lines)
+        # current_cache = ...
+        # dA_prev_temp, dW_temp, db_temp = ...
+        # grads["dA" + str(l)] = ...
+        # grads["dW" + str(l + 1)] = ...
+        # grads["db" + str(l + 1)] = ...
+        # YOUR CODE STARTS HERE
+        current_cache = caches[l]
+        dA_prev_temp, dW_temp, db_temp = linear_activation_backward(grads["dA" + str(l + 1)], current_cache, activation = "relu")
+        grads["dA" + str(l)] = dA_prev_temp
+        grads["dW" + str(l + 1)] = dW_temp
+        grads["db" + str(l + 1)] = db_temp
+        # YOUR CODE ENDS HERE
+
+    return grads
+```
+![1](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/22ee5c81-49a7-4bf2-8b96-3f171a90a628).
+
+**下一步就是更新parameters**
+
+<a name='6-4'></a>
+### 6.4 - Update Parameters
+
+In this section, you'll update the parameters of the model, using gradient descent: 
+
+$$ W^{[l]} = W^{[l]} - \alpha \text{ } dW^{[l]} \tag{16}$$
+$$ b^{[l]} = b^{[l]} - \alpha \text{ } db^{[l]} \tag{17}$$
+
+where $\alpha$ is the learning rate. 
+
+After computing the updated parameters, store them in the parameters dictionary. 
