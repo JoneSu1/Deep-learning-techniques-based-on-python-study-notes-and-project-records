@@ -693,8 +693,156 @@ def update_parameters(params, grads, learning_rate):
     return parameters
 ```
 ### Integrate the above data to construct the L_modle function
-**整合上面的数据构出L_modle function**
+**整合上面的数据构出L_layer_modle function**
 ```python
 ### CONSTANTS ###
 layers_dims = [12288, 20, 7, 5, 1] #  4-layer model
 ```
+### define the L_model() 
+
+# GRADED FUNCTION: L_layer_model
+```python
+def L_layer_model(X, Y, layers_dims, learning_rate = 0.0075, num_iterations = 3000, print_cost=False):
+    """
+    Implements a L-layer neural network: [LINEAR->RELU]*(L-1)->LINEAR->SIGMOID.
+    
+    Arguments:
+    X -- input data, of shape (n_x, number of examples)
+    Y -- true "label" vector (containing 1 if cat, 0 if non-cat), of shape (1, number of examples)
+    layers_dims -- list containing the input size and each layer size, of length (number of layers + 1).
+    learning_rate -- learning rate of the gradient descent update rule
+    num_iterations -- number of iterations of the optimization loop
+    print_cost -- if True, it prints the cost every 100 steps
+    
+    Returns:
+    parameters -- parameters learnt by the model. They can then be used to predict.
+    """
+
+    np.random.seed(1)
+    costs = []                         # keep track of cost
+    
+    # Parameters initialization.
+    #(≈ 1 line of code)
+    # parameters = ...
+    # YOUR CODE STARTS HERE
+    parameters = initialize_parameters_deep(layers_dims)
+    
+    # YOUR CODE ENDS HERE
+    
+    # Loop (gradient descent)
+    for i in range(0, num_iterations):
+
+        # Forward propagation: [LINEAR -> RELU]*(L-1) -> LINEAR -> SIGMOID.
+        #(≈ 1 line of code)
+        # AL, caches = ...
+        # YOUR CODE STARTS HERE
+        AL, caches = L_model_forward(X, parameters)
+        
+        # YOUR CODE ENDS HERE
+        
+        # Compute cost.
+        #(≈ 1 line of code)
+        # cost = ...
+        # YOUR CODE STARTS HERE
+        cost = compute_cost(AL,Y)
+        
+        # YOUR CODE ENDS HERE
+    
+        # Backward propagation.
+        #(≈ 1 line of code)
+        # grads = ...    
+        # YOUR CODE STARTS HERE
+        grads = L_model_backward(AL,Y,caches)
+        
+        # YOUR CODE ENDS HERE
+ 
+        # Update parameters.
+        #(≈ 1 line of code)
+        # parameters = ...
+        # YOUR CODE STARTS HERE
+        parameters = update_parameters(parameters, grads, learning_rate)
+        
+        # YOUR CODE ENDS HERE
+                
+        # Print the cost every 100 iterations
+        if print_cost and i % 100 == 0 or i == num_iterations - 1:
+            print("Cost after iteration {}: {}".format(i, np.squeeze(cost)))
+        if i % 100 == 0 or i == num_iterations:
+            costs.append(cost)
+    
+    return parameters, costs
+```
+#### test the L_layer_model()
+![1](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/e96668e1-cfba-4689-a2ef-c0c14d6db649)
+
+<a name='5-1'></a>
+### 5.1 - Train the model 
+
+If your code passed the previous cell, run the cell below to train your model as a 4-layer neural network. 
+
+- The cost should decrease on every iteration. 
+
+- It may take up to 5 minutes to run 2500 iterations.
+```python
+  parameters, costs = L_layer_model(train_x, train_y, layers_dims, num_iterations = 2500, print_cost = True)
+```
+### 定义predict（）函数，分别预测traning和testing样本的准确率
+```python
+def predict(X, parameters):
+    """
+    Predicts the labels for input data X using the learned parameters of the L-layer model.
+
+    Arguments:
+    X -- input data of shape (n_x, m)
+    parameters -- parameters of the trained model
+
+    Returns:
+    predictions -- array of predictions (0 or 1) for the input data X
+    """
+
+    # Forward propagation
+    AL, _ = L_model_forward(X, parameters)
+
+    # Convert probabilities to predictions (0 or 1)
+    predictions = (AL > 0.5).astype(int)
+
+    return predictions
+```
+![1](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/d91c11a3-0ce9-4648-83f7-28a565b567dd)
+
+**predict training**
+```python
+pred_train = predict(train_x, train_y, parameters)
+```
+![1](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/c62ad236-6865-45b5-9f91-3e663b67564a)
+
+**predict testing**
+
+```python
+
+pred_test = predict(test_x, test_y, parameters)
+```
+
+![2](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/707c4fcf-f306-4079-81a4-58f15e285b22)
+
+### Congrats! It seems that your 4-layer neural network has better performance (80%) than your 2-layer neural network (72%) on the same test set. 
+
+This is pretty good performance for this task. Nice job! 
+
+In the next course on "Improving deep neural networks," you'll be able to obtain even higher accuracy by systematically searching for better hyperparameters: learning_rate, layers_dims, or num_iterations, for example.  
+
+<a name='6'></a>
+##  6 - Results Analysis
+
+First, take a look at some images the L-layer model labeled incorrectly. This will show a few mislabeled images. 
+
+<a name='6'></a>
+## 6 - 结果分析
+
+首先，看一下L层模型标记错误的一些图像。这将显示一些错误标记的图像。
+```python
+
+print_mislabeled_images(classes, test_x, test_y, pred_test)
+
+```
+
