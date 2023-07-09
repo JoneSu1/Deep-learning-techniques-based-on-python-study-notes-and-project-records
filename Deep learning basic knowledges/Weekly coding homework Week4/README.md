@@ -2,12 +2,17 @@
 **在多层神经网络构建时候，最方便的方法**
 
 - 先定义一个能处理l层paramerters的initialization的function
+  
 **initialize_parameters(n_x, n_h, n_y)**
   - 再定义一个线性的forward方程
+    
    **initialize_parameters_deep(layer_dims)得到存储着参数的parameters**
+   
 - 然后再根据需要的激活函数来构建联合方程（如果是sigmoid--relu）就再里面添加逻辑判断，activation == ？，然后来套刚才的forward方程=Z
+  
   然后再A = g(Z)来保证不同的激活函数的工作.
   同样，需要先定义sigmoid和relu的helper函数，由于这个L神经网络的组成是L-1个relu，1个sigmoid的output.
+  
 **linear_forward(A, W, b):得到Z值和存着参数的cache**
   ``` Python
   #当激活函数是sigmoid时候
@@ -16,14 +21,47 @@
   relu = np.maximum(0,Z)
   reture Z
   ```
-- 通过 forward 中的cache（包含Z,W,b）可以计算cost.
+  
  **linear_activation_forward(A_prev, W, b, activation):得到A,和包含着激活函数类别的cache**
-  而costfunction是： $$-\frac{1}{m} \sum\limits_{i = 1}^{m} (y^{(i)}\log\left(a^{[L] (i)}\right) + (1-y^{(i)})\log\left(1- a^{[L](i)}\right)) \tag{7}$$
+
+ 实现LINEAR->ACTIVATION层的前向传播。数学关系是：𝐴[𝑙]=𝑔(𝑍[𝑙])=𝑔(𝑊[𝑙]𝐴[𝑙-1]+𝑏[𝑙]) 其中激活的g可以是sigmoid（）或者relu（）。使用 linear_forward() 和正确的激活函数。
+ 这个部分主要是利用if activation == relu or sigmoid 来组合两个激活函数的运算分别得到相应的A,Z
+
+ - L-Layer Model 通过整合之前的公式，得到不同层数的Z和A以及parameters的array
+
+    **L_model_forward(X, parameters):AL值和cache**
+
+
+𝐴[𝐿]=𝜎(𝑍[𝐿])=𝜎(𝑊[𝐿]𝐴[𝐿−1]+𝑏[𝐿]) 是根据这个公式，来分别对激活函数是sigmoid和relu的layer进行求值的.
+
+  ``` Python
+    caches = [] #创建储存的dictionary
+    A = X
+    L = len(parameters) // 2                  # number of layers in the neural network
+    for l in range(1,L)
+#先处理relu函数，我们都知道1到L-1层是relu作为激活函数，而最后的output层是sigmoid.
+ A, cache = linear_activation_forward(A_prev, parameters['W' + str(l)], parameters['b' + str(l)], activation='relu')
+        caches.append(cache)
+#然后处理位于最后一层的sigmoid
+  AL, cache = linear_activation_forward(A, parameters['W' + str(L)], parameters['b' + str(L)], activation='sigmoid')
+    caches.append(cache)
+      return AL, caches
+    #最后得到了包含A,AL的cache dictionary.
+```
+
+   
+- 最后一步，forward的，通过 forward 中的cache（包含Z,W,b）可以计算cost.
+
+  而costfunction是：
+  ![1](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/6c4531e6-ca50-4f96-95b3-a27dd430f10e)
+
   其中Y*log（AL）因为都是array，想元素成元素，就得使用np.multiply（）函数.
          cost = -1/m * np.sum(np.multiply(Y, np.log(AL)) + np.multiply(1-Y, np.log(1-AL)))
     得到cost 值之后，就可以进入backward propagation
-- 然后进入backward的部分，同样先定义backward的线性方程
-  **L_model_forward(X, parameters):AL值和cache**
+    
+  
+  - 然后进入backward的部分，同样先定义backward的线性方程
+
   ``` Python
   dW = 1/m*np.dot(dZ,A_prev.T)
   db = 1/m*np.sum(dZ,axis = 1, keep.dims=True)#记得是横向求和，并且保留dimension.
@@ -94,14 +132,19 @@ def tanh_backward(dA, cache):
 
     return dZ
 ```
+
 - 然后根据sigmoid_backward算出的dZ值，带入linear_back的公式（dZ,activation_cache）算出dW，db,dA_prev.
 
 - 下一步就是计算出dZ值，以及定义出gradient descent function.
+- 
   其中需要记住的是：dAL = - (np.divide(Y, AL) - np.divide(1 - Y, 1 - AL)) # derivative of cost with respect to AL
+  
 **以及，在L=number of layer时候，A只有L-1个，W有L个，b也有L个**
+
   然后因为是backward propagation所以是从大的layer倒着算gra的
    for l in reversed(range(L-1))，所以我们需要使用reversed（range（））这个函数，帮我们取l值，从L-1开始取.
   然后这是L层nn的back_ward propagation函数设置。
+  
 ``` python
       for l in reversed(range(L-1)): #这里的l in reversed(range(L-1)),其中L是layer数，而L-1是为了去掉input层
         # lth layer: (RELU -> LINEAR) gradients.
