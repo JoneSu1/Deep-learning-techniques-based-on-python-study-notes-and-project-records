@@ -303,3 +303,197 @@ def linear_backward(dZ, cache):
     return parameters
    ```
  
+### Integrate all the above formulas related to deep learning networks into the modle function.
+整合上面所有和深度学习网络有关的公式到modle function中.
+```python
+### CONSTANTS DEFINING THE MODEL ####
+n_x = 12288     # num_px * num_px * 3
+n_h = 7
+n_y = 1
+layers_dims = (n_x, n_h, n_y)
+learning_rate = 0.0075
+```
+# GRADED FUNCTION: two_layer_model
+``` python
+def two_layer_model(X, Y, layers_dims, learning_rate = 0.0075, num_iterations = 3000, print_cost=False):
+    """
+    Implements a two-layer neural network: LINEAR->RELU->LINEAR->SIGMOID.
+    
+    Arguments:
+    X -- input data, of shape (n_x, number of examples)
+    Y -- true "label" vector (containing 1 if cat, 0 if non-cat), of shape (1, number of examples)
+    layers_dims -- dimensions of the layers (n_x, n_h, n_y)
+    num_iterations -- number of iterations of the optimization loop
+    learning_rate -- learning rate of the gradient descent update rule
+    print_cost -- If set to True, this will print the cost every 100 iterations 
+    
+    Returns:
+    parameters -- a dictionary containing W1, W2, b1, and b2
+    """
+    
+    np.random.seed(1)
+    grads = {}
+    costs = []                              # to keep track of the cost
+    m = X.shape[1]                           # number of examples
+    (n_x, n_h, n_y) = layers_dims
+    
+    # Initialize parameters dictionary, by calling one of the functions you'd previously implemented
+    #(≈ 1 line of code)
+    # parameters = ...
+    # YOUR CODE STARTS HERE
+    parameters = initialize_parameters(n_x, n_h, n_y)
+    
+    # YOUR CODE ENDS HERE
+    
+    # Get W1, b1, W2 and b2 from the dictionary parameters.
+    W1 = parameters["W1"]
+    b1 = parameters["b1"]
+    W2 = parameters["W2"]
+    b2 = parameters["b2"]
+    
+    # Loop (gradient descent)
+
+    for i in range(0, num_iterations):
+
+        # Forward propagation: LINEAR -> RELU -> LINEAR -> SIGMOID. Inputs: "X, W1, b1, W2, b2". Output: "A1, cache1, A2, cache2".
+        #(≈ 2 lines of code)
+        # A1, cache1 = ...
+        # A2, cache2 = ...
+        # YOUR CODE STARTS HERE
+        A1, cache1 = linear_activation_forward(X, W1, b1, activation="relu")
+        A2, cache2 = linear_activation_forward(A1, W2, b2, activation="sigmoid")
+        # YOUR CODE ENDS HERE
+        
+        # Compute cost
+        #(≈ 1 line of code)
+        # cost = ...
+        # YOUR CODE STARTS HERE
+        cost = compute_cost(A2, Y)
+        
+        # YOUR CODE ENDS HERE
+        
+        # Initializing backward propagation
+        dA2 = - (np.divide(Y, A2) - np.divide(1 - Y, 1 - A2))
+        
+        # Backward propagation. Inputs: "dA2, cache2, cache1". Outputs: "dA1, dW2, db2; also dA0 (not used), dW1, db1".
+        #(≈ 2 lines of code)
+        # dA1, dW2, db2 = ...
+        # dA0, dW1, db1 = ...
+        # YOUR CODE STARTS HERE
+        dA1, dW2, db2 = linear_activation_backward(dA2, cache2, activation="sigmoid")
+        dA0, dW1, db1 = linear_activation_backward(dA1, cache1, activation="relu")
+        
+        # YOUR CODE ENDS HERE
+        
+        # Set grads['dWl'] to dW1, grads['db1'] to db1, grads['dW2'] to dW2, grads['db2'] to db2
+        grads['dW1'] = dW1
+        grads['db1'] = db1
+        grads['dW2'] = dW2
+        grads['db2'] = db2
+        
+        # Update parameters.
+        #(approx. 1 line of code)
+        # parameters = ...
+        # YOUR CODE STARTS HERE
+        parameters = update_parameters(parameters, grads, learning_rate)
+        # 这里的parameters是之前initialization时候得到的.
+        # YOUR CODE ENDS HERE
+
+        # Retrieve W1, b1, W2, b2 from parameters
+        W1 = parameters["W1"]
+        b1 = parameters["b1"]
+        W2 = parameters["W2"]
+        b2 = parameters["b2"]
+        
+        # Print the cost every 100 iterations
+        if print_cost and i % 100 == 0 or i == num_iterations - 1:
+            print("Cost after iteration {}: {}".format(i, np.squeeze(cost)))
+        if i % 100 == 0 or i == num_iterations:
+            costs.append(cost)
+
+    return parameters, costs
+
+def plot_costs(costs, learning_rate=0.0075):
+    plt.plot(np.squeeze(costs))
+    plt.ylabel('cost')
+    plt.xlabel('iterations (per hundreds)')
+    plt.title("Learning rate =" + str(learning_rate))
+    plt.show()
+    ```
+
+    ### test
+    ```python
+    parameters, costs = two_layer_model(train_x, train_y, layers_dims = (n_x, n_h, n_y), num_iterations = 2, print_cost=False)
+
+    print("Cost after first iteration: " + str(costs[0]))
+
+    two_layer_model_test(two_layer_model)
+    ```
+    
+  ![1](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/54ba286c-3972-4bee-a85f-8433ba806695)
+<a name='4-1'></a>
+### 4.1 - Train the model 
+
+If your code passed the previous cell, run the cell below to train your parameters. 
+
+- The cost should decrease on every iteration. 
+
+- It may take up to 5 minutes to run 2500 iterations.
+
+如果你的代码通过了前面的单元，请运行下面的单元来训练你的参数。
+
+- 每一次迭代的成本都应该减少。
+
+- 运行2500次迭代可能需要5分钟。
+
+训练2500次，每100次输出一次cost，然后plot_costs(costs, learning_rate)，以costs值为Y轴，learning_rate为X轴输出图像.
+然后plot_costs（）是Matplotlib库进行绘图的专门对于cost的.
+
+``` python
+
+       parameters, costs = two_layer_model(train_x, train_y, layers_dims = (n_x, n_h, n_y), num_iterations = 2500, print_cost=True)
+
+       plot_costs(costs, learning_rate)
+```
+
+![3](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/f07cc5a8-686a-4d92-a54b-07d76bc57c07)
+![4](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/878f175c-0c15-4a90-aae5-2eac0eb8cd4d)
+
+#### 对test样本的数据进行预测。
+**Setting the predict function**
+``` python
+
+def predict(X, y, parameters):
+    """
+    使用训练好的参数对输入数据 X 进行预测
+    
+    参数：
+    X -- 输入数据，形状为 (n_x, m)
+    y -- 真实标签向量，形状为 (1, m)
+    parameters -- 训练好的参数
+    
+    返回：
+    predictions -- 预测结果向量，形状为 (1, m)
+    """
+    
+    # 前向传播
+    A2, _ = forward_propagation(X, parameters)
+
+    
+    # 根据预测值 A2 生成预测结果
+    predictions = np.round(A2)  # 四舍五入为最接近的整数
+    
+    return predictions
+```
+  
+**1. predict the training samples to get the value of accuracy.**  
+```python
+predictions_train = predict(train_x, train_y, parameters)
+```
+![1](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/e9d5d212-404f-40fc-84f4-dbc559085e54)
+
+**2.  predict the testing samples to get the value of accuracy.**
+```python
+predictions_test = predict(test_x, test_y, parameters)
+```
+![2](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/57705c4f-f928-4466-a857-5e55ff6e1df2)
