@@ -61,8 +61,9 @@ print ("y = " + str(train_y[0,index]) + ". It's a " + classes[train_y[0,index]].
 
 ## checking  the shape of image
 
+```Python
 # Explore your dataset 
-m_train = train_x_orig.shape[0]
+m_train = train_x_orig.shape[0]# 这种图片文件是4维的，（224，64，64，3）其中第一个是图片的数量。
 num_px = train_x_orig.shape[1]
 m_test = test_x_orig.shape[0]
 
@@ -73,3 +74,26 @@ print ("train_x_orig shape: " + str(train_x_orig.shape))
 print ("train_y shape: " + str(train_y.shape))
 print ("test_x_orig shape: " + str(test_x_orig.shape))
 print ("test_y shape: " + str(test_y.shape))
+```
+![1](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/669785bc-9ebb-44ca-8907-2646de1134ed)
+
+## Reshape the 4 dimensions to 1 dimension and standardize 
+**Due to it being image data, it has 255 pixels. We can use reshape_data by 255 to standardize**
+**由于它是图像数据，它有255个像素。我们可以使用255的reshape_data来进行标准化**。
+
+![2](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/11847f0a-cf37-4410-8e19-098e66276132)
+```python
+# Reshape the training and test examples 
+train_x_flatten = train_x_orig.reshape(train_x_orig.shape[0], -1).T   # The "-1" makes reshape flatten the remaining dimensions
+#作用是将训练集图像数据进行重塑，使其变为一个二维数组，其中每一行代表一张图像。-1的意思是自动计算对应的列数，以保持总的元素个数不变。
+#.T表示对数组进行转置操作，将行和列进行互换。 所以得到的是一个二维数组，每一列代表一个图像，每一行代表一组数据.
+test_x_flatten = test_x_orig.reshape(test_x_orig.shape[0], -1).T
+
+# Standardize data to have feature values between 0 and 1.
+train_x = train_x_flatten/255.
+test_x = test_x_flatten/255.
+
+print ("train_x's shape: " + str(train_x.shape))
+print ("test_x's shape: " + str(test_x.shape))
+```
+![3](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/d52c54c8-613e-45ce-8b9c-b5f8db132d17)
