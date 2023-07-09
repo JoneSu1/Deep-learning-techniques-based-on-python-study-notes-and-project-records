@@ -497,3 +497,204 @@ predictions_train = predict(train_x, train_y, parameters)
 predictions_test = predict(test_x, test_y, parameters)
 ```
 ![2](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/57705c4f-f928-4466-a857-5e55ff6e1df2)
+
+### Congratulations! It seems that your 2-layer neural network has better performance (72%) than the logistic regression implementation (70%, assignment week 2). Let's see if you can do even better with an $L$-layer model.
+
+**Note**: You may notice that running the model on fewer iterations (say 1500) gives better accuracy on the test set. This is called "early stopping" and you'll hear more about it in the next course. Early stopping is a way to prevent overfitting. 
+
+###恭喜你! 看来你的2层神经网络的性能（72%）比逻辑回归的实现（70%，作业第二周）更好。让我们看看你是否能用$L$层的模型做得更好。
+
+**注意**： 你可能会注意到，在较少的迭代中运行模型（比如1500次），在测试集上有更好的准确性。这被称为 "早期停止"，你将在下一个课程中听到更多关于它的内容。早期停止是一种防止过度拟合的方法。
+
+
+<a name='5'></a>
+## 5 - L-layer Neural Network
+
+<a name='ex-2'></a>
+### Exercise 2 - L_layer_model 
+
+Use the helper functions you implemented previously to build an $L$-layer neural network with the following structure: *[LINEAR -> RELU]$\times$(L-1) -> LINEAR -> SIGMOID*. The functions and their inputs are:
+```python
+def initialize_parameters_deep(layers_dims):
+    ...
+    return parameters 
+def L_model_forward(X, parameters):
+    ...
+    return AL, caches
+def compute_cost(AL, Y):
+    ...
+    return cost
+def L_model_backward(AL, Y, caches):
+    ...
+    return grads
+def update_parameters(parameters, grads, learning_rate):
+    ...
+    return parameters
+```
+
+
+As usual, you'll follow the Deep Learning methodology to build the model:
+
+1. Initialize parameters / Define hyperparameters
+2. Loop for num_iterations:
+  - a. Forward propagation
+  -  b. Compute cost function
+  -  c. Backward propagation
+  -  d. Update parameters (using parameters, and grads from backprop) 
+3. Use trained parameters to predict labels
+
+#### L_layers initialize_parameters fucntion setting
+**initialize_parameters_deep(layer_dims)**
+
+```python
+def initialize_parameters_deep(layer_dims):
+    np.random.seed(3)
+    parameters = {}
+    L = len(layer_dims) # number of layers in the network
+#这里也是根据W,b。dims的情况来的.
+    for l in range(1, L):
+        parameters['W' + str(l)] = np.random.randn(layer_dims[l],layer_dims[l-1])*0.01
+        parameters['b' + str(l)] = np.zeros((layer_dims[l],1))
+        assert(parameters['W' + str(l)].shape == (layer_dims[l], layer_dims[l - 1]))
+        assert(parameters['b' + str(l)].shape == (layer_dims[l], 1))
+
+        
+    return parameters
+```
+#### In the whole calculation process, only the initialize part and the molde part of forward have differences, the rest of linear_activation_forward are the same
+**在整个计算流程中，只有initialize部分和forward的molde部分有差别，其他的linear_activation_forward都是同样的**
+``` python
+def L_model_forward(X, parameters):
+    caches = []
+    A = X
+    L = len(parameters) // 2                  # number of layers in the neural network
+        # Implement [LINEAR -> RELU]*(L-1). Add "cache" to the "caches" list.
+    # The for loop starts at 1 because layer 0 is the input
+    for l in range(1, L):
+        A_prev = A 
+        #(≈ 2 lines of code)
+        # A, cache = ...
+        # caches ...
+        
+        A, cache = linear_activation_forward(A_prev, parameters['W' + str(l)], parameters['b' + str(l)], activation='relu')
+        caches.append(cache)
+        AL, cache = linear_activation_forward(A, parameters['W' + str(L)], parameters['b' + str(L)], activation='sigmoid')
+        caches.append(cache)
+           
+    return AL, caches
+```
+#### compute_cost(AL, Y):计算cost
+```
+def compute_cost(AL, Y):
+    m = Y.shape[1]
+    cost = -1/m * np.sum(np.multiply(Y, np.log(AL)) + np.multiply(1-Y, np.log(1-AL)))
+    cost = np.squeeze(cost)      # To make sure your cost's shape is what we expect (e.g. this turns [[17]] into 17).
+    return cost
+ ```
+
+#### next,using the backward function
+**L_model_backward(AL, Y, caches):**
+# GRADED FUNCTION: L_model_backward
+```python
+def L_model_backward(AL, Y, caches):
+    """
+    Implement the backward propagation for the [LINEAR->RELU] * (L-1) -> LINEAR -> SIGMOID group
+    
+    Arguments:
+    AL -- probability vector, output of the forward propagation (L_model_forward())
+    Y -- true "label" vector (containing 0 if non-cat, 1 if cat)
+    caches -- list of caches containing:
+                every cache of linear_activation_forward() with "relu" (it's caches[l], for l in range(L-1) i.e l = 0...L-2)
+                the cache of linear_activation_forward() with "sigmoid" (it's caches[L-1])
+    
+    Returns:
+    grads -- A dictionary with the gradients
+             grads["dA" + str(l)] = ... 
+             grads["dW" + str(l)] = ...
+             grads["db" + str(l)] = ... 
+    """
+    grads = {}
+    L = len(caches) # the number of layers
+    m = AL.shape[1]
+    Y = Y.reshape(AL.shape) # after this line, Y is the same shape as AL
+    
+    # Initializing the backpropagation
+    #(1 line of code)
+    # dAL = ...
+    # YOUR CODE STARTS HERE
+    dAL = - (np.divide(Y, AL) - np.divide(1 - Y, 1 - AL))    
+    # YOUR CODE ENDS HERE
+    
+    # Lth layer (SIGMOID -> LINEAR) gradients. Inputs: "dAL, current_cache". Outputs: "grads["dAL-1"], grads["dWL"], grads["dbL"]
+    #(approx. 5 lines)
+    # current_cache = ...
+    # dA_prev_temp, dW_temp, db_temp = ...
+    # grads["dA" + str(L-1)] = ...
+    # grads["dW" + str(L)] = ...
+    # grads["db" + str(L)] = ...
+    # YOUR CODE STARTS HERE
+    current_cache = caches[L-1]
+    grads["dA" + str(L-1)], grads["dW" + str(L)], grads["db" + str(L)] = linear_activation_backward(dAL, current_cache, activation = "sigmoid")
+    print("dA"+ str(L-1)+" = "+str(grads["dA" + str(L-1)]))
+    print("dW"+ str(L)+" = "+str(grads["dW" + str(L)]))
+    print("db"+ str(L)+" = "+str(grads["db" + str(L)]))
+    # YOUR CODE ENDS HERE
+    
+    # Loop from l=L-2 to l=0
+    for l in reversed(range(L-1)):
+        # lth layer: (RELU -> LINEAR) gradients.
+        # Inputs: "grads["dA" + str(l + 1)], current_cache". Outputs: "grads["dA" + str(l)] , grads["dW" + str(l + 1)] , grads["db" + str(l + 1)] 
+        #(approx. 5 lines)
+        # current_cache = ...
+        # dA_prev_temp, dW_temp, db_temp = ...
+        # grads["dA" + str(l)] = ...
+        # grads["dW" + str(l + 1)] = ...
+        # grads["db" + str(l + 1)] = ...
+        # YOUR CODE STARTS HERE
+        current_cache = caches[l]
+        dA_prev_temp, dW_temp, db_temp = linear_activation_backward(grads["dA" + str(l + 1)], current_cache, activation = "relu")
+        grads["dA" + str(l)] = dA_prev_temp
+        grads["dW" + str(l + 1)] = dW_temp
+        grads["db" + str(l + 1)] = db_temp
+        # YOUR CODE ENDS HERE
+
+    return grads
+```
+
+#### update_parameters
+
+# GRADED FUNCTION: update_parameters
+```python
+def update_parameters(params, grads, learning_rate):
+    """
+    Update parameters using gradient descent
+    
+    Arguments:
+    params -- python dictionary containing your parameters 
+    grads -- python dictionary containing your gradients, output of L_model_backward
+    
+    Returns:
+    parameters -- python dictionary containing your updated parameters 
+                  parameters["W" + str(l)] = ... 
+                  parameters["b" + str(l)] = ...
+    """
+    parameters = params.copy()
+    L = len(parameters) // 2 # number of layers in the neural network
+
+    # Update rule for each parameter. Use a for loop.
+    #(≈ 2 lines of code)
+    for l in range(L):
+        # parameters["W" + str(l+1)] = ...
+        # parameters["b" + str(l+1)] = ...
+        # YOUR CODE STARTS HERE
+        parameters["W" + str(l+1)] = params["W"+ str(l+1)] - learning_rate * grads["dW"+ str(l+1)]
+        parameters["b" + str(l+1)] = params["b"+ str(l+1)] - learning_rate * grads["db"+ str(l+1)]
+        # YOUR CODE ENDS HERE
+    return parameters
+```
+### Integrate the above data to construct the L_modle function
+**整合上面的数据构出L_modle function**
+```python
+### CONSTANTS ###
+layers_dims = [12288, 20, 7, 5, 1] #  4-layer model
+```
