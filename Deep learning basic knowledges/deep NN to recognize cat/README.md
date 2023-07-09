@@ -97,3 +97,209 @@ print ("train_x's shape: " + str(train_x.shape))
 print ("test_x's shape: " + str(test_x.shape))
 ```
 ![3](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/d52c54c8-613e-45ce-8b9c-b5f8db132d17)
+
+<a name='3'></a>
+## 3 - Model Architecture
+<a name='3-1'></a>
+### 3.1 - 2-layer Neural Network
+
+Now that you're familiar with the dataset, it's time to build a deep neural network to distinguish cat images from non-cat images!
+
+You're going to build two different models:
+
+- A 2-layer neural network
+- An L-layer deep neural network
+
+Then, you'll compare the performance of these models, and try out some different values for $L$. 
+
+Let's look at the two architectures:
+![1](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/5849f375-54e6-4cd6-80fa-da71040d34c1)
+
+<u><b>Detailed Architecture of Figure 2</b></u>:
+- The input is a (64,64,3) image which is flattened to a vector of size $(12288,1)$. 
+- The corresponding vector: $[x_0,x_1,...,x_{12287}]^T$ is then multiplied by the weight matrix $W^{[1]}$ of size $(n^{[1]}, 12288)$.
+- Then, add a bias term and take its relu to get the following vector: $[a_0^{[1]}, a_1^{[1]},..., a_{n^{[1]}-1}^{[1]}]^T$.
+- Multiply the resulting vector by $W^{[2]}$ and add the intercept (bias). 
+- Finally, take the sigmoid of the result. If it's greater than 0.5, classify it as a cat.
+
+
+  ### 3.2 - L-layer Deep Neural Network
+
+It's pretty difficult to represent an L-layer deep neural network using the above representation. However, here is a simplified network representation:
+![5](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/c3ccd301-6587-4599-94c6-c5714ac59d6a)
+
+<u><b>Detailed Architecture of Figure 3</b></u>:
+- The input is a (64,64,3) image which is flattened to a vector of size (12288,1).
+- The corresponding vector: $[x_0,x_1,...,x_{12287}]^T$ is then multiplied by the weight matrix $W^{[1]}$ and then you add the intercept $b^{[1]}$. The result is called the linear unit.
+- Next, take the relu of the linear unit. This process could be repeated several times for each $(W^{[l]}, b^{[l]})$ depending on the model architecture.
+- Finally, take the sigmoid of the final linear unit. If it is greater than 0.5, classify it as a cat.
+
+<a name='3-3'></a>
+### 3.3 - General Methodology
+
+As usual, you'll follow the Deep Learning methodology to build the model:
+
+1. Initialize parameters / Define hyperparameters
+2. Loop for num_iterations:
+  - a. Forward propagation
+  -  b. Compute cost function
+  -  c. Backward propagation
+  -  d. Update parameters (using parameters, and grads from backprop) 
+3. Use trained parameters to predict labels
+
+Now go ahead and implement those two models!
+
+
+<a name='4'></a>
+## 4 - Two-layer Neural Network
+**先定义出两层的网络的代码**
+<a name='ex-1'></a>
+### Exercise 1 - two_layer_model 
+
+Use the helper functions you have implemented in the previous assignment to build a 2-layer neural network with the following structure: *LINEAR -> RELU -> LINEAR -> SIGMOID*. The functions and their inputs are:
+```python
+def initialize_parameters(n_x, n_h, n_y):
+    ...
+    return parameters 
+def linear_activation_forward(A_prev, W, b, activation):
+    ...
+    return A, cache
+def compute_cost(AL, Y):
+    ...
+    return cost
+def linear_activation_backward(dA, cache, activation):
+    ...
+    return dA_prev, dW, db
+def update_parameters(parameters, grads, learning_rate):
+    ...
+    return parameters
+```
+### define the 2-layer functions
+
+#### 1. Initialize parameters / Define hyperparameters
+```python
+def initialize_parameters(n_x, n_h, n_y):
+
+    W1 = np.random.randn(n_h,n_x)*0.01
+    b1 = np.zeros((n_h,1))
+    W2 = np.random.randn(n_y,n_h)*0.01
+    b2 = np.zeros((n_y,1))
+    
+    parameters = {"W1": W1,
+                  "b1": b1,
+                  "W2": W2,
+                  "b2": b2}
+    
+    return parameters    
+```
+#### 2. Loop for num_iterations:
+######   a. Forward propagation
+
+- 先定义出forward propagation，
+- 定义出activation function（relu，sigmoid）
+- 再定义出包含了forward和激活函数的 linear_activation_forward函数.
+ ```python 
+# part 1  define the linear_forward function
+def linear_forward(A, W, b):
+
+    Z = np.dot(W,A) + b
+    cache = (A, W, b)
+    return Z, cache
+```
+
+ # part 2 define the helper function of activation 
+
+ ```python
+ #当激活函数是sigmoid时候
+sigmoid = 1/(1+np.exp(-Z))
+#当激活函数是relu的时候
+relu = np.maximum(0,Z)
+reture Z
+```
+# part 3 define the linear_activation_forward
+
+```python
+def linear_activation_forward(A_prev, W, b, activation):
+
+ if activation == "sigmoid":
+
+   Z, linear_cache = linear_forward(A_prev,W,b)
+   A, activation_cache = sigmoid(Z)
+   elif activation == "relu":
+   Z, linear_cache = linear_forward(A_prev,W,b)
+   A, activation_cache = relu(Z)
+
+   cache = (linear_cache, activation_cache)
+```
+####  b. Compute_cost function
+
+``` python
+def compute_cost(AL, Y):
+    m = Y.shape[1] #保证m和Y的dim是一致的
+    cost = -1/m * np.sum(np.multiply(Y, np.log(AL)) + np.multiply(1-Y, np.log(1-AL)))
+    cost = np.squeeze(cost)      # To make sure your cost's shape is what we expect (e.g. this turns [[17]] into 17).
+    return cost
+```
+####  c. Backward propagation
+
+- 先定义出backward propagation，
+- 定义出activation function（relu，sigmoid）
+- 再定义出包含了forward和激活函数的 linear_activation_forward函数.
+``` python
+然后进入backward的部分，同样先定义backward的线性方程
+dW = 1/m*np.dot(dZ,A_prev.T)
+db = 1/m*np.sum(dZ,axis = 1, keep.dims=True)#记得是横向求和，并且保留dimension.
+dA_prev = np.dot(W.T,dZ)
+#而关于dZ的求值，不同的激活函数，有不同的结果
+#如果激活函数是softmax 和 sigmoid
+dZ = A - Y
+#如果激活函数是tanh和Relu
+dZ = dA * relu_derivative(Z)
+```
+```python 
+def linear_backward(dZ, cache):
+# dZ是之前的函数得出的
+    A_prev, W, b = cache
+    m = A_prev.shape[1]
+
+    dW = 1/m *np.dot(dZ,A_prev.T)
+    db = 1/m * np.sum(dZ,axis = 1, keepdims=True)
+    dA_prev = np.dot(W.T, dZ)
+
+    return dA_prev, dW, db
+```
+
+ #### 定义出Linear-Activation Backward function
+ ```python
+ def linear_activation_backward(dA, cache, activation):
+ 
+    linear_cache, activation_cache = cache
+    
+    if activation == "relu":
+        dZ = relu_backward(dA, activation_cache)
+        dA_prev, dW, db = linear_backward(dZ, linear_cache)
+        
+        elif activation == "sigmoid":
+        dZ = sigmoid_backward(dA, activation_cache)
+        dA_prev, dW, db = linear_backward(dZ, linear_cache)
+        
+    
+    return dA_prev, dW, db
+```
+ #### d. Update parameters (using parameters, and grads from backprop) 
+```python
+ def update_parameters(params, grads, learning_rate):
+
+    parameters = params.copy()
+    L = len(parameters) // 2 # number of layers in the neural network
+
+    # Update rule for each parameter. Use a for loop.
+    
+    for l in range(L):
+    
+        parameters["W" + str(l+1)] = params["W"+ str(l+1)] - learning_rate * grads["dW"+ str(l+1)]
+        parameters["b" + str(l+1)] = params["b"+ str(l+1)] - learning_rate * grads["db"+ str(l+1)]
+        
+    return parameters
+   ```
+ 
