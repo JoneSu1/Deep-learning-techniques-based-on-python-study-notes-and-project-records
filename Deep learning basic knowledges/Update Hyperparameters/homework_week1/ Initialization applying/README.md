@@ -308,7 +308,6 @@ def predict_dec(parameters, X):
 ```
 
 **绘图：**
-```python
 plt.title("Model with large random initialization")
 axes = plt.gca()
 axes.set_xlim([-1.5,1.5])
@@ -383,3 +382,65 @@ Implement the following function to initialize your parameters with He initializ
 
 练习 3 - 初始化参数 He
 执行下面的函数，用He初始化来初始化参数。这个函数类似于前面的 initialize_parameters_random(...)。唯一不同的是，不是将np.random.randn(..,..)乘以10，而是乘以上一层的2dimension， $\sqrt{\frac{2}{\text{dimension of the previous layer}}}$， 这也是He初始化对ReLU激活层的建议。
+
+
+**Code**
+```python
+
+# GRADED FUNCTION: initialize_parameters_he
+
+def initialize_parameters_he(layers_dims):
+    """
+    Arguments:
+    layer_dims -- python array (list) containing the size of each layer.
+    
+    Returns:
+    parameters -- python dictionary containing your parameters "W1", "b1", ..., "WL", "bL":
+                    W1 -- weight matrix of shape (layers_dims[1], layers_dims[0])
+                    b1 -- bias vector of shape (layers_dims[1], 1)
+                    ...
+                    WL -- weight matrix of shape (layers_dims[L], layers_dims[L-1])
+                    bL -- bias vector of shape (layers_dims[L], 1)
+    """
+    
+    np.random.seed(3)
+    parameters = {}
+    L = len(layers_dims) - 1 # integer representing the number of layers
+     
+    for l in range(1, L + 1):
+        #(≈ 2 lines of code)
+        # parameters['W' + str(l)] = 
+        # parameters['b' + str(l)] =
+        # YOUR CODE STARTS HERE
+        
+        parameters['W' + str(l)] = np.random.randn(layers_dims[l], layers_dims[l-1]) * np.sqrt(2.0 / layers_dims[l-1]) ## None
+        parameters['b' + str(l)] = np.zeros((layers_dims[l],1))
+        # YOUR CODE ENDS HERE
+        
+    return parameters
+```
+
+![1](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/d52e9948-0159-450c-9407-205ccb88bff6)
+
+**带入model来iteration迭代，并用最后的结果进行predict，然后计算Accuracy值**
+```python
+parameters = model(train_X, train_Y, initialization = "he")
+print ("On the train set:")
+predictions_train = predict(train_X, train_Y, parameters)
+print ("On the test set:")
+predictions_test = predict(test_X, test_Y, parameters)
+```
+![2](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/3a8a874b-af57-4458-971d-97d815db9a66)
+![3](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/8ea70eee-502f-4167-8561-85119aeb1df8)
+**可以看到这次的accuracy特别好**
+**画图看分类情况**
+```python
+plt.title("Model with He initialization")
+axes = plt.gca()
+axes.set_xlim([-1.5,1.5])
+axes.set_ylim([-1.5,1.5])
+plot_decision_boundary(lambda x: predict_dec(parameters, x.T), train_X, train_Y)
+```
+![6](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/35e418a9-4563-43c6-9640-d77a020d8216)
+
+
