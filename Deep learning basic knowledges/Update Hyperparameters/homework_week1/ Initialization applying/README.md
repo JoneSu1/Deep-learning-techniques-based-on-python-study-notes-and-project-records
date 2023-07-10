@@ -272,3 +272,114 @@ predictions_train = predict(train_X, train_Y, parameters)
 print ("On the test set:")
 predictions_test = predict(test_X, test_Y, parameters)
 ```
+![1](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/da649eac-f33d-47c1-a79b-70dbb485a5b3)
+
+**可以看到performance random initialization打破了对称性**
+
+**然后我们使用自定义的边界函数和预测函数来绘制出分类图**
+
+自定义函数setting
+**plot_decision_boundary(model, X, y):**
+
+```python
+
+def plot_decision_boundary(model, X, y):
+    # 绘制决策边界的代码实现
+    x_min, x_max = X[:, 0].min() - 1, X[:, 0].max() + 1
+    y_min, y_max = X[:, 1].min() - 1, X[:, 1].max() + 1
+    h = 0.01
+    xx, yy = np.meshgrid(np.arange(x_min, x_max, h), np.arange(y_min, y_max, h))
+    Z = model(np.c_[xx.ravel(), yy.ravel()])
+    Z = Z.reshape(xx.shape)
+    plt.contourf(xx, yy, Z, cmap=plt.cm.Spectral)
+    plt.scatter(X[:, 0], X[:, 1], c=y, cmap=plt.cm.Spectral)
+    plt.xlabel('x1')
+    plt.ylabel('x2')
+    plt.title('Decision Boundary')
+```
+**predict_dec(parameters, X):**
+```python
+
+def predict_dec(parameters, X):
+    # 决策预测的代码实现
+    A2, cache = forward_propagation(X, parameters)
+    predictions = (A2 > 0.5)
+    return predictions
+```
+
+**绘图：**
+```python
+plt.title("Model with large random initialization")
+axes = plt.gca()
+axes.set_xlim([-1.5,1.5])
+axes.set_ylim([-1.5,1.5])
+plot_decision_boundary(lambda x: predict_dec(parameters, x.T), train_X, train_Y)
+```
+![2](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/a0d118f1-14b0-4eb5-a929-eb3a87ec43e2)
+
+**Observations**:
+- The cost starts very high. This is because with large random-valued weights, the last activation (sigmoid) outputs results that are very close to 0 or 1 for some examples, and when it gets that example wrong it incurs a very high loss for that example. Indeed, when $\log(a^{[3]}) = \log(0)$, the loss goes to infinity.
+- Poor initialization can lead to vanishing/exploding gradients, which also slows down the optimization algorithm. 
+- If you train this network longer you will see better results, but initializing with overly large random numbers slows down the optimization.
+
+<font color='blue'>
+    
+**In summary**:
+- Initializing weights to very large random values doesn't work well. 
+- Initializing with small random values should do better. The important question is, how small should be these random values be? Let's find out up next!
+
+<font color='black'>    
+    
+**Optional Read:**
+
+
+The main difference between Gaussian variable (`numpy.random.randn()`) and uniform random variable is the distribution of the generated random numbers:
+
+- numpy.random.rand() produces numbers in a [uniform distribution](https://raw.githubusercontent.com/jahnog/deeplearning-notes/master/Course2/images/rand.jpg).
+- and numpy.random.randn() produces numbers in a [normal distribution](https://raw.githubusercontent.com/jahnog/deeplearning-notes/master/Course2/images/randn.jpg).
+
+When used for weight initialization, randn() helps most the weights to Avoid being close to the extremes, allocating most of them in the center of the range.
+
+An intuitive way to see it is, for example, if you take the [sigmoid() activation function](https://raw.githubusercontent.com/jahnog/deeplearning-notes/master/Course2/images/sigmoid.jpg).
+
+You’ll remember that the slope near 0 or near 1 is extremely small, so the weights near those extremes will converge much more slowly to the solution, and having most of them near the center will speed the convergence.
+
+
+意见：
+
+开始时成本很高。这是因为在随机权值较大的情况下，最后一个激活（sigmoid）输出的结果在某些例子中非常接近0或1，当它弄错例子时，会对该例子产生非常高的损失。事实上，当 ，损失将达到无穷大。
+糟糕的初始化会导致梯度消失/爆炸，这也会减慢优化算法的速度。
+如果您对该网络进行更长时间的训练，您将看到更好的结果，但使用过大的随机数进行初始化会减慢优化速度。
+总之：
+
+将权重初始化为非常大的随机值效果并不好。
+使用较小的随机数初始化效果会更好。重要的问题是，这些随机值应该有多小？让我们接下来来了解一下！
+可选阅读：
+
+高斯变量（numpy.random.randn()）和均匀随机变量的主要区别在于生成的随机数的分布：
+
+numpy.random.rand()产生的数字是均匀分布的。
+和numpy.random.randn()产生正态分布的数字。
+当用于权重初始化时，randn()帮助大多数权重避免接近极值，将大多数权重分配在范围的中心。
+
+一个直观的方法是，例如，如果你使用sigmoid()激活函数。
+
+你会记得0或1附近的斜率是非常小的，因此靠近这些极端值的权重会更慢地收敛到解中，而将大部分权重靠近中心会加速收敛。
+
+
+
+<a name='6'></a>
+## 6 - He Initialization
+
+Finally, try "He Initialization"; this is named for the first author of He et al., 2015. (If you have heard of "Xavier initialization", this is similar except Xavier initialization uses a scaling factor for the weights $W^{[l]}$ of `sqrt(1./layers_dims[l-1])` where He initialization would use `sqrt(2./layers_dims[l-1])`.)
+
+6 - He初始化
+最后，试试 "He初始化"；这是以He等人2015年论文的第一作者命名的。(如果您听说过 "Xavier初始化"，那么这与 "He初始化 "类似，只不过Xavier初始化使用了权重的缩放因子，即sqrt(1./layer_dims[l-1])，而 "He初始化 "使用的是sqrt(2./layer_dims[l-1])。
+
+<a name='ex-3'></a>
+### Exercise 3 - initialize_parameters_he
+
+Implement the following function to initialize your parameters with He initialization. This function is similar to the previous `initialize_parameters_random(...)`. The only difference is that instead of multiplying `np.random.randn(..,..)` by 10, you will multiply it by $\sqrt{\frac{2}{\text{dimension of the previous layer}}}$, which is what He initialization recommends for layers with a ReLU activation. 
+
+练习 3 - 初始化参数 He
+执行下面的函数，用He初始化来初始化参数。这个函数类似于前面的 initialize_parameters_random(...)。唯一不同的是，不是将np.random.randn(..,..)乘以10，而是乘以上一层的2dimension， $\sqrt{\frac{2}{\text{dimension of the previous layer}}}$， 这也是He初始化对ReLU激活层的建议。
