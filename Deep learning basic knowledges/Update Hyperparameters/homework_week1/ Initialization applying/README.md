@@ -1,4 +1,20 @@
+
 # 使用3种initialization的方法
+**可以清楚的知道HE_initialization的准确率要高**
+Here's a quick recap of the main takeaways:
+
+<font color='blue'>
+    
+- Different initializations lead to very different results
+- Random initialization is used to break symmetry and make sure different hidden units can learn different things
+- Resist initializing to values that are too large!
+- He initialization works well for networks with ReLU activations
+
+- 不同的初始化会导致截然不同的结果
+- 随机初始化用于打破对称性，确保不同的隐藏单元可以学习不同的东西
+- 避免初始化值过大！
+- 他的初始化对具有ReLU激活的网络非常有效
+----------------------------------------------------------
 - *Zeros initialization* --  setting `initialization = "zeros"` in the input argument.
 - *Random initialization* -- setting `initialization = "random"` in the input argument. This initializes the weights to large random values.  
 - *He initialization* -- setting `initialization = "he"` in the input argument. This initializes the weights to random values scaled according to a paper by He et al., 2015. 
