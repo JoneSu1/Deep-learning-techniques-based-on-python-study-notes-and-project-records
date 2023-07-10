@@ -29,8 +29,9 @@
 **这里展示的是当tanh作为激活函数的时候**
 ![1](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/e05d9ed6-e4c2-4a6a-8ef8-06d2e82fa0ef)
 
-## 当神经网络种完成了backward propagation之后要进行gradient descent，如何确定gradient descent倒位了,（Numerical Approximation of gradient）梯度数值近似.
 
+##  Gradient Checking
+**当神经网络种完成了backward propagation之后要进行gradient descent，如何确定gradient descent倒位了,（Numerical Approximation of gradient）梯度数值近似.**
 ### 1. check the derivative computation
 ![3](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/a7db0089-2324-4dd7-9b9c-68f817389594)
 ![4](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/6f549016-c4f7-48ab-9f9d-052df6fda324)
@@ -44,3 +45,22 @@
  ![1](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/6502b0c2-9dc7-4efb-b1d8-89018af77ae4)
 
 
+**关于代码实现**
+
+首先我们需要把每一个parameter给提出来.
+所以我们会用到for loop中对每一个参数都进行处理的命令
+for i each in （）
+![1](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/89f26ef2-b119-44bb-bfe7-188637377ac6)
+
+如果这个gradient checking的结果是10（-7）次方那就对了，如果是-5次方就需要检查了.
+
+### 关于实现gradient checking的一些提示
+
+- 不要在训练模型的时候去gradient checking，只在debug的时候使用
+- If a algorithm failed in grad checking, look at components to try to identify bugs.
+  (主要就是检查d0（approximation）中哪些i导致的和d0的差距过大)
+  
+- 记得regularization （都是处理过拟合的）
+- don't work with dropout (用dropout处理过net之后，J（cost）的值不容易计算)
+- 要考虑有可能是因为W，b随着iteration而变大了，精准的时候可能是W，b接近0的时候.
+- 
