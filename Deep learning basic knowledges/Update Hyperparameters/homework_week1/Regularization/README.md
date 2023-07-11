@@ -385,8 +385,14 @@ Finally, **dropout** is a widely used regularization technique that is specific 
 
 Dropout算法让每一次iteration中丢失的神经元都是随机的.
 
-https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/fb550c6d-dead-4725-9e77-045059024910
+
+
+https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/a56075d9-49c6-474f-a02f-82f7484afea3
+
+
+
 Figure 2 : Drop-out on the second hidden layer.
+
 At each iteration, you shut down (= set to zero) each neuron of a layer with probability  1−𝑘𝑒𝑒𝑝_𝑝𝑟𝑜𝑏  or keep it with probability  𝑘𝑒𝑒𝑝_𝑝𝑟𝑜𝑏  (50% here). The dropped neurons don't contribute to the training in both the forward and backward propagations of the iteration.
 图 2 : 第二层隐藏神经元的退出。
 在每次迭代中，以概率1-𝑘𝑒𝑝_𝑝𝑟𝑜𝑏或以概率𝑘𝑒𝑝_𝑝𝑟𝑜𝑏（此处为50%）保留一层中的每个神经元。被删除的神经元在迭代的前向和后向传播中对训练没有贡献。
