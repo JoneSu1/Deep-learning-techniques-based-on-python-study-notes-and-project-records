@@ -1,5 +1,11 @@
 # 降低overfitting的方法
 
+**在L2 regularization中是使用 lambd来定义** 
+
+- L2 正则化，只是改变了W的值，所以在backpropagation中也只需要改变dW的值就行。dW(l) = (1./m) * np.dot(dZ(l),A(l-1).T) + (lambd/m) * W(l)
+
+**在Dropout中是使用 keep_prob来定义比例**
+
 - 1.数据扩充（Data Augmentation）：通过对训练数据进行一系列的变换和增强操作，生成额外的训练样本。这可以帮助模型更好地泛化并减少过拟合。
 
 - 2.正则化（Regularization）：通过在损失函数中添加正则化项，限制模型的复杂度。常见的正则化方法包括L1正则化和L2正则化。
