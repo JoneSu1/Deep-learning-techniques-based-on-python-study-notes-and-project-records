@@ -2,6 +2,7 @@
  1. **minibatch-gradient descent**
  2. **Exponentially weighted averages(指数加权平均)**
  3. **值得了解的技术bias correction in Exponentially Weight Averages**
+ 4. **Gradient Descent with Momentum(动量梯度下降)**(比上面的标准Optimization算法更快，计算加权平均值然后跟新权重)
 **当数据较大时候，一个好的Opimization将会缩短很多时间**
 
 ## Mini-batch gradient descent是一种用于训练神经网络的优化算法。
@@ -96,6 +97,7 @@ extreme case
   ![2](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/c9ab6e98-ec4c-4e18-a753-e219c61f0981)
 
 **关于0.9这个值的选择**
+
 1. 如果选择这个值更接近1，取0.98，这时候：1/（1-0.98） = 50（相当于粗略算了前50天的温度）.
 2. 这个值选的大，就会曲线更平滑，但是会发生曲线右移动.（因为数值大计算时候产生了数值延迟，适应的慢）
 3. 这个值选小的（0.5），它算出来就是相当于2天的估计。噪声多，更快适应温度的变化.
@@ -117,4 +119,30 @@ Bias correction 会让我们得出的averages 更accurate.
 ![3](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/a1efab1d-2854-4e86-8ebf-497f1b6977f2)
 
 
-   
+## 对这个技术的实践，Momentum.
+
+因为使用gradient descent的时候，它的学习轨迹是折线的，如果iteration太大会超出范围。
+
+**而Momentum算法可以减少前往最小值路上的震荡，因为他是取了两个偏差的平均值，能更接近直线的得到最小值.**
+
+**可以看成在求一个weight数据分布为碗的数据时候，dW，db是小球从碗边落下的加速度，把β看成摩擦力（因为β小于1）**
+![1](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/1951e368-e3ed-4880-af84-e058fc5d9279)
+```
+ Momentum
+  on iteration t:
+  computer dW,db on current mini-bath
+  VdW = βVdW + (1 - β)*dW （就是刚刚的expomential weight averages）
+  vdb = βVdb + （1- β）*db
+```
+  **新的权重**
+  如之前探索的，expomentaily weight averages中，最合适的β值是0.9
+```
+  W = W - α*VdW
+  b = b - α*Vdb 
+```
+**完整的公式**
+
+记得把Vdw = 0， Vdb = 0
+![2](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/c21575fc-8dbc-4c6a-a1f7-846f87e4a432)
+
+
