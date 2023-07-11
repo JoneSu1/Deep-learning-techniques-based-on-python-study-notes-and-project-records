@@ -1,7 +1,7 @@
 # 优化参数iteration的方法
  1. **minibatch-gradient descent**
  2. **Exponentially weighted averages(指数加权平均)**
- 3. 
+ 3. **值得了解的技术bias correction in Exponentially Weight Averages**
 **当数据较大时候，一个好的Opimization将会缩短很多时间**
 
 ## Mini-batch gradient descent是一种用于训练神经网络的优化算法。
@@ -85,12 +85,36 @@ extreme case
   ## 第二种Optimization：Expomentially weight averages
 
    如果想要找出temperature图中数据的曲线，并不让noise影响
-...
+```
   将V0设为0
   则V1 = 0.9vo + 0.1*当天温度
   V2 = 0.9Vo + 0.1*第二天温度
   Vt = 0.9Vo + 0.1*第天温度
-...
+```
   然后在图中绘出曲线，这就是每日温度的Expomentially weight averages
 
   ![2](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/c9ab6e98-ec4c-4e18-a753-e219c61f0981)
+
+**关于0.9这个值的选择**
+1. 如果选择这个值更接近1，取0.98，这时候：1/（1-0.98） = 50（相当于粗略算了前50天的温度）.
+2. 这个值选的大，就会曲线更平滑，但是会发生曲线右移动.（因为数值大计算时候产生了数值延迟，适应的慢）
+3. 这个值选小的（0.5），它算出来就是相当于2天的估计。噪声多，更快适应温度的变化.
+4. 所以根据下图推出的，平均值是约等于（1/（1-设定的数））
+![6](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/de8a7d54-dd29-4e2d-8f9b-492e37b1371a)
+
+**关于如何使用**
+![1](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/1301df83-2fd5-4da0-bc6a-d85240c9603e)
+
+
+
+## Bias correction in exponentially weight averages
+
+Bias correction 会让我们得出的averages 更accurate.
+
+下图中：gree——line： β = 0.98. purple——line： β
+
+
+![3](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/a1efab1d-2854-4e86-8ebf-497f1b6977f2)
+
+
+   
