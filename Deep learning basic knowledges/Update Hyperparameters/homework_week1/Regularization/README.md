@@ -1,4 +1,14 @@
+
 # Regularization
+
+请注意，正则化会损害训练集的性能！这是因为它限制了网络过拟合训练集的能力。但是，由于正则化最终会提高测试精度，因此它对您的系统是有帮助的。
+
+：
+
+- 正则化将帮助您减少过度拟合。
+- 正则化将降低权重值。
+- L2正则化和Dropout是两种非常有效的正则化技术。
+
 Deep Learning models have so much flexibility and capacity that **overfitting can be a serious problem**,
 if the training dataset is not big enough. Sure it does well on the training set, but the learned network **doesn't generalize to new examples** that it has never seen!
 
@@ -367,6 +377,278 @@ L2-正则化基于这样一个假设：权重小的模型比权重大的模型�
 - 权重被推至更小的值。
 
 
+**使用Dropout来进行regularization**
 
+Finally, **dropout** is a widely used regularization technique that is specific to deep learning. It randomly shuts down some neurons in each iteration. Watch these two videos to see what this means!
+
+最后，**dropout**是一种广泛使用的正则化技术，专门用于深度学习。它在每次迭代中随机关闭一些神经元。请观看这两段视频，了解这意味着什么！
+
+Dropout算法让每一次iteration中丢失的神经元都是随机的.
+
+https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/fb550c6d-dead-4725-9e77-045059024910
+Figure 2 : Drop-out on the second hidden layer.
+At each iteration, you shut down (= set to zero) each neuron of a layer with probability  1−𝑘𝑒𝑒𝑝_𝑝𝑟𝑜𝑏  or keep it with probability  𝑘𝑒𝑒𝑝_𝑝𝑟𝑜𝑏  (50% here). The dropped neurons don't contribute to the training in both the forward and backward propagations of the iteration.
+图 2 : 第二层隐藏神经元的退出。
+在每次迭代中，以概率1-𝑘𝑒𝑝_𝑝𝑟𝑜𝑏或以概率𝑘𝑒𝑝_𝑝𝑟𝑜𝑏（此处为50%）保留一层中的每个神经元。被删除的神经元在迭代的前向和后向传播中对训练没有贡献。
+
+https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/5471a1f4-30ec-45f3-9d45-99b7543b3acc
+
+Figure 3: Drop-out on the first and third hidden layers.
+1𝑠𝑡  layer: we shut down on average 40% of the neurons.  3𝑟𝑑  layer: we shut down on average 20% of the neurons.
+
+图3：第一和第三隐藏层的神经元丢失。
+
+1𝑠𝑡层：我们平均关闭了40%的神经元。 3𝑟𝑑层：我们平均关闭了20%的神经元。
+
+当你关闭一些神经元时，你实际上修改了你的模型。Drop-out背后的理念是，在每次迭代中，您都要训练一个不同的模型，该模型只使用神经元的一个子集。
+通过停用，神经元对其他特定神经元的激活变得不那么敏感，因为其他神经元随时可能被关闭。
+
+
+<a name='6-1'></a>
+### 6.1 - Forward Propagation with Dropout
+
+<a name='ex-3'></a>
+### Exercise 3 - forward_propagation_with_dropout
+
+Implement the forward propagation with dropout. You are using a 3 layer neural network, and will add dropout to the first and second hidden layers. We will not apply dropout to the input layer or output layer. 
+
+**Instructions**:
+You would like to shut down some neurons in the first and second layers. To do that, you are going to carry out 4 Steps:
+1. In lecture, we dicussed creating a variable $d^{[1]}$ with the same shape as $a^{[1]}$ using `np.random.rand()` to randomly get numbers between 0 and 1. Here, you will use a vectorized implementation, so create a random matrix $D^{[1]} = [d^{[1](1)} d^{[1](2)} ... d^{[1](m)}] $ of the same dimension as $A^{[1]}$.
+2. Set each entry of $D^{[1]}$ to be 1 with probability (`keep_prob`), and 0 otherwise.
+
+**Hint:** Let's say that keep_prob = 0.8, which means that we want to keep about 80% of the neurons and drop out about 20% of them.  We want to generate a vector that has 1's and 0's, where about 80% of them are 1 and about 20% are 0.
+This python statement:  
+`X = (X < keep_prob).astype(int)`  
+
+is conceptually the same as this if-else statement (for the simple case of a one-dimensional array) :
+
+```
+for i,v in enumerate(x):
+    if v < keep_prob:
+        x[i] = 1
+    else: # v >= keep_prob
+        x[i] = 0
+```
+Note that the `X = (X < keep_prob).astype(int)` works with multi-dimensional arrays, and the resulting output preserves the dimensions of the input array.
+
+Also note that without using `.astype(int)`, the result is an array of booleans `True` and `False`, which Python automatically converts to 1 and 0 if we multiply it with numbers.  (However, it's better practice to convert data into the data type that we intend, so try using `.astype(int)`.)
+
+3. Set $A^{[1]}$ to $A^{[1]} * D^{[1]}$. (You are shutting down some neurons). You can think of $D^{[1]}$ as a mask, so that when it is multiplied with another matrix, it shuts down some of the values.
+4. Divide $A^{[1]}$ by `keep_prob`. By doing this you are assuring that the result of the cost will still have the same expected value as without drop-out. (This technique is also called inverted dropout.)
+
+练习 3 - 带滤波的前向传播
+实现带滤波的前向传播。您将使用一个三层神经网络，并在第一层和第二层隐藏层添加滤波。我们不会在输入层和输出层添加滤波。
+
+说明： 您希望关闭第一层和第二层的一些神经元。为此，您需要执行4个步骤：
+**注意，dropout只处理hidden层，不处理output层**
+在讲座中，我们讨论了使用np.random.rand()创建一个与𝑎[1]形状相同的变量𝑑[1]，**随机获取0到1之间的数字**。在这里，您将使用矢量化实现，因此创建一个与 𝐴[1]相同维度的随机矩阵 𝐷[1]=[𝑑[1](1)𝑑[1](2)...𝑑[1](𝑚)] 。
+将𝐷[1]中的每个条目设置为 1，概率为 (keep_prob)，否则为 0。
+提示：假设 keep_prob = 0.8，这意味着我们希望保留大约 80% 的神经元，放弃大约 20% 的神经元。我们希望生成一个有1和0的向量，其中大约80%是1，大约20%是0：
+X = (X < keep_prob).astype(int)
+
+在概念上与if-else语句相同（对于一维数组的简单情况）：
+```
+for i,v in enumerate(x)：
+    if v < keep_prob：
+        x[i] = 1
+    else： # v >= keep_prob
+        x[i] = 0
+```
+注意X = (X < keep_prob).astype(int)对多维数组有效，输出结果保留了输入数组的维数。
+
+还要注意的是，如果不使用 .astype(int)，结果将是一个布尔数组 True 和 False，如果我们将其与数字相乘，Python 会自动将其转换为 1 和 0。(然而，更好的做法是将数据转换成我们想要的数据类型，所以尝试使用 .astype(int))。
+
+将 𝐴[1] 设为 𝐴[1]∗𝐷[1] 。(您正在关闭一些神经元）。您可以将 𝐷[1]视为一个掩码，当它与另一个矩阵相乘时，它将关闭某些值。
+用 keep_prob 除以 𝐴[1]。通过这样做，您可以确保代价的结果仍然具有与没有丢弃时相同的期望值。(这种技术也被称为反向滤波）。
+# GRADED FUNCTION: forward_propagation_with_dropout
+```python
+def forward_propagation_with_dropout(X, parameters, keep_prob = 0.5):
+    """
+    Implements the forward propagation: LINEAR -> RELU + DROPOUT -> LINEAR -> RELU + DROPOUT -> LINEAR -> SIGMOID.
     
+    Arguments:
+    X -- input dataset, of shape (2, number of examples)
+    parameters -- python dictionary containing your parameters "W1", "b1", "W2", "b2", "W3", "b3":
+                    W1 -- weight matrix of shape (20, 2)
+                    b1 -- bias vector of shape (20, 1)
+                    W2 -- weight matrix of shape (3, 20)
+                    b2 -- bias vector of shape (3, 1)
+                    W3 -- weight matrix of shape (1, 3)
+                    b3 -- bias vector of shape (1, 1)
+    keep_prob - probability of keeping a neuron active during drop-out, scalar
+    
+    Returns:
+    A3 -- last activation value, output of the forward propagation, of shape (1,1)
+    cache -- tuple, information stored for computing the backward propagation
+    """
+    
+    np.random.seed(1)
+    
+    # retrieve parameters
+    W1 = parameters["W1"]
+    b1 = parameters["b1"]
+    W2 = parameters["W2"]
+    b2 = parameters["b2"]
+    W3 = parameters["W3"]
+    b3 = parameters["b3"]
+    
+    # LINEAR -> RELU -> LINEAR -> RELU -> LINEAR -> SIGMOID
+    Z1 = np.dot(W1, X) + b1
+    A1 = relu(Z1)
+    #(≈ 4 lines of code)         # Steps 1-4 below correspond to the Steps 1-4 described above. 
+    # D1 =                                           # Step 1: initialize matrix D1 = np.random.rand(..., ...)
+    # D1 =                                           # Step 2: convert entries of D1 to 0 or 1 (using keep_prob as the threshold)
+    # A1 =                                           # Step 3: shut down some neurons of A1
+    # A1 =                                           # Step 4: scale the value of neurons that haven't been shut down
+    # YOUR CODE STARTS HERE
+    D1 = np.random.rand(A1.shape[0], A1.shape[1])  # Step 1: initialize matrix D1
+    D1 = (D1 < keep_prob).astype(int)  # Step 2: convert entries of D1 to 0 or 1 (using keep_prob as the threshold)
+    A1 = A1 * D1  # Step 3: shut down some neurons of A1
+    A1 = A1 / keep_prob  # Step 4: scale the value of neurons that haven't been shut down
+    
+    # YOUR CODE ENDS HERE
+    Z2 = np.dot(W2, A1) + b2
+    A2 = relu(Z2)
+    #(≈ 4 lines of code)
+    # D2 =                                           # Step 1: initialize matrix D2 = np.random.rand(..., ...)
+    # D2 =                                           # Step 2: convert entries of D2 to 0 or 1 (using keep_prob as the threshold)
+    # A2 =                                           # Step 3: shut down some neurons of A2
+    # A2 =                                           # Step 4: scale the value of neurons that haven't been shut down
+    # YOUR CODE STARTS HERE
+    D2 = np.random.rand(A2.shape[0], A2.shape[1])  # Step 1: initialize matrix D2
+    D2 = (D2 < keep_prob).astype(int)  # Step 2: convert entries of D2 to 0 or 1 (using keep_prob as the threshold)
+    A2 = A2 * D2  # Step 3: shut down some neurons of A2
+    A2 = A2 / keep_prob  # Step 4: scale the value of neurons that haven't been shut down
+    
+    # YOUR CODE ENDS HERE
+    Z3 = np.dot(W3, A2) + b3
+    A3 = sigmoid(Z3)
+    
+    cache = (Z1, D1, A1, W1, b1, Z2, D2, A2, W2, b2, Z3, A3, W3, b3)
+    
+    return A3, cache
+```
+![1](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/aec9fee9-def1-4975-9122-af22f89c1e77)
 
+
+<a name='6-2'></a>
+### 6.2 - Backward Propagation with Dropout
+
+<a name='ex-4'></a>
+### Exercise 4 - backward_propagation_with_dropout
+Implement the backward propagation with dropout. As before, you are training a 3 layer network. Add dropout to the first and second hidden layers, using the masks $D^{[1]}$ and $D^{[2]}$ stored in the cache. 
+
+
+
+**Instruction**:
+Backpropagation with dropout is actually quite easy. You will have to carry out 2 Steps:
+1. You had previously shut down some neurons during forward propagation, by applying a mask $D^{[1]}$ to `A1`. In backpropagation, you will have to shut down the same neurons, by reapplying the same mask $D^{[1]}$ to `dA1`. 
+2. During forward propagation, you had divided `A1` by `keep_prob`. In backpropagation, you'll therefore have to divide `dA1` by `keep_prob` again (the calculus interpretation is that if $A^{[1]}$ is scaled by `keep_prob`, then its derivative $dA^{[1]}$ is also scaled by the same `keep_prob`).
+
+6.2 - 带滤波的反向传播
+
+练习 4 - 带滤波的反向传播
+
+实现带 dropout 的反向传播。和以前一样，我们训练一个三层网络。使用缓存中的掩码𝐷[1]和𝐷[2]，在第一层和第二层隐藏层中添加滤波。
+
+指令： 带 dropout 的反向传播实际上非常简单。您需要执行 2 个步骤：
+
+- 在前向传播过程中，通过对 A1 应用掩码 𝐷[1]，您已经关闭了一些神经元。在反向传播过程中，您需要关闭相同的神经元，方法是在 dA1 上重新应用相同的掩码𝐷[1]。
+- 在前向传播过程中，您将 A1 除以 keep_prob。在反向传播中，您必须再次用 keep_prob 除以 dA1（微积分的解释是，如果 𝐴[1] 被 keep_prob 缩放，那么它的导数 𝑑𝐴[1]也被同样的 keep_prob 缩放）。
+- **很简单，也是把随机出来的数组（0到1之间的）直接和算出来的dA相乘，再除以keep_prob来**
+
+# GRADED FUNCTION: backward_propagation_with_dropout
+```python
+def backward_propagation_with_dropout(X, Y, cache, keep_prob):
+    """
+    Implements the backward propagation of our baseline model to which we added dropout.
+    
+    Arguments:
+    X -- input dataset, of shape (2, number of examples)
+    Y -- "true" labels vector, of shape (output size, number of examples)
+    cache -- cache output from forward_propagation_with_dropout()
+    keep_prob - probability of keeping a neuron active during drop-out, scalar
+    
+    Returns:
+    gradients -- A dictionary with the gradients with respect to each parameter, activation and pre-activation variables
+    """
+    
+    m = X.shape[1]
+    (Z1, D1, A1, W1, b1, Z2, D2, A2, W2, b2, Z3, A3, W3, b3) = cache
+    
+    dZ3 = A3 - Y
+    dW3 = 1./m * np.dot(dZ3, A2.T)
+    db3 = 1./m * np.sum(dZ3, axis=1, keepdims=True)
+    dA2 = np.dot(W3.T, dZ3)
+    #(≈ 2 lines of code)
+    # dA2 =                # Step 1: Apply mask D2 to shut down the same neurons as during the forward propagation
+    # dA2 =                # Step 2: Scale the value of neurons that haven't been shut down
+    # YOUR CODE STARTS HERE
+    dA2 = np.multiply(dA2, D2)
+    dA2 = dA2 / keep_prob  # Scale the value of neurons that haven't been shut down
+    
+    dZ2 = np.multiply(dA2, np.int64(A2 > 0))
+    
+    # YOUR CODE ENDS HERE
+    dZ2 = np.multiply(dA2, np.int64(A2 > 0))
+    dW2 = 1./m * np.dot(dZ2, A1.T)
+    db2 = 1./m * np.sum(dZ2, axis=1, keepdims=True)
+    
+    dA1 = np.dot(W2.T, dZ2)
+    #(≈ 2 lines of code)
+    # dA1 =                # Step 1: Apply mask D1 to shut down the same neurons as during the forward propagation
+    # dA1 =                # Step 2: Scale the value of neurons that haven't been shut down
+    # YOUR CODE STARTS HERE现在让我们运行带 dropout 的模型（`keep_prob = 0.86`）。这意味着在每次迭代时，以14%的概率关闭第1层和第2层的每个神经元。函数 `model()` 现在将调用：
+- 前向_propagation_with_dropout"，而不是 "前向_propagation"。
+- `backward_propagation_with_dropout`代替`backward_propagation`。
+    dA1 = np.multiply(dA1,D1)
+    dA1 = dA1/ keep_prob
+    # YOUR CODE ENDS HERE
+    dZ1 = np.multiply(dA1, np.int64(A1 > 0))
+    dW1 = 1./m * np.dot(dZ1, X.T)
+    db1 = 1./m * np.sum(dZ1, axis=1, keepdims=True)
+    
+    gradients = {"dZ3": dZ3, "dW3": dW3, "db3": db3,"dA2": dA2,
+                 "dZ2": dZ2, "dW2": dW2, "db2": db2, "dA1": dA1, 
+                 "dZ1": dZ1, "dW1": dW1, "db1": db1}
+    
+    return gradients
+```
+![1](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/ed1ee673-3fd2-47a0-9e63-b4a9c0eca2af)
+
+Let's now run the model with dropout (`keep_prob = 0.86`). It means at every iteration you shut down each neurons of layer 1 and 2 with 14% probability. The function `model()` will now call:
+- `forward_propagation_with_dropout` instead of `forward_propagation`.
+- `backward_propagation_with_dropout` instead of `backward_propagation`.
+
+
+现在让我们运行带 dropout 的模型（`keep_prob = 0.86`）。这意味着在每次迭代时，以14%的概率关闭第1层和第2层的每个神经元。函数 `model()` 现在将调用：
+- 前向_propagation_with_dropout"，而不是 "前向_propagation"。
+- `backward_propagation_with_dropout`代替`backward_propagation`。
+ ```
+parameters = model(train_X, train_Y, keep_prob = 0.86, learning_rate = 0.3)
+
+print ("On the train set:")
+predictions_train = predict(train_X, train_Y, parameters)
+print ("On the test set:")
+predictions_test = predict(test_X, test_Y, parameters)
+```
+![1](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/0fbd6aa3-00aa-452b-942a-dc1909c4ae38)
+
+Dropout运行良好！测试准确率再次提高（达到 95%）！您的模型没有过度拟合训练集，并且在测试集上表现出色。法国足球队将永远感谢您！
+
+运行下面的代码绘制决策边界。
+![2](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/59298adb-8675-439b-9150-2d96256d52e7)
+
+
+**注意**：
+- 使用dropout时的一个**常见错误是在训练和测试中都使用它。您应该只在训练中使用dropout（随机剔除节点）。
+- 像[TensorFlow](https://www.tensorflow.org/api_docs/python/tf/nn/dropout)、[PaddlePaddle](https://www.paddlepaddle.org.cn/documentation/docs/en/api/paddle/nn/Dropout_en.html#dropout)、[Keras](https://keras.io/api/layers/regularization_layers/dropout/)或[caffe](https://caffe.berkeleyvision.org/doxygen/classcaffe_1_1DropoutLayer.html)这样的深度学习框架都有dropout层实现。不要紧张--您很快就会学会其中的一些框架。
+
+<font color='blue'>
+    
+**关于Dropout，您需要记住的是：**
+- Dropout是一种正则化技术。
+- 你只能在训练时使用dropout。在测试时不要使用dropout（随机消除节点）。
+- 在前向和后向传播过程中都要使用dropout。
+- 在训练期间，将每个 dropout 层除以 keep_prob，以保持激活的期望值相同。例如，如果keep_prob为0.5，那么我们将平均关闭一半的节点，因此输出将按0.5的比例缩放，因为只有剩余的一半节点对求解有贡献。因此，现在的输出具有相同的期望值。您可以检查一下，即使 keep_prob 的值不是 0.5，这个方法也是有效的。 
