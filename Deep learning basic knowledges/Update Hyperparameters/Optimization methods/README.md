@@ -3,6 +3,7 @@
  2. **Exponentially weighted averages(指数加权平均)**
  3. **值得了解的技术bias correction in Exponentially Weight Averages**
  4. **Gradient Descent with Momentum(动量梯度下降)**(比上面的标准Optimization算法更快，计算加权平均值然后跟新权重)
+ 5. 结合了Momentum和RMSprop（root mean square propagation，均根传递）的最优秀算法**Adam**
 **当数据较大时候，一个好的Opimization将会缩短很多时间**
 
 ## Mini-batch gradient descent是一种用于训练神经网络的优化算法。
@@ -153,6 +154,7 @@ Bias correction 会让我们得出的averages 更accurate.
 
 ![1](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/52d40dc3-3f92-4eaf-b3d1-ff9a4e9381c4)
 
+**蓝色的是未经Optimization（root mean square propagation）的，绿色是收敛了b的**
 
 **根据图和公式，我们希望dW^2是小的，W就是大的，这就会往直线走，db^2是大的，那么b就是小的，那像上的偏差就少.**
 
@@ -164,4 +166,8 @@ On iteration t:
        #然后用以下方法跟新parameters
        W：= W - α * （dW/根号下SdW ）
        b：= b - α * （dW/根号下Sdb ）
+
+## 结合Momentum 和 RMSprop的最流行算法，Adam
+
+
  
