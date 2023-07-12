@@ -169,5 +169,50 @@ On iteration t:
 
 ## 结合Momentum 和 RMSprop的最流行算法，Adam
 
+   VdW = 0, SdW = 0, Vdb = 0,, Sdb = 0
+   On iteration t:
+      compute dW,db using current mini-bath
+      #V是执行Momentum
+      VdW = β（1）*VdW + （1-β（1））*dW
+      Vab = β（1）Vdb + （1-β（1））*db
+      #S是执行RMSprop
+      SdW = β（2）*SdW + （1—β（2））*dw^2
+      Sdb = β（2）*Sdb + （1—β（2））*db^2）
 
- 
+      #bias correction
+      VdW = Vdw/(1-β（1）^t)
+      Vdb = Vdb/（1-β（1）^t）
+      Sdw = Sdw/（1-β（2）^t）
+      Sdb = Sdb/（1-β（2）^t）
+
+      #gradient descent
+      W = W - α*（Vdw/(根号下SdW+ Epsion)）
+      b = b - α*（Vdw/(根号下SdW+ Epsion)）
+
+### Hyperparameters choice:
+
+     α： needs to be tune
+     β1：0.9                                    （dw^2）
+     β2：0.999                          （dw^2）
+     E(Epsilon):   10^-8
+
+  Adam: adaptive moment estimation(自适应估计)
+
+
+## learning rate decay(学习效率衰减)
+
+有时学习率过高了，超过了minimize的点，那时就需要进行learning rate decay.
+
+在深度学习中，学习率（learning rate）是一个非常重要的超参数，它决定了模型参数在每次迭代更新时的步长大小。合适的学习率可以加快模型的收敛速度，提高性能，而不合适的学习率可能导致模型无法收敛或者陷入局部最小值。
+
+Learning rate decay（学习率衰减）是一种在训练过程中逐渐降低学习率的技术。通常情况下，一开始使用较大的学习率，然后随着训练的进行逐渐减小学习率。这种技术有以下几个原因和好处：
+
+收敛性：较大的学习率可能导致训练过程中参数更新过大，无法找到合适的最优解。通过逐渐减小学习率，可以使参数更新更加稳定，有助于模型收敛到更好的解。
+
+防止震荡：有时候学习率过大会导致参数在最优解附近来回震荡，而无法收敛。通过衰减学习率，可以减少震荡的可能性，使训练过程更加平稳。
+
+稳定性：衰减学习率可以使模型在训练后期更加稳定。在接近最优解时，模型可能只需要微小的参数更新，而较大的学习率可能会导致模型跳过最优解。通过衰减学习率，可以使模型在接近最优解时更加谨慎地更新参数。
+
+更好的泛化性能：学习率衰减也可以帮助模型具有更好的泛化性能。通过逐渐减小学习率，模型可以在训练过程中逐渐细化参数调整，从而更好地适应数据集的特征，减少过拟合的风险。
+
+     
