@@ -145,4 +145,23 @@ Bias correction 会让我们得出的averages 更accurate.
 记得把Vdw = 0， Vdb = 0
 ![2](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/c21575fc-8dbc-4c6a-a1f7-846f87e4a432)
 
+## 一种新的Optimization algorithm（RMSprop（Root Mean Square prop(均方根传递)））
 
+**我们是通过W和b来影响这个迭代的方向的，如果iteration rate太大就会出现超偏，而如何把这个迭代速率最大化？**
+
+ 就是Root mean square prop algorithm 做的事.
+
+![1](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/52d40dc3-3f92-4eaf-b3d1-ff9a4e9381c4)
+
+
+**根据图和公式，我们希望dW^2是小的，W就是大的，这就会往直线走，db^2是大的，那么b就是小的，那像上的偏差就少.**
+
+On iteration t:
+
+       compute dW,db on current mini-bath
+       SdW = β*SdW + （1-β）* dW^2
+       Sdb = β* Sdb + （1-β）*db^2
+       #然后用以下方法跟新parameters
+       W：= W - α * （dW/根号下SdW ）
+       b：= b - α * （dW/根号下Sdb ）
+ 
