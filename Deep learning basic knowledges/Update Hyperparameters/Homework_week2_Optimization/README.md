@@ -177,10 +177,42 @@ Now you'll build some mini-batches from the training set (X, Y).
 
 There are two steps:
 
-第一步就是随机的分出mini——batch
+第一步就是把数据随机的分到mini——batch中
+第二步就是，把洗牌后的数据按大小（64）分成mini-bath
 
 - **Shuffle**: Create a shuffled version of the training set (X, Y) as shown below. Each column of X and Y represents a training example. Note that the random shuffling is done synchronously between X and Y. Such that after the shuffling the $i^{th}$ column of X is the example corresponding to the $i^{th}$ label in Y. The shuffling step ensures that examples will be split randomly into different mini-batches. 
 
 
 ![1](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/dc16967c-cc47-4b5d-b313-753db3cc4dd3)
 
+- **Partition**: Partition the shuffled (X, Y) into mini-batches of size `mini_batch_size` (here 64). Note that the number of training examples is not always divisible by `mini_batch_size`. The last mini batch might be smaller, but you don't need to worry about this. When the final mini-batch is smaller than the full `mini_batch_size`, it will look like this:
+
+-  **分区**： 将洗牌后的(X, Y)分成大小为`mini_batch_size`（此处为64）的迷你批。请注意，训练实例的数量并不总是可以被 "mini_batch_size "整除。最后的迷你批次可能会更小，但无需担心。当最后的迷你批次小于全部的`mini_batch_size`时，它将看起来像这样：
+  
+![2](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/430151c2-72ce-40bd-ad56-67b52c322af8)
+
+<a name='ex-2'></a>
+### Exercise 2 - random_mini_batches
+
+Implement `random_mini_batches`. The shuffling part has already been coded for you! To help with the partitioning step, you've been provided the following code that selects the indexes for the $1^{st}$ and $2^{nd}$ mini-batches:
+```python
+first_mini_batch_X = shuffled_X[:, 0 : mini_batch_size]
+second_mini_batch_X = shuffled_X[:, mini_batch_size : 2 * mini_batch_size]
+...
+```
+
+Note that the last mini-batch might end up smaller than `mini_batch_size=64`. Let $\lfloor s \rfloor$ represents $s$ rounded down to the nearest integer (this is `math.floor(s)` in Python). If the total number of examples is not a multiple of `mini_batch_size=64` then there will be $\left\lfloor \frac{m}{mini\_batch\_size}\right\rfloor$ mini-batches with a full 64 examples, and the number of examples in the final mini-batch will be $\left(m-mini_\_batch_\_size \times \left\lfloor \frac{m}{mini\_batch\_size}\right\rfloor\right)$. 
+
+**Hint:**
+
+$$mini\_batch\_X = shuffled\_X[:, i : j]$$ 
+
+Think of a way in which you can use the for loop variable `k` help you increment `i` and `j` in multiples of mini_batch_size.
+
+As an example, if you want to increment in multiples of 3, you could the following:
+
+```python
+n = 3
+for k in (0 , 5):
+    print(k * n)
+```
