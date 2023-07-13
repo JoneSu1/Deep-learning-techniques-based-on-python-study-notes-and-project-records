@@ -244,3 +244,27 @@ Learning rate decay（学习率衰减）是一种在训练过程中逐渐降低�
 
 ![2](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/fd63296f-c56a-4667-99cc-b408f19504a3)
 
+## local optima(局部优化) 
+
+最优解，gradient descent的大多数点是位于边上的鞍点（Saddle point）这些点就是grad为0的点。而不是所有点都是0.
+
+而大多数时候我们遇到的最优解都是像右图这样的，不同曲线交点得到local 解，而不是局部最优解.
+而这个解看起来像马鞍，而那个点刚好导数是0， 所以才会叫鞍点.
+
+![4](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/b269d80d-77d2-4207-8565-7ad447d3fc76)
+
+
+**Problem of plateaus(停滞区)**
+
+可以使用(Momentum) algorithm 和RMSprop 以及 Adam算法解决进入palteaus的问题.
+
+他们能快速的学习并通过这个区域得到优解.
+ ![6](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/227f8a47-0a84-4b0a-8a1a-0d1f3c1c6645)
+
+
+
+plateaus 是指derivative长时间接近于0的一段区域.
+
+如图，从那个点开始进行gradient descent，由于grad为0或者接近0，the surface is quite flat.
+所以可能会花费很长的时间，取缓慢的在plateaus中找到那个点.
+
