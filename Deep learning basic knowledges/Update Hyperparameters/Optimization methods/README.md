@@ -4,6 +4,7 @@
  3. **值得了解的技术bias correction in Exponentially Weight Averages**
  4. **Gradient Descent with Momentum(动量梯度下降)**(比上面的标准Optimization算法更快，计算加权平均值然后跟新权重)
  5. 结合了Momentum和RMSprop（root mean square propagation，均根传递）的最优秀算法**Adam**
+ 6. **Learning rate decay**
 **当数据较大时候，一个好的Opimization将会缩短很多时间**
 
 ## Mini-batch gradient descent是一种用于训练神经网络的优化算法。
@@ -201,7 +202,12 @@ On iteration t:
 
 ## learning rate decay(学习效率衰减)
 
+![1](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/ffeee178-40cd-43a5-ad81-5cee385189b8)
+
+
 有时学习率过高了，超过了minimize的点，那时就需要进行learning rate decay.
+
+学习率衰减的目的是在训练过程中逐渐降低学习率，使模型在接近最优解时更加稳定。这样可以提高模型的收敛速度，并帮助模型更好地泛化到未见过的数据。选择适当的学习率衰减方法和衰减率是优化神经网络训练的重要考虑因素。
 
 在深度学习中，学习率（learning rate）是一个非常重要的超参数，它决定了模型参数在每次迭代更新时的步长大小。合适的学习率可以加快模型的收敛速度，提高性能，而不合适的学习率可能导致模型无法收敛或者陷入局部最小值。
 
@@ -215,4 +221,26 @@ Learning rate decay（学习率衰减）是一种在训练过程中逐渐降低�
 
 更好的泛化性能：学习率衰减也可以帮助模型具有更好的泛化性能。通过逐渐减小学习率，模型可以在训练过程中逐渐细化参数调整，从而更好地适应数据集的特征，减少过拟合的风险。
 
-     
+**常见的Learning rate decay**
+
+![3](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/a7f39862-5e75-4141-8804-a0b9e746eac0)
+
+
+定期衰减（Step Decay）：在训练的特定时间点或特定的训练轮数之后，将学习率乘以一个衰减因子。例如，每隔一定的训练轮数，将学习率减小为原来的一半。
+
+指数衰减（Exponential Decay）：以指数函数的形式逐渐降低学习率。学习率的衰减速度取决于指数函数中的衰减率参数。
+
+
+自适应学习率方法（Adaptive Learning Rate）：根据模型训练的情况动态地调整学习率。例如，AdaGrad、RMSprop 和 Adam 等优化算法就会根据梯度的变化情况自适应地调整学习率。
+
+### how to implement learning rate decay
+
+**主要是根据epoch的增长来使得学习率α下降，所以公式中是一个分式 * 上一次α的形式**
+
+![1](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/4b5efef1-541e-4c72-b9e5-1d711739f3f2)
+
+
+**Dr.Andew书写错误的订正**
+
+![2](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/fd63296f-c56a-4667-99cc-b408f19504a3)
+
