@@ -117,8 +117,8 @@ Bias correction 会让我们得出的averages 更accurate.
 
 下图中：gree——line： β = 0.98. purple——line： β
 
+![1](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/bea1bcf4-92f7-43ab-acbc-f2fc7e2d81c0)
 
-![3](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/a1efab1d-2854-4e86-8ebf-497f1b6977f2)
 
 
 ## 对这个技术的实践，Momentum.
