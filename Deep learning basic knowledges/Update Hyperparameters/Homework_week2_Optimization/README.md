@@ -73,3 +73,83 @@ where L is the number of layers and $\alpha$ is the learning rate.
 All parameters should be stored in the `parameters` dictionary. Note that the iterator `l` starts at 1
 in the `for` loop as the first parameters are $W^{[1]}$ and $b^{[1]}$. 
 
+# GRADED FUNCTION: update_parameters_with_gd
+``` python
+def update_parameters_with_gd(parameters, grads, learning_rate):
+    """
+    Update parameters using one step of gradient descent
+    
+    Arguments:
+    parameters -- python dictionary containing your parameters to be updated:
+                    parameters['W' + str(l)] = Wl
+                    parameters['b' + str(l)] = bl
+    grads -- python dictionary containing your gradients to update each parameters:
+                    grads['dW' + str(l)] = dWl
+                    grads['db' + str(l)] = dbl
+    learning_rate -- the learning rate, scalar.
+    
+    Returns:
+    parameters -- python dictionary containing your updated parameters 
+    """
+    L = len(parameters) // 2 # number of layers in the neural networks
+
+    # Update rule for each parameter
+    for l in range(1, L + 1):
+        # (approx. 2 lines)
+        # parameters["W" + str(l)] =  
+        # parameters["b" + str(l)] = 
+        # YOUR CODE STARTS HERE
+        parameters["W" + str(l)] =parameters["W" + str(l)] - learning_rate * grads["dW" + str(l)]
+        parameters["b" + str(l)] =parameters["b" + str(l)] - learning_rate * grads["db"+ str(l)]
+        # YOUR CODE ENDS HERE
+    return parameters
+```
+![1](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/91603b65-5586-4719-9f6f-c5f0019c3078)
+
+A variant of this is Stochastic Gradient Descent (SGD), which is equivalent to mini-batch gradient descent, where each mini-batch has just 1 example. The update rule that you have just implemented does not change. What changes is that you would be computing gradients on just one training example at a time, rather than on the whole training set. The code examples below illustrate the difference between stochastic gradient descent and (batch) gradient descent.
+
+其变种是随机梯度下降法（SGD），相当于迷你批次梯度下降法，每个迷你批次只有一个实例。您刚刚实现的更新规则并没有改变。发生变化的是，您每次只在一个训练实例上计算梯度，而不是在整个训练集上计算梯度。下面的代码示例说明了随机梯度下降和（批量）梯度下降的区别。
+
+- **(Batch) Gradient Descent**:
+
+``` python
+X = data_input
+Y = labels
+m = X.shape[1]  # Number of training examples
+parameters = initialize_parameters(layers_dims)
+for i in range(0, num_iterations):
+    # Forward propagation
+    a, caches = forward_propagation(X, parameters)
+    # Compute cost
+    cost_total = compute_cost(a, Y)  # Cost for m training examples
+    # Backward propagation
+    grads = backward_propagation(a, caches, parameters)
+    # Update parameters
+    parameters = update_parameters(parameters, grads)
+    # Compute average cost
+    cost_avg = cost_total / m
+        
+```
+#差别就是在Stochastic gradient descent里面还是用了第二个for loop J，j in range(0,分出的batch数目).
+
+- **Stochastic Gradient Descent**:
+
+```python
+X = data_input
+Y = labels
+m = X.shape[1]  # Number of training examples
+parameters = initialize_parameters(layers_dims)
+for i in range(0, num_iterations):
+    cost_total = 0
+    for j in range(0, m):
+        # Forward propagation
+        a, caches = forward_propagation(X[:,j], parameters)
+        # Compute cost
+        cost_total += compute_cost(a, Y[:,j])  # Cost for one training example
+        # Backward propagation
+        grads = backward_propagation(a, caches, parameters)
+        # Update parameters
+        parameters = update_parameters(parameters, grads)
+    # Compute average cost
+    cost_avg = cost_total / m
+```
