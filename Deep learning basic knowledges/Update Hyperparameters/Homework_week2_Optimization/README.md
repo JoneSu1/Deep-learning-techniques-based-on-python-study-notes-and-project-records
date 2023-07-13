@@ -153,3 +153,34 @@ for i in range(0, num_iterations):
     # Compute average cost
     cost_avg = cost_total / m
 ```
+
+In Stochastic Gradient Descent, you use only 1 training example before updating the gradients. When the training set is large, SGD can be faster. But the parameters will "oscillate（震动）" toward the minimum rather than converge smoothly. Here's what that looks like:
+
+![2](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/7d79f6c3-b871-457b-a0cb-ccfdbbf1abae)
+
+**Note** also that implementing SGD requires 3 for-loops in total:
+1. Over the number of iterations
+2. Over the $m$ training examples
+3. Over the layers (to update all parameters, from $(W^{[1]},b^{[1]})$ to $(W^{[L]},b^{[L]})$)
+
+In practice, you'll often get faster results if you don't use the entire training set, or just one training example, to perform each update. Mini-batch gradient descent uses an intermediate number of examples for each step. With mini-batch gradient descent, you loop over the mini-batches instead of looping over individual training examples.
+
+在实践中，如果不使用整个训练集，或只使用一个训练示例来执行每次更新，通常会获得更快的结果。迷你批次梯度下降法每一步都使用中间数量的示例。使用迷你批次梯度下降法，您可以循环使用迷你批次，而不是循环使用单个训练示例。
+
+![3](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/5c16155d-dee0-475e-b0b6-ac2bb937f93c)
+
+
+<a name='3'></a>
+## 3 - Mini-Batch Gradient Descent
+
+Now you'll build some mini-batches from the training set (X, Y).
+
+There are two steps:
+
+第一步就是随机的分出mini——batch
+
+- **Shuffle**: Create a shuffled version of the training set (X, Y) as shown below. Each column of X and Y represents a training example. Note that the random shuffling is done synchronously between X and Y. Such that after the shuffling the $i^{th}$ column of X is the example corresponding to the $i^{th}$ label in Y. The shuffling step ensures that examples will be split randomly into different mini-batches. 
+
+
+![1](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/dc16967c-cc47-4b5d-b313-753db3cc4dd3)
+
