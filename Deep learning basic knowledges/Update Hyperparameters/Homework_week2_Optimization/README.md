@@ -332,3 +332,112 @@ Momentum takes into account the past gradients to smooth out the update. The 'di
 ![2](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/db73d9ec-766c-474e-a404-1b64d48c2f16)
 
 <caption><center> <u><font color='purple'><b>Figure 3</b> </u><font color='purple'>: The red arrows show the direction taken by one step of mini-batch gradient descent with momentum. The blue points show the direction of the gradient (with respect to the current mini-batch) on each step. Rather than just following the gradient, the gradient is allowed to influence $v$ and then take a step in the direction of $v$.<br> <font color='black'> </center>
+
+图 3 : 红色箭头表示带动量的迷你批次梯度下降的一步方向。蓝色点表示每一步的梯度方向（相对于当前迷你批次）。图 3：红色箭头表示带动量的小批量梯度下降过程中的每一步，
+蓝色点表示每一步的梯度方向（相对于当前的小批量）。
+
+<a name='ex-3'></a>    
+### Exercise 3 - initialize_velocity
+Initialize the velocity. The velocity, $v$, is a python dictionary that needs to be initialized with arrays of zeros. Its keys are the same as those in the `grads` dictionary, that is:
+for $l =1,...,L$:
+初始化速度 速度 𝑣 是一个 python 字典，需要用零数组进行初始化。其键值与grads字典中的键值相同，即：对于𝑙=1,...,𝐿 ：
+```python
+v["dW" + str(l)] = ... #(numpy array of zeros with the same shape as parameters["W" + str(l)])
+v["db" + str(l)] = ... #(numpy array of zeros with the same shape as parameters["b" + str(l)])
+```
+**Note** that the iterator l starts at 1 in the for loop as the first parameters are v["dW1"] and v["db1"] (that's a "one" on the superscript).
+**注意**在for循环中迭代器l从1开始，因为第一个参数是v["dW1"]和v["db1"]（上标是 "一"）。
+
+np.zeros_like()是NumPy库中的一个函数，用于创建一个与给定数组具有相同形状的零数组。
+
+具体而言，np.zeros_like(arr)函数将返回一个与数组arr具有相同形状的零数组。该函数的返回值是一个新的NumPy数组，其中的元素都被初始化为零。
+
+```python
+def initialize_velocity(parameters):
+    """
+    Initializes the velocity as a python dictionary with:
+                - keys: "dW1", "db1", ..., "dWL", "dbL" 
+                - values: numpy arrays of zeros of the same shape as the corresponding gradients/parameters.
+    Arguments:
+    parameters -- python dictionary containing your parameters.
+                    parameters['W' + str(l)] = Wl
+                    parameters['b' + str(l)] = bl
+    
+    Returns:
+    v -- python dictionary containing the current velocity.
+                    v['dW' + str(l)] = velocity of dWl
+                    v['db' + str(l)] = velocity of dbl
+    """
+    
+    L = len(parameters) // 2  # 神经网络中的层数
+    v = {}
+    
+    # 初始化速度
+    for l in range(1, L + 1):
+        # 初始化v["dW" + str(l)]和v["db" + str(l)]为零数组
+        v["dW" + str(l)] = np.zeros_like(parameters["W" + str(l)])
+        v["db" + str(l)] = np.zeros_like(parameters["b" + str(l)])
+        
+    return v
+```
+![1](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/02882220-4831-4320-8d69-d13db67fe2e9)
+
+<a name='ex-4'></a>   
+### Exercise 4 - update_parameters_with_momentum
+
+Now, implement the parameters update with momentum. The momentum update rule is, for $l = 1, ..., L$: 
+
+$$ \begin{cases}
+v_{dW^{[l]}} = \beta v_{dW^{[l]}} + (1 - \beta) dW^{[l]} \\
+W^{[l]} = W^{[l]} - \alpha v_{dW^{[l]}}
+\end{cases}\tag{3}$$
+
+$$\begin{cases}
+v_{db^{[l]}} = \beta v_{db^{[l]}} + (1 - \beta) db^{[l]} \\
+b^{[l]} = b^{[l]} - \alpha v_{db^{[l]}} 
+\end{cases}\tag{4}$$
+
+where L is the number of layers, $\beta$ is the momentum and $\alpha$ is the learning rate. All parameters should be stored in the `parameters` dictionary.  Note that the iterator `l` starts at 1 in the `for` loop as the first parameters are $W^{[1]}$ and $b^{[1]}$ (that's a "one" on the superscript).
+
+其中，L 是层数， 𝛼 是动量，𝛼 是学习率。所有参数都存储在参数字典中。请注意，在for循环中，迭代器l从1开始，因为第一个参数是𝑏[1]和𝑏[1]（上标是 "1"）。
+```python
+def update_parameters_with_momentum(parameters, grads, v, beta, learning_rate):
+    """
+    Update parameters using Momentum
+    
+    Arguments:
+    parameters -- python dictionary containing your parameters:
+                    parameters['W' + str(l)] = Wl
+                    parameters['b' + str(l)] = bl
+    grads -- python dictionary containing your gradients for each parameters:
+                    grads['dW' + str(l)] = dWl
+                    grads['db' + str(l)] = dbl
+    v -- python dictionary containing the current velocity:
+                    v['dW' + str(l)] = ...
+                    v['db' + str(l)] = ...
+    beta -- the momentum hyperparameter, scalar
+    learning_rate -- the learning rate, scalar
+    
+    Returns:
+    parameters -- python dictionary containing your updated parameters 
+    v -- python dictionary containing your updated velocities
+    """
+
+    L = len(parameters) // 2  # 神经网络中的层数
+    
+    # 对每个参数进行动量更新
+    for l in range(1, L + 1):
+        
+        # 计算速度
+        v["dW" + str(l)] = beta * v["dW" + str(l)] + (1 - beta) * grads["dW" + str(l)]
+        v["db" + str(l)] = beta * v["db" + str(l)] + (1 - beta) * grads["db" + str(l)]
+        
+        # 更新参数
+        parameters["W" + str(l)] = parameters["W" + str(l)] - learning_rate * v["dW" + str(l)]
+        parameters["b" + str(l)] = parameters["b" + str(l)] - learning_rate * v["db" + str(l)]
+        
+    return parameters, v
+```
+![3](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/b2d28a5d-4ce3-4b24-b457-7b4d997d2636)
+
+
