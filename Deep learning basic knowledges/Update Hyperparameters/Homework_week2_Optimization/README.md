@@ -217,3 +217,118 @@ n = 3
 for k in (0 , 5):
     print(k * n)
 ```
+
+
+在代码中，k 是循环变量，它表示当前迭代的完整小批次的索引。索引从0开始，所以 (k + 1) 表示下一个完整小批次的索引。
+
+在处理完整小批次时，我们需要从 shuffled_X 和 shuffled_Y 中提取一段连续的数据作为当前小批次。这段数据的起始索引是 k * mini_batch_size，结束索引是 (k + 1) * mini_batch_size。因此，我们需要使用 (k + 1) 来计算结束索引，以确保提取的数据是连续的、不重叠的。
+
+举个例子，如果 mini_batch_size 是 64，而 k 的值是 0，则 (k + 1) * mini_batch_size 就是 64，意味着我们提取的数据范围是从索引 0 到 63（共计 64 个元素），即一个完整的小批次。
+```python
+import math
+import numpy as np
+
+def random_mini_batches(X, Y, mini_batch_size=64, seed=0):
+    """
+    Creates a list of random minibatches from (X, Y)
+
+    Arguments:
+    X -- input data, of shape (input size, number of examples)
+    Y -- true "label" vector (1 for blue dot / 0 for red dot), of shape (1, number of examples)
+    mini_batch_size -- size of the mini-batches, integer
+
+    Returns:
+    mini_batches -- list of synchronous (mini_batch_X, mini_batch_Y)
+    """
+
+    np.random.seed(seed)  # To make your "random" minibatches the same as ours
+    m = X.shape[1]  # number of training examples
+    mini_batches = []
+
+    # Step 1: Shuffle (X, Y)
+    permutation = list(np.random.permutation(m))  # 随机打乱样本顺序
+    shuffled_X = X[:, permutation]  # 根据打乱的索引重新排列X
+    shuffled_Y = Y[:, permutation].reshape((1, m))  # 根据打乱的索引重新排列Y
+
+    inc = mini_batch_size
+
+    # Step 2 - Partition (shuffled_X, shuffled_Y).
+    # Cases with a complete mini batch size only i.e each of 64 examples.
+    num_complete_minibatches = math.floor(m / mini_batch_size)  # 计算完整小批次的数量
+    for k in range(0, num_complete_minibatches):
+        # 提取完整的小批次
+        mini_batch_X = shuffled_X[:, k * mini_batch_size: (k + 1) * mini_batch_size]
+        mini_batch_Y = shuffled_Y[:, k * mini_batch_size: (k + 1) * mini_batch_size]
+        mini_batch = (mini_batch_X, mini_batch_Y)
+        mini_batches.append(mini_batch)
+
+    # For handling the end case (last mini-batch < mini_batch_size i.e less than 64)
+    if m % mini_batch_size != 0:
+        # 提取最后一个不完整的小批次
+        mini_batch_X = shuffled_X[:, num_complete_minibatches * mini_batch_size:]
+        mini_batch_Y = shuffled_Y[:, num_complete_minibatches * mini_batch_size:]
+        mini_batch = (mini_batch_X, mini_batch_Y)
+        mini_batches.append(mini_batch)
+
+    return mini_batches
+```
+```python
+np.random.seed(1)  # 设置随机种子为1
+mini_batch_size = 64  # 小批次大小
+nx = 12288  # 输入特征的数量
+m = 148  # 样本数量
+
+# 创建输入数据 X，大小为 (nx, m)
+X = np.array([x for x in range(nx * m)]).reshape((m, nx)).T
+
+# 创建标签数据 Y，大小为 (1, m)
+Y = np.random.randn(1, m) < 0.5
+
+# 生成随机小批次
+mini_batches = random_mini_batches(X, Y, mini_batch_size)
+
+# 计算生成的小批次数量
+n_batches = len(mini_batches)
+
+# 检查生成的小批次数量是否正确
+assert n_batches == math.ceil(m / mini_batch_size), f"Wrong number of mini batches. {n_batches} != {math.ceil(m / mini_batch_size)}"
+
+# 检查每个小批次的形状和数值
+for k in range(n_batches - 1):
+    assert mini_batches[k][0].shape == (nx, mini_batch_size), f"Wrong shape in {k} mini batch for X"
+    assert mini_batches[k][1].shape == (1, mini_batch_size), f"Wrong shape in {k} mini batch for Y"
+    assert np.sum(np.sum(mini_batches[k][0] - mini_batches[k][0][0], axis=0)) == ((nx * (nx - 1) / 2 ) * mini_batch_size), "Wrong values. It happens if the order of X rows(features) changes"
+
+# 检查最后一个小批次的形状
+if m % mini_batch_size > 0:
+    assert mini_batches[n_batches - 1][0].shape == (nx, m % mini_batch_size), f"Wrong shape in the last minibatch. {mini_batches[n_batches - 1][0].shape} != {(nx, m % mini_batch_size)}"
+
+# 检查特定索引处的数值是否正确
+assert np.allclose(mini_batches[0][0][0][0:3], [294912,  86016, 454656]), "Wrong values. Check the indexes used to form the mini batches"
+assert np.allclose(mini_batches[-1][0][-1][0:3], [1425407, 1769471, 897023]), "Wrong values. Check the indexes used to form the mini batches"
+
+print("\033[92mAll tests passed!")
+```
+
+![1](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/1250c8a1-7a66-4194-b094-c9668324faf8)
+
+<font color='blue'>
+    
+**您应该记住**：
+- 洗牌和分区是建立迷你批所需的两个步骤
+- 通常选择2的幂次作为迷你批的大小，例如16、32、64、128。
+
+
+<a name='4'></a>
+## 4 - Momentum
+
+Because mini-batch gradient descent makes a parameter update after seeing just a subset of examples, the direction of the update has some variance, and so the path taken by mini-batch gradient descent will "oscillate" toward convergence. Using momentum can reduce these oscillations. 
+
+Momentum takes into account the past gradients to smooth out the update. The 'direction' of the previous gradients is stored in the variable $v$. Formally, this will be the exponentially weighted average of the gradient on previous steps. You can also think of $v$ as the "velocity" of a ball rolling downhill, building up speed (and momentum) according to the direction of the gradient/slope of the hill. 
+
+由于微型批量梯度下降算法只在看到一个子集的例子后进行参数更新，因此更新的方向有一定的偏差，所以微型批量梯度下降算法的收敛路径会出现 "振荡"。使用动量可以减少这些振荡。
+
+动量考虑了过去的梯度来平滑更新。之前梯度的 "方向 "存储在变量𝑣中。从形式上看，这是前几步梯度的指数加权平均值。您也可以将 𝑣 看作是下坡滚动的球的 "速度"，根据坡度/斜率的方向增加速度（和动量）。
+![2](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/db73d9ec-766c-474e-a404-1b64d48c2f16)
+
+<caption><center> <u><font color='purple'><b>Figure 3</b> </u><font color='purple'>: The red arrows show the direction taken by one step of mini-batch gradient descent with momentum. The blue points show the direction of the gradient (with respect to the current mini-batch) on each step. Rather than just following the gradient, the gradient is allowed to influence $v$ and then take a step in the direction of $v$.<br> <font color='black'> </center>
