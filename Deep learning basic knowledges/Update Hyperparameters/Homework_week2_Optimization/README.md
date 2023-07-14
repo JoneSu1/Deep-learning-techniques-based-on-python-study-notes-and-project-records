@@ -14,7 +14,7 @@ just a few hours to get a good result.
 - [5 - Adam](#5)
     - [Exercise 5 - initialize_adam](#ex-5)
     - [Exercise 6 - update_parameters_with_adam](#ex-6)
-- [6 - Model with different Optimization algorithms](#6)
+- [6 - Model with different Optimization algorithms](#6) 
     - [6.1 - Mini-Batch Gradient Descent](#6-1)
     - [6.2 - Mini-Batch Gradient Descent with Momentum](#6-2)
     - [6.3 - Mini-Batch with Adam](#6-3)
