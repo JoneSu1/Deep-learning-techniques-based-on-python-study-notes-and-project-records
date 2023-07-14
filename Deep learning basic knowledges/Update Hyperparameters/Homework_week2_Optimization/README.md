@@ -441,3 +441,33 @@ def update_parameters_with_momentum(parameters, grads, v, beta, learning_rate):
 ![3](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/b2d28a5d-4ce3-4b24-b457-7b4d997d2636)
 
 
+v["dW" + str(l)]的计算公式为 beta * v["dW" + str(l)] + (1 - beta) * grads["dW" + str(l)]
+代码中计算 v["dW" + str(l)] 的公式确实是使用了历史速度 v["dW" + str(l)] 和当前梯度 grads["dW" + str(l)]。这是为了实现动量方法的更新规则。
+
+动量方法中的速度 v["dW" + str(l)] 可以看作是参数更新的一个积累量，用于记录历史梯度的影响。它在每次迭代中都会被更新，而不仅仅依赖于当前的梯度。通过结合历史速度和当前梯度，动量方法能够在参数更新中保持一定的惯性，从而加速收敛并平滑优化路径。
+
+因此，正确的计算公式为 v["dW" + str(l)] = beta * v["dW" + str(l)] + (1 - beta) * grads["dW" + str(l)]，其中 v["dW" + str(l)] 表示当前速度，beta 是动量超参数，grads["dW" + str(l)] 是当前梯度。
+
+在代码中，您可以看到这个公式的实际应用，即更新 v["dW" + str(l)] 的数值。这样，在接下来的步骤中，可以使用更新后的速度来更新参数。
+
+
+**Note that**:
+- The velocity is initialized with zeros. So the algorithm will take a few iterations to "build up" velocity and start to take bigger steps.
+- If $\beta = 0$, then this just becomes standard gradient descent without momentum. 
+
+**How do you choose $\beta$?**
+
+- The larger the momentum $\beta$ is, the smoother the update, because it takes the past gradients into account more. But if $\beta$ is too big, it could also smooth out the updates too much. 
+- Common values for $\beta$ range from 0.8 to 0.999. If you don't feel inclined to tune this, $\beta = 0.9$ is often a reasonable default. 
+- Tuning the optimal $\beta$ for your model might require trying several values to see what works best in terms of reducing the value of the cost function $J$.
+  
+
+注意
+
+速度初始化为零。因此，算法需要经过几次迭代来 "建立 "速度，并开始采取更大的步长。
+如果 φ=0 ，那么就变成了没有动量的标准梯度下降算法。
+如何选择 仸？
+
+ν越大，更新越平滑，因为它更多地考虑了过去的梯度。但是，如果 ν φ 过大，也会使更新过于平滑。
+常用的 ν 值范围在 0.8 到 0.999 之间。如果您不想调整这个值，通常默认值为0.9。
+为您的模型调整最佳的 𝐽 可能需要尝试几个值，看看哪个值在降低成本函数 𝐽 值方面效果最好。
