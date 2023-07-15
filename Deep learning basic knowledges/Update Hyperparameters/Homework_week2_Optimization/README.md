@@ -929,3 +929,440 @@ Now, you'll apply scheduled learning rate decay to a 3-layer neural network in t
 
 This model is essentially the same as the one you used before, except in this one you'll be able to include learning rate decay. It includes two new parameters, decay and decay_rate. 
 
+
+最后，学习率是另一个可以帮助您加快学习速度的超参数。
+
+在训练的最初阶段，您的模型可以采取较大的步长，但随着时间的推移，使用固定值的学习率α会导致您的模型陷入大范围的振荡，永远无法收敛。但是，如果您随着时间的推移慢慢降低学习率α，您就可以迈出更小更慢的步子，从而更接近最小值。这就是学习率衰减背后的理念。
+
+学习率衰减可以通过使用自适应方法或预定义的学习率计划来实现。
+
+现在，您将在三种不同的优化器模式下对一个3层神经网络应用预定学习率衰减，并了解每种模式的不同之处，以及在不同的epochs进行调度的效果。
+
+这个模型与您之前使用的模型基本相同，只是在这个模型中您可以加入学习率衰减。它包括两个新参数，decay和decay_rate。
+
+```python
+
+import matplotlib.pyplot as plt
+import numpy as np
+import random
+
+def model(X, Y, layers_dims, optimizer, learning_rate=0.0007, mini_batch_size=64, beta=0.9,
+          beta1=0.9, beta2=0.999, epsilon=1e-8, num_epochs=5000, print_cost=True, decay=None, decay_rate=1):
+    """
+    3-layer neural network model which can be run in different optimizer modes.
+    
+    Arguments:
+    X -- input data, of shape (2, number of examples)
+    Y -- true "label" vector (1 for blue dot / 0 for red dot), of shape (1, number of examples)
+    layers_dims -- python list, containing the size of each layer
+    learning_rate -- the learning rate, scalar.
+    mini_batch_size -- the size of a mini batch
+    beta -- Momentum hyperparameter
+    beta1 -- Exponential decay hyperparameter for the past gradients estimates 
+    beta2 -- Exponential decay hyperparameter for the past squared gradients estimates 
+    epsilon -- hyperparameter preventing division by zero in Adam updates
+    num_epochs -- number of epochs
+    print_cost -- True to print the cost every 1000 epochs
+    decay -- learning rate decay function, default is None
+    decay_rate -- learning rate decay rate, default is 1
+
+    Returns:
+    parameters -- python dictionary containing your updated parameters 
+    """
+
+    L = len(layers_dims)             # number of layers in the neural networks
+    costs = []                       # to keep track of the cost
+    t = 0                            # initializing the counter required for Adam update
+    seed = 10                        # For grading purposes, so that your "random" minibatches are the same as ours
+    m = X.shape[1]                   # number of training examples
+    lr_rates = []
+    learning_rate0 = learning_rate   # the original learning rate
+    
+    # Initialize parameters
+    parameters = initialize_parameters(layers_dims)  # 初始化参数
+
+    # Initialize the optimizer
+    if optimizer == "gd":
+        pass # no initialization required for gradient descent
+    elif optimizer == "momentum":
+        v = initialize_velocity(parameters)  # 初始化动量
+    elif optimizer == "adam":
+        v, s = initialize_adam(parameters)  # 初始化Adam
+    
+    # Optimization loop
+    for i in range(num_epochs):
+        
+        # Define the random minibatches. We increment the seed to reshuffle differently the dataset after each epoch
+        seed = seed + 1
+        minibatches = random_mini_batches(X, Y, mini_batch_size, seed)  # 随机分割小批量
+        cost_total = 0
+        
+        for minibatch in minibatches:
+
+            # Select a minibatch
+            (minibatch_X, minibatch_Y) = minibatch  # 选择一个小批量
+
+            # Forward propagation
+            a3, caches = forward_propagation(minibatch_X, parameters)  # 前向传播
+
+            # Compute cost and add to the cost total
+            cost_total += compute_cost(a3, minibatch_Y)  # 计算成本并累加
+
+            # Backward propagation
+            grads = backward_propagation(minibatch_X, minibatch_Y, caches)  # 反向传播
+
+            # Update parameters
+            if optimizer == "gd":
+                parameters = update_parameters_with_gd(parameters, grads, learning_rate)  # 使用梯度下降更新参数
+            elif optimizer == "momentum":
+                parameters, v = update_parameters_with_momentum(parameters, grads, v, beta, learning_rate)  # 使用动量法更新参数
+            elif optimizer == "adam":
+                t = t + 1 # Adam counter
+                parameters, v, s, _, _ = update_parameters_with_adam(parameters, grads, v, s,
+                                                               t, learning_rate, beta1, beta2,  epsilon)  # 使用Adam算法更新参数
+        cost_avg = cost_total / m
+        if decay:
+            learning_rate = decay(learning_rate0, i, decay_rate)  # 学习率衰减
+        # Print the cost every 1000 epoch
+        if print_cost and i % 1000 == 0:
+            print ("Cost after epoch %i: %f" %(i, cost_avg))  # 每1000个epoch打印成本值
+            if decay:
+                print("Learning rate after epoch %i: %f"%(i, learning_rate))  # 若使用学习率衰减，打印学习率
+        if print_cost and i % 100 == 0:
+            costs.append(cost_avg)
+                
+    # plot the cost
+    plt.plot(costs)
+    plt.ylabel('Cost')
+    plt.xlabel('Epochs (per 100)')
+    plt.title("Learning rate = " + str(learning_rate))
+    plt.show()
+
+    return parameters
+
+```
+
+<a name='7-1'></a>  
+### 7.1 - Decay on every iteration  
+
+For this portion of the assignment, you'll try one of the pre-defined schedules for learning rate decay, called exponential learning rate decay. It takes this mathematical form:
+
+$$\alpha = \frac{1}{1 + decayRate \times epochNumber} \alpha_{0}$$
+
+<a name='ex-7'></a>  
+### Exercise 7 - update_lr
+
+Epoch number（轮次编号）是指在训练神经网络时，将整个训练数据集（包含多个样本）分成若干个小批量进行反向传播和参数更新的循环次数。在每个轮次（epoch）中，神经网络会遍历整个训练数据集一次。每次遍历一个小批量数据并进行反向传播和参数更新被称为一个迭代（iteration）。当所有小批量数据都被遍历完一次后，完成了一个轮次（epoch）的训练。所以，Epoch number（轮次编号）就是指当前处于第几个训练轮次的编号。通过增加训练轮次的数量，可以提高神经网络的训练效果和性能。
+
+Calculate the new learning rate using exponential weight decay.
+
+# GRADED FUNCTION: update_lr
+```python
+def update_lr(learning_rate0, epoch_num, decay_rate):
+    """
+    Calculates updated the learning rate using exponential weight decay.
+    
+    Arguments:
+    learning_rate0 -- Original learning rate. Scalar
+    epoch_num -- Epoch number. Integer
+    decay_rate -- Decay rate. Scalar
+
+    Returns:
+    learning_rate -- Updated learning rate. Scalar 
+    """
+    # 计算更新的学习率
+    learning_rate = learning_rate0 * np.power(decay_rate, epoch_num)
+    
+    return learning_rate
+```
+![4](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/aab5d8b4-9155-44d9-b199-90cbb76d499b)
+**带入到上面的3种optimization algorithm中看**
+```python
+# train 3-layer model
+layers_dims = [train_X.shape[0], 5, 2, 1]
+parameters = model(train_X, train_Y, layers_dims, optimizer = "gd", learning_rate = 0.1, num_epochs=5000, decay=update_lr)
+
+# Predict
+predictions = predict(train_X, train_Y, parameters)
+
+# Plot decision boundary
+plt.title("Model with Gradient Descent optimization")
+axes = plt.gca()
+axes.set_xlim([-1.5,2.5])
+axes.set_ylim([-1,1.5])
+plot_decision_boundary(lambda x: predict_dec(parameters, x.T), train_X, train_Y)
+```
+![1](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/59aa210e-d20b-43da-acc2-fc9453003e1e)
+![2](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/bab22751-20be-40e6-ae9d-69342a9dd54f)
+
+Notice that if you set the decay to occur at every iteration, the learning rate goes to zero too quickly - even if you start with a higher learning rate. 
+<table> 
+    <tr>
+        <td>
+        <b>Epoch Number</b>
+        </td>
+        <td>
+        <b>Learning Rate</b>
+        </td>
+        <td>
+        <b>Cost</b>
+        </td>
+    </tr>
+    <tr>
+        <td>
+        0
+        </td>
+        <td>
+        0.100000
+        </td>
+        <td>
+        0.701091
+        </td>
+    </tr>
+    <tr>
+        <td>
+        1000
+        </td>
+        <td>
+        0.000100
+        </td>
+        <td>
+        0.661884
+        </td>
+    </tr>
+    <tr>
+        <td>
+        2000
+        </td>
+        <td>
+        0.000050
+        </td>
+        <td>
+        0.658620
+        </td>
+    </tr>
+    <tr>
+        <td>
+        3000
+        </td>
+        <td>
+        0.000033
+        </td>
+        <td>
+        0.656765
+        </td>
+    </tr>
+    <tr>
+        <td>
+        4000
+        </td>
+        <td>
+        0.000025
+        </td>
+        <td>
+        0.655486
+        </td>
+    </tr>
+    <tr>
+        <td>
+        5000
+        </td>
+        <td>
+        0.000020
+        </td>
+        <td>
+        0.654514
+        </td>
+    </tr>
+</table> 
+
+When you're training for a few epoch this doesn't cause a lot of troubles, but when the number of epochs is large the optimization algorithm will stop updating. One common fix to this issue is to decay the learning rate every few steps. This is called fixed interval scheduling.
+
+
+<a name='7-2'></a> 
+### 7.2 - Fixed Interval Scheduling
+
+You can help prevent the learning rate speeding to zero too quickly by scheduling the exponential learning rate decay at a fixed time interval, for example 1000. You can either number the intervals, or divide the epoch by the time interval, which is the size of window with the constant learning rate. 
+
+
+您可以在固定时间间隔（例如1000）内安排指数学习率衰减，以防止学习率过快归零。您可以对时间间隔进行编号，也可以将epoch除以时间间隔，即恒定学习率窗口的大小。
+![3](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/60be0890-c809-4245-9477-628ca927dbdf)
+
+<a name='ex-8'></a> 
+### Exercise 8 - schedule_lr_decay
+
+Calculate the new learning rate using exponential weight decay with fixed interval scheduling.
+
+**Instructions**: Implement the learning rate scheduling such that it only changes when the epochNum is a multiple of the timeInterval.
+
+**Note:** The fraction in the denominator uses the floor operation. 
+
+$$\alpha = \frac{1}{1 + decayRate \times \lfloor\frac{epochNum}{timeInterval}\rfloor} \alpha_{0}$$
+
+**Hint:** [numpy.floor](https://numpy.org/doc/stable/reference/generated/numpy.floor.html)
+
+其中，公式里的[epochNum / timeinterval] 是整除的意思.
+
+# GRADED FUNCTION: schedule_lr_decay
+```python
+
+def schedule_lr_decay(learning_rate0, epoch_num, decay_rate, time_interval=1000):
+    """
+    Calculates updated the learning rate using exponential weight decay.
+    
+    Arguments:
+    learning_rate0 -- Original learning rate. Scalar
+    epoch_num -- Epoch number. Integer.
+    decay_rate -- Decay rate. Scalar.
+    time_interval -- Number of epochs where you update the learning rate.
+
+    Returns:
+    learning_rate -- Updated learning rate. Scalar 
+    """
+    # 计算学习率衰减
+    learning_rate = (1 / (1 + decay_rate * (epoch_num // time_interval))) * learning_rate0
+    
+    return learning_rate
+```
+![4](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/ab30afa3-0471-4dee-86b7-18aee1b0179f)
+
+
+这段代码展示了使用 schedule_lr_decay 函数计算学习率衰减的示例，并测试了该函数的输出。
+
+代码的执行过程如下：
+
+首先，将学习率 learning_rate 设置为 0.5，并打印出原始学习率。
+
+然后，定义了两个轮次编号 epoch_num_1 和 epoch_num_2，以及衰减率 decay_rate 和时间间隔 time_interval 的值。
+
+使用 schedule_lr_decay 函数分别计算了经过 epoch_num_1 和 epoch_num_2 轮次后的学习率，将结果分别存储在 learning_rate_1 和 learning_rate_2 变量中。
+
+打印出经过 epoch_num_1 轮次后更新后的学习率和经过 epoch_num_2 轮次后更新后的学习率。
+
+最后，调用 schedule_lr_decay_test 函数来测试 schedule_lr_decay 函数的输出。
+
+这段代码主要用于展示学习率衰减的效果。通过指定不同的轮次编号，可以观察学习率在不同阶段的衰减情况。你可以根据自己的需要修改轮次编号、衰减率和时间间隔的值，并观察学习率的变化。
+
+
+<a name='7-3'></a> 
+### 7.3 - Using Learning Rate Decay for each Optimization Method
+
+Below, you'll use the following "moons" dataset to test the different optimization methods. (The dataset is named "moons" because the data from each of the two classes looks a bit like a crescent-shaped moon.) 
+
+ - 对每种优化方法使用学习率衰减
+
+下面，您将使用下面的 "moons "数据集来测试不同的优化方法。(该数据集之所以命名为 "moons"，是因为来自两个类的数据看起来有点像新月形的月亮）。
+
+<a name='7-3-1'></a> 
+#### 7.3.1 - Gradient Descent with Learning Rate Decay
+**可以显著的看到准确率提升了，到了94%**
+
+Run the following code to see how the model does gradient descent and weight decay.
+```python
+# train 3-layer model
+layers_dims = [train_X.shape[0], 5, 2, 1]
+parameters = model(train_X, train_Y, layers_dims, optimizer = "gd", learning_rate = 0.1, num_epochs=5000, decay=schedule_lr_decay)
+
+# Predict
+predictions = predict(train_X, train_Y, parameters)
+
+# Plot decision boundary
+plt.title("Model with Gradient Descent optimization")
+axes = plt.gca()
+axes.set_xlim([-1.5,2.5])
+axes.set_ylim([-1,1.5])
+plot_decision_boundary(lambda x: predict_dec(parameters, x.T), train_X, train_Y)
+```
+![3](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/232d1a90-ee74-4045-9f07-99348c35cc46)
+
+
+![1](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/64f002e1-460e-41eb-9da4-048d3f83ee5a)
+
+<a name='7-3-2'></a> 
+#### 7.3.2 - Gradient Descent with Momentum and Learning Rate Decay
+**可以看到Momentum的准确率到了95.5%**
+Run the following code to see how the model does gradient descent with momentum and weight decay.
+```python
+# train 3-layer model
+layers_dims = [train_X.shape[0], 5, 2, 1]
+parameters = model(train_X, train_Y, layers_dims, optimizer = "momentum", learning_rate = 0.1, num_epochs=5000, decay=schedule_lr_decay)
+
+# Predict
+predictions = predict(train_X, train_Y, parameters)
+
+# Plot decision boundary
+plt.title("Model with Gradient Descent with momentum optimization")
+axes = plt.gca()
+axes.set_xlim([-1.5,2.5])
+axes.set_ylim([-1,1.5])
+plot_decision_boundary(lambda x: predict_dec(parameters, x.T), train_X, train_Y)
+```
+![3](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/9a5c38c2-74eb-4c42-b70e-2c879e21b6f6)
+![4](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/e7b32a2f-fb78-45e0-9659-b293efb1e7aa)
+
+<a name='7-3-3'></a> 
+#### 7.3.3 - Adam with Learning Rate Decay
+
+Run the following code to see how the model does Adam and weight decay.
+```
+# train 3-layer model
+layers_dims = [train_X.shape[0], 5, 2, 1]
+parameters = model(train_X, train_Y, layers_dims, optimizer = "adam", learning_rate = 0.01, num_epochs=5000, decay=schedule_lr_decay)
+
+# Predict
+predictions = predict(train_X, train_Y, parameters)
+
+# Plot decision boundary
+plt.title("Model with Adam optimization")
+axes = plt.gca()
+axes.set_xlim([-1.5,2.5])
+axes.set_ylim([-1,1.5])
+plot_decision_boundary(lambda x: predict_dec(parameters, x.T), train_X, train_Y)
+```
+![5](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/937ff8be-f058-4e07-9dd0-a393e987c90d)
+![6](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/247c0543-8bc1-4ec0-9037-35ea585975de)
+
+<a name='7-4'></a> 
+### 7.4 - Achieving similar performance with different methods
+
+With Mini-batch GD or Mini-batch GD with Momentum, the accuracy is significantly lower than Adam, but when learning rate decay is added on top, either can achieve performance at a speed and accuracy score that's similar to Adam.
+
+In the case of Adam, notice that the learning curve achieves a similar accuracy but faster.
+
+<table> 
+    <tr>
+        <td>
+        <b>optimization method</b>
+        </td>
+        <td>
+        <b>accuracy</b>
+        </td>
+    </tr>
+        <td>
+        Gradient descent
+        </td>
+        <td>
+        >94.6%
+        </td>
+    <tr>
+        <td>
+        Momentum
+        </td>
+        <td>
+        >95.6%
+        </td>
+    </tr>
+    <tr>
+        <td>
+        Adam
+        </td>
+        <td>
+        94%
+        </td>
+    </tr>
+</table> 
+
+使用Mini-batch GD或Mini-batch GD with Momentum，准确率明显低于Adam，但在学习率衰减的基础上，二者都可以达到与Adam相似的速度和准确率。
+
+在Adam的情况下，请注意学习曲线实现了相似的准确率，但速度更快。
+
