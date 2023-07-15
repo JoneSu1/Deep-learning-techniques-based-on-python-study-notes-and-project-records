@@ -825,9 +825,107 @@ plot_decision_boundary(lambda x: predict_dec(parameters, x.T), train_X, train_Y)
 ![1](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/1f669fc9-4f65-445c-afe8-f81a2c136e96)
 ![2](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/d2f2d2b2-66f6-4bf3-b030-1e8eabcfc6e8)
 
-**最后我再用Mini_bath和Adam结合**
+**最后我再用Mini_bath和Adam结合,准确率最高（94%）**
 
 <a name='6-3'></a>  
 ### 6.3 - Mini-Batch with Adam
 
 Finally, run the following code to see how the model does with Adam.
+```python
+# train 3-layer model
+layers_dims = [train_X.shape[0], 5, 2, 1]
+parameters = model(train_X, train_Y, layers_dims, optimizer = "adam")
+
+# Predict
+predictions = predict(train_X, train_Y, parameters)
+
+# Plot decision boundary
+plt.title("Model with Adam optimization")
+axes = plt.gca()
+axes.set_xlim([-1.5,2.5])
+axes.set_ylim([-1,1.5])
+plot_decision_boundary(lambda x: predict_dec(parameters, x.T), train_X, train_Y)
+```
+![1](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/9da39841-0310-4a98-a538-09fce086c17b)
+![2](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/a8b1d487-e651-4838-90d2-39e37b6579e2)
+
+<a name='6-4'></a>  
+### 6.4 - Summary
+
+<table> 
+    <tr>
+        <td>
+        <b>optimization method</b>
+        </td>
+        <td>
+        <b>accuracy</b>
+        </td>
+        <td>
+        <b>cost shape</b>
+        </td>
+    </tr>
+        <td>
+        Gradient descent
+        </td>
+        <td>
+        >71%
+        </td>
+        <td>
+        smooth
+        </td>
+    <tr>
+        <td>
+        Momentum
+        </td>
+        <td>
+        >71%
+        </td>
+        <td>
+        smooth
+        </td>
+    </tr>
+    <tr>
+        <td>
+        Adam
+        </td>
+        <td>
+        >94%
+        </td>
+        <td>
+        smoother
+        </td>
+    </tr>
+</table> 
+
+Momentum usually helps, but given the small learning rate and the simplistic dataset, its impact is almost negligible.
+
+On the other hand, Adam clearly outperforms mini-batch gradient descent and Momentum. If you run the model for more epochs on this simple dataset, all three methods will lead to very good results. However, you've seen that Adam converges a lot faster.
+
+Some advantages of Adam include:
+
+- Relatively low memory requirements (though higher than gradient descent and gradient descent with momentum) 
+- Usually works well even with little tuning of hyperparameters (except $\alpha$)
+
+
+Momentum通常会有所帮助，但由于学习率较低且数据集较为简单，其影响几乎可以忽略不计。
+
+另一方面，Adam明显优于mini-batch梯度下降法和Momentum。如果在这个简单的数据集上运行更多的epochs，这三种方法都会取得非常好的结果。不过，Adam的收敛速度要快得多。
+
+Adam的一些优势包括
+
+- 相对较低的内存需求（尽管高于梯度下降法和带动量的梯度下降法） 
+- 即使对超参数进行很少的调整，通常也能很好地工作（$\alpha$除外）
+
+  <a name='7'></a>  
+## 7 - Learning Rate Decay and Scheduling
+
+Lastly, the learning rate is another hyperparameter that can help you speed up learning. 
+
+During the first part of training, your model can get away with taking large steps, but over time, using a fixed value for the learning rate alpha can cause your model to get stuck in a wide oscillation that never quite converges. But if you were to slowly reduce your learning rate alpha over time, you could then take smaller, slower steps that bring you closer to the minimum. This is the idea behind learning rate decay. 
+
+Learning rate decay can be achieved by using either adaptive methods or pre-defined learning rate schedules. 
+
+Now, you'll apply scheduled learning rate decay to a 3-layer neural network in three different optimizer modes and see how each one differs, as well as the effect of scheduling at different epochs. 
+
+This model is essentially the same as the one you used before, except in this one you'll be able to include learning rate decay. It includes two new parameters, decay and decay_rate. 
+
