@@ -111,3 +111,6 @@
 # 学习使用workframe： TensorFLow
 这将更加高效的帮我构建模型.
 
+**以下是常见的work frame**
+![1](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/4a8c7f6d-31b6-4dda-b500-5b678132caf6)
+
