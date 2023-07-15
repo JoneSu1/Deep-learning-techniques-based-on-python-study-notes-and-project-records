@@ -471,3 +471,363 @@ v["dW" + str(l)]的计算公式为 beta * v["dW" + str(l)] + (1 - beta) * grads[
 ν越大，更新越平滑，因为它更多地考虑了过去的梯度。但是，如果 ν φ 过大，也会使更新过于平滑。
 常用的 ν 值范围在 0.8 到 0.999 之间。如果您不想调整这个值，通常默认值为0.9。
 为您的模型调整最佳的 𝐽 可能需要尝试几个值，看看哪个值在降低成本函数 𝐽 值方面效果最好。
+
+
+您应该记住的
+
+动量将过去的梯度考虑在内，以平滑梯度下降的步骤。它可以应用于批量梯度下降、迷你批量梯度下降或随机梯度下降。
+
+您必须调整动量超参数 𝛼 和学习率 𝛼 。
+
+<a name='5'></a>   
+## 5 - Adam
+
+Adam is one of the most effective optimization algorithms for training neural networks. It combines ideas from RMSProp (described in lecture) and Momentum. 
+
+**How does Adam work?**
+1. It calculates an exponentially weighted average of past gradients, and stores it in variables $v$ (before bias correction) and $v^{corrected}$ (with bias correction). 
+2. It calculates an exponentially weighted average of the squares of the past gradients, and  stores it in variables $s$ (before bias correction) and $s^{corrected}$ (with bias correction). 
+3. It updates parameters in a direction based on combining information from "1" and "2".
+ 
+**Adam 是如何工作的？**
+1. 它计算过去梯度的指数加权平均值，并将其存储在变量𝑣（偏差修正前）和𝑣𝑐𝑜𝑟𝑒𝑐𝑡𝑑（偏差修正后）中。
+2. 计算过去梯度平方的指数加权平均值，并将其存储在变量𝑠（偏差修正前）和 𝑠𝑐𝑜𝑟𝑒𝑡𝑒𝑑（偏差修正后）中。
+
+3. 根据 "1 "和 "2 "的信息更新参数方向。
+
+The update rule is, for $l = 1, ..., L$: 
+![1](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/d30b3241-2ae1-406c-a3d6-2f934dc399b0)
+
+
+where:
+- t counts the number of steps taken of Adam 
+- L is the number of layers
+- $\beta_1$ and $\beta_2$ are hyperparameters that control the two exponentially weighted averages. 
+- $\alpha$ is the learning rate
+- $\varepsilon$ is a very small number to avoid dividing by zero
+
+As usual, all parameters are stored in the `parameters` dictionary  
+
+- t为Adam的步数
+- L是层数
+- 𝛼 和 𝛼2 是超参数，用于控制两个指数加权平均值。
+
+- 𝛼是学习率
+- 𝜀是一个非常小的数字，以避免除以0。
+- 像往常一样，所有参数都存储在参数字典中。
+ 
+<a name='ex-5'></a>   
+### Exercise 5 - initialize_adam
+
+Initialize the Adam variables $v, s$ which keep track of the past information.
+
+**Instruction**: The variables $v, s$ are python dictionaries that need to be initialized with arrays of zeros. Their keys are the same as for `grads`, that is:
+for $l = 1, ..., L$:
+```python
+v["dW" + str(l)] = ... #(numpy array of zeros with the same shape as parameters["W" + str(l)])
+v["db" + str(l)] = ... #(numpy array of zeros with the same shape as parameters["b" + str(l)])
+s["dW" + str(l)] = ... #(numpy array of zeros with the same shape as parameters["W" + str(l)])
+s["db" + str(l)] = ... #(numpy array of zeros with the same shape as parameters["b" + str(l)])
+
+```
+
+# GRADED FUNCTION: initialize_adam
+```python
+def initialize_adam(parameters):
+    """
+    初始化v和s，它们是两个Python字典：
+                - 键: "dW1", "db1", ..., "dWL", "dbL" 
+                - 值: 形状与相应梯度/参数相同的零数组
+    
+    参数：
+    parameters -- 包含参数的Python字典。
+                    parameters["W" + str(l)] = Wl
+                    parameters["b" + str(l)] = bl
+    
+    返回: 
+    v -- 包含梯度的指数加权平均值的Python字典。初始化为零。
+                    v["dW" + str(l)] = ...
+                    v["db" + str(l)] = ...
+    s -- 包含平方梯度的指数加权平均值的Python字典。初始化为零。
+                    s["dW" + str(l)] = ...
+                    s["db" + str(l)] = ...
+    """
+
+    L = len(parameters) // 2  # 神经网络中的层数
+    v = {}
+    s = {}
+    
+    # 初始化v和s。输入: "parameters"。输出: "v, s"。
+    for l in range(1, L + 1):
+        # v["dW" + str(l)] = ...
+        # v["db" + str(l)] = ...
+        # s["dW" + str(l)] = ...
+        # s["db" + str(l)] = ...
+        # YOUR CODE STARTS HERE
+        v["dW" + str(l)] = np.zeros_like(parameters["W" + str(l)])  # 用零初始化v["dW" + str(l)]
+        v["db" + str(l)] = np.zeros_like(parameters["b" + str(l)])  # 用零初始化v["db" + str(l)]
+        s["dW" + str(l)] = np.zeros_like(parameters["W" + str(l)])  # 用零初始化s["dW" + str(l)]
+        s["db" + str(l)] = np.zeros_like(parameters["b" + str(l)])  # 用零初始化s["db" + str(l)]
+        # YOUR CODE ENDS HERE
+    
+    return v, s
+```
+![2](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/c3a97500-2ac1-46fb-acc2-6ffb1cb51c7e)
+
+<a name='ex-6'></a>   
+### Exercise 6 - update_parameters_with_adam
+
+Now, implement the parameters update with Adam. Recall the general update rule is, for $l = 1, ..., L$: 
+
+![3](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/d756e7bf-1f61-49c1-8429-0d065420f9e5)
+
+
+np.power() 函数是NumPy中用于求幂的函数。它可以用来计算一个数组中元素的幂。
+
+函数的语法如下：
+``` PYTHON
+np.power(base, exponent)
+
+```
+
+```PYTHON
+# GRADED FUNCTION: update_parameters_with_adam
+
+def update_parameters_with_adam(parameters, grads, v, s, t, learning_rate=0.01,
+                                beta1=0.9, beta2=0.999, epsilon=1e-8):
+    """
+    使用Adam更新参数
+    
+    参数：
+    parameters -- 包含参数的Python字典:
+                    parameters['W' + str(l)] = Wl
+                    parameters['b' + str(l)] = bl
+    grads -- 包含每个参数的梯度的Python字典:
+                    grads['dW' + str(l)] = dWl
+                    grads['db' + str(l)] = dbl
+    v -- Adam变量，第一个梯度的移动平均值，Python字典
+    s -- Adam变量，平方梯度的移动平均值，Python字典
+    t -- Adam变量，步数计数
+    learning_rate -- 学习率，标量
+    beta1 -- 第一矩估计的指数衰减超参数
+    beta2 -- 第二矩估计的指数衰减超参数
+    epsilon -- 防止Adam更新中除以零的超参数
+
+    返回:
+    parameters -- 包含更新后参数的Python字典
+    v -- Adam变量，第一个梯度的移动平均值，Python字典
+    s -- Adam变量，平方梯度的移动平均值，Python字典
+    """
+    
+    L = len(parameters) // 2                 # 神经网络中的层数
+    v_corrected = {}                         # 初始化第一个矩估计的修正值，Python字典
+    s_corrected = {}                         # 初始化第二个矩估计的修正值，Python字典
+    
+    # 对所有参数执行Adam更新
+    for l in range(1, L + 1):
+        # 梯度的移动平均值。输入: "v, grads, beta1"。输出: "v"。
+        v["dW" + str(l)] = beta1 * v["dW" + str(l)] + (1 - beta1) * grads["dW" + str(l)]
+        v["db" + str(l)] = beta1 * v["db" + str(l)] + (1 - beta1) * grads["db" + str(l)]
+
+        # 计算偏差修正的第一个矩估计。输入: "v, beta1, t"。输出: "v_corrected"。
+        v_corrected["dW" + str(l)] = v["dW" + str(l)] / (1 - np.power(beta1, t))
+        v_corrected["db" + str(l)] = v["db" + str(l)] / (1 - np.power(beta1, t))
+
+        # 平方梯度的移动平均值。输入: "s, grads, beta2"。输出: "s"。
+        s["dW" + str(l)] = beta2 * s["dW" + str(l)] + (1 - beta2) * np.power(grads["dW" + str(l)], 2)
+        s["db" + str(l)] = beta2 * s["db" + str(l)] + (1 - beta2) * np.power(grads["db" + str(l)], 2)
+
+        # 计算偏差修正的第二个原始矩估计。输入: "s, beta2, t"。输出: "s_corrected"。
+        s_corrected["dW" + str(l)] = s["dW" + str(l)] / (1 - np.power(beta2, t))
+        s_corrected["db" + str(l)] = s["db" + str(l)] / (1 - np.power(beta2, t))
+
+        # 更新参数。输入: "parameters, learning_rate, v_corrected, s_corrected, epsilon"。输出: "parameters"。
+        parameters["W" + str(l)] = parameters["W" + str(l)] - learning_rate * (v_corrected["dW" + str(l)] / (np.sqrt(s_corrected["dW" + str(l)]) + epsilon))
+        parameters["b" + str(l)] = parameters["b" + str(l)] - learning_rate * (v_corrected["db" + str(l)] / (np.sqrt(s_corrected["db" + str(l)]) + epsilon))
+
+    return parameters, v, s, v_corrected, s_corrected
+```
+![4](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/621599c7-a181-468d-854b-09d9f6ce5b41)
+
+You now have three working optimization algorithms (mini-batch gradient descent, Momentum, Adam). Let's implement a model with each of these optimizers and observe the difference.
+
+现在您已经有了三种有效的优化算法（迷你批量梯度下降算法、动量算法和亚当算法）。让我们用这三种优化算法分别实现一个模型，并观察它们之间的区别。
+
+<a name='6'></a>  
+## 6 - Model with different Optimization algorithms
+
+Below, you'll use the following "moons" dataset to test the different optimization methods. (The dataset is named "moons" because the data from each of the two classes looks a bit like a crescent-shaped moon.) 
+```
+train_X, train_Y = load_dataset()
+```
+A 3-layer neural network has already been implemented for you! You'll train it with: 
+- Mini-batch **Gradient Descent**: it will call your function:
+    - `update_parameters_with_gd()`
+- Mini-batch **Momentum**: it will call your functions:
+    - `initialize_velocity()` and `update_parameters_with_momentum()`
+- Mini-batch **Adam**: it will call your functions:
+    - `initialize_adam()` and `update_parameters_with_adam()`
+
+已经为您实现了一个3层神经网络！您将使用以下方法对其进行训练
+
+迷你批量梯度下降：它将调用您的函数：
+update_parameters_with_gd()
+小批量动量：它将调用您的函数：
+initialize_velocity()和update_parameters_with_momentum()
+小批量Adam：它将调用您的函数：
+initialize_adam()和update_parameters_with_adam()
+
+**这个模型整合了3种optimization**
+
+```python
+import matplotlib.pyplot as plt
+import numpy as np
+import random
+
+def model(X, Y, layers_dims, optimizer, learning_rate=0.0007, mini_batch_size=64, beta=0.9,
+          beta1=0.9, beta2=0.999, epsilon=1e-8, num_epochs=5000, print_cost=True):
+    """
+    一个可以在不同优化器模式下运行的三层神经网络模型。
+    
+    Arguments:
+    X -- input data, of shape (2, number of examples)
+    Y -- true "label" vector (1 for blue dot / 0 for red dot), of shape (1, number of examples)
+    optimizer -- the optimizer to be passed, gradient descent, momentum or adam
+    layers_dims -- python list, containing the size of each layer
+    learning_rate -- the learning rate, scalar.
+    mini_batch_size -- the size of a mini batch
+    beta -- Momentum hyperparameter
+    beta1 -- Exponential decay hyperparameter for the past gradients estimates 
+    beta2 -- Exponential decay hyperparameter for the past squared gradients estimates 
+    epsilon -- hyperparameter preventing division by zero in Adam updates
+    num_epochs -- number of epochs
+    print_cost -- True to print the cost every 1000 epochs
+
+    Returns:
+    parameters -- python dictionary containing your updated parameters 
+    """
+
+    L = len(layers_dims)             # 神经网络中的层数
+    costs = []                       # 用于记录成本
+    t = 0                            # 初始化Adam更新所需的计数器
+    seed = 10                        # 为了评估方便，确保你的“随机”小批量与我们的相同
+    m = X.shape[1]                   # 训练样本的数量
+    
+    # Initialize parameters
+    parameters = initialize_parameters(layers_dims)  # 初始化参数
+
+    # Initialize the optimizer
+    if optimizer == "gd":
+        pass  # 梯度下降法不需要额外初始化
+    elif optimizer == "momentum":
+        v = initialize_velocity(parameters)  # 初始化动量
+    elif optimizer == "adam":
+        v, s = initialize_adam(parameters)  # 初始化Adam
+    
+    # Optimization loop
+    for i in range(num_epochs):
+        
+        # Define the random minibatches. We increment the seed to reshuffle differently the dataset after each epoch
+        seed = seed + 1
+        minibatches = random_mini_batches(X, Y, mini_batch_size, seed)  # 随机分割小批量
+        cost_total = 0
+        
+        for minibatch in minibatches:
+
+            # Select a minibatch
+            (minibatch_X, minibatch_Y) = minibatch  # 选择一个小批量
+
+            # Forward propagation
+            a3, caches = forward_propagation(minibatch_X, parameters)  # 前向传播
+
+            # Compute cost and add to the cost total
+            cost_total += compute_cost(a3, minibatch_Y)  # 计算成本并累加
+
+            # Backward propagation
+            grads = backward_propagation(minibatch_X, minibatch_Y, caches)  # 反向传播
+
+            # Update parameters
+            if optimizer == "gd":
+                parameters = update_parameters_with_gd(parameters, grads, learning_rate)  # 使用梯度下降更新参数
+            elif optimizer == "momentum":
+                parameters, v = update_parameters_with_momentum(parameters, grads, v, beta, learning_rate)  # 使用动量法更新参数
+            elif optimizer == "adam":
+                t = t + 1  # Adam计数器
+                parameters, v, s, _, _ = update_parameters_with_adam(parameters, grads, v, s,
+                                                               t, learning_rate, beta1, beta2,  epsilon)  # 使用Adam算法更新参数
+        cost_avg = cost_total / m
+        
+        # Print the cost every 1000 epoch
+        if print_cost and i % 1000 == 0:
+            print ("Cost after epoch %i: %f" %(i, cost_avg))  # 每1000个epoch打印成本值
+        if print_cost and i % 100 == 0:
+            costs.append(cost_avg)
+                
+    # plot the cost
+    plt.plot(costs)
+    plt.ylabel('Cost')
+    plt.xlabel('Epochs (per 100)')
+    plt.title("Learning rate = " + str(learning_rate))
+    plt.show()
+
+    return parameters
+```
+
+Now, run this 3 layer neural network with each of the 3 optimization methods.
+
+<a name='6-1'></a>  
+### 6.1 - Mini-Batch Gradient Descent
+
+Run the following code to see how the model does with mini-batch gradient descent.
+
+**首先来看使用常规的Mini-bath gradient descent(准确率70%)**
+```python
+# train 3-layer model
+layers_dims = [train_X.shape[0], 5, 2, 1]
+parameters = model(train_X, train_Y, layers_dims, optimizer = "gd")
+
+# Predict
+predictions = predict(train_X, train_Y, parameters)
+
+# Plot decision boundary
+plt.title("Model with Gradient Descent optimization")
+axes = plt.gca()
+axes.set_xlim([-1.5,2.5])
+axes.set_ylim([-1,1.5])
+plot_decision_boundary(lambda x: predict_dec(parameters, x.T), train_X, train_Y)
+```
+![6](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/ae8fd125-9f96-4438-a78c-ca698f86ef3f)
+![7](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/e0200d0f-a1d0-4650-bec4-90baeec741f8)
+
+<a name='6-2'></a>  
+### 6.2 - Mini-Batch Gradient Descent with Momentum
+
+Next, run the following code to see how the model does with momentum. Because this example is relatively simple, the gains from using momemtum are small - but for more complex problems you might see bigger gains.
+
+运行下面的代码查看模型在动量情况下的表现。由于本例相对简单，使用momemtum的收益较小，但对于更复杂的问题，您可能会看到更大的收益。
+
+**在使用Mini-bath和Momentum之后准确率是71%**
+```python
+# train 3-layer model
+layers_dims = [train_X.shape[0], 5, 2, 1]
+parameters = model(train_X, train_Y, layers_dims, optimizer = "adam")
+
+# Predict
+predictions = predict(train_X, train_Y, parameters)
+
+# Plot decision boundary
+plt.title("Model with Adam optimization")
+axes = plt.gca()
+axes.set_xlim([-1.5,2.5])
+axes.set_ylim([-1,1.5])
+plot_decision_boundary(lambda x: predict_dec(parameters, x.T), train_X, train_Y)
+```
+![1](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/1f669fc9-4f65-445c-afe8-f81a2c136e96)
+![2](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/d2f2d2b2-66f6-4bf3-b030-1e8eabcfc6e8)
+
+**最后我再用Mini_bath和Adam结合**
+
+<a name='6-3'></a>  
+### 6.3 - Mini-Batch with Adam
+
+Finally, run the following code to see how the model does with Adam.
