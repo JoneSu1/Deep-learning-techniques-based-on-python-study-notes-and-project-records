@@ -2,6 +2,18 @@ speed up learning and perhaps even get you to a better final value for the cost 
 Having a good optimization algorithm can be the difference between waiting days vs. 
 just a few hours to get a good result.
 
+
+
+* Apply three different optimization methods to your models 
+* Build mini-batches for your training set 
+* Use learning rate decay scheduling to speed up your training
+
+
+* 对您的模型应用三种不同的优化方法 
+* 为您的训练集建立迷你批次 
+* 使用学习率衰减调度来加快训练速度
+
+
 ## Table of Contents
 - [1- Packages](#1)
 - [2 - Gradient Descent](#2)
