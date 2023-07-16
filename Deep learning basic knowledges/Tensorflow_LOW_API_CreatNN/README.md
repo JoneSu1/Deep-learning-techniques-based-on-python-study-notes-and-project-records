@@ -28,13 +28,13 @@ Programming frameworks like TensorFlow not only cut down on time spent coding, b
 <a name='1'></a>
 ## 1 - Packages
 
-import h5py
-import numpy as np
-import tensorflow as tf
-import matplotlib.pyplot as plt
-from tensorflow.python.framework.ops import EagerTensor
-from tensorflow.python.ops.resource_variable_ops import ResourceVariable
-import time
+        import h5py
+        import numpy as np
+        import tensorflow as tf
+        import matplotlib.pyplot as plt
+        from tensorflow.python.framework.ops import EagerTensor
+        from tensorflow.python.ops.resource_variable_ops import ResourceVariable
+        import time
 
 <a name='1-1'></a>
 ### 1.1 - Checking TensorFlow Version 
@@ -78,10 +78,10 @@ h5py.File('datasets/test_signs.h5', "r")：这行代码打开名为test_signs.h5
 一旦这两个HDF5文件被打开，你就可以使用train_dataset和test_dataset两个变量来访问其中的数据集和相关信息。通常，这些文件会包含训练数据集和测试数据集的特征（例如图像数据）以及对应的标签（例如图像所属的类别）。
 
 要进一步使用这些数据集，你可以通过h5py库中的方法来获取其中的数据和元数据。例如，可以使用类似train_dataset['features']的方式来获取训练数据集中的特征数据，train_dataset['labels']来获取训练数据集中的标签数据，等等。
-
+```
 train_dataset = h5py.File('datasets/train_signs.h5', "r")
 test_dataset = h5py.File('datasets/test_signs.h5', "r")
-
+```
 **进行提取和转换**
 
 这段代码使用TensorFlow中的tf.data.Dataset.from_tensor_slices方法从numpy数组（或张量）中创建了训练和测试数据集的tf.data.Dataset对象。
@@ -93,13 +93,13 @@ train_dataset['train_set_y']：这部分代码从train_dataset对象中获取了
 test_dataset['test_set_x']：这部分代码从test_dataset对象中获取了名为test_set_x的数据，这可能是测试数据集的特征数据。
 
 test_dataset['test_set_y']：这部分代码从test_dataset对象中获取了名为test_set_y的数据，这可能是测试数据集的标签数据。
-
+```python
 x_train = tf.data.Dataset.from_tensor_slices(train_dataset['train_set_x'])
 y_train = tf.data.Dataset.from_tensor_slices(train_dataset['train_set_y'])
 
 x_test = tf.data.Dataset.from_tensor_slices(test_dataset['test_set_x'])
 y_test = tf.data.Dataset.from_tensor_slices(test_dataset['test_set_y'])
-
+```
 
 Since TensorFlow Datasets are generators, you can't access directly the contents unless you iterate over them in a for loop, or by explicitly creating a Python iterator using `iter` and consuming its
 elements using `next`. Also, you can inspect the `shape` and `dtype` of each element using the `element_spec` attribute.
@@ -125,10 +125,11 @@ unique_labels.add(element.numpy())：在循环中，代码使用add方法将每�
 print(unique_labels)：最后，代码打印输出了unique_labels集合，其中包含训练数据集中的所有唯一标签值。
 
 总之，这段代码的作用是获取训练数据集y_train中的所有唯一标签，并将其打印输出。
-
+```python
 unique_labels = set()
 for element in y_train:
     unique_labels.add(element.numpy())
 print(unique_labels)
+```
 
 ![1](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/c9e673dd-75a3-48ba-8d8d-d4a8403a7a71)
