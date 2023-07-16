@@ -99,3 +99,36 @@ y_train = tf.data.Dataset.from_tensor_slices(train_dataset['train_set_y'])
 
 x_test = tf.data.Dataset.from_tensor_slices(test_dataset['test_set_x'])
 y_test = tf.data.Dataset.from_tensor_slices(test_dataset['test_set_y'])
+
+
+Since TensorFlow Datasets are generators, you can't access directly the contents unless you iterate over them in a for loop, or by explicitly creating a Python iterator using `iter` and consuming its
+elements using `next`. Also, you can inspect the `shape` and `dtype` of each element using the `element_spec` attribute.
+
+由于TensorFlow数据集是生成器，你不能直接访问其内容，除非你在一个for循环中遍历它们，或者通过使用`iter`显式地创建一个Python迭代器，并使用`next`消耗它的
+元素。另外，你可以使用`element_spec`属性检查每个元素的`shape`和`dtype`。
+![2](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/479da84a-4625-4a23-b241-30955be6ef2c)
+
+
+The dataset that you'll be using during this assignment is a subset of the sign language digits. It contains six different classes representing the digits from 0 to 5.
+
+本作业中您将使用的数据集是手语数字的子集。它包含六个不同的类别，代表从0到5的数字。
+
+
+这段代码通过遍历TensorFlow Dataset中的y_train（假设y_train是一个TensorFlow Dataset对象）来获取训练数据集中的唯一标签，并将其存储在一个集合（unique_labels）中。
+
+unique_labels = set()：这一行创建了一个空的集合，用于存储唯一的标签。
+
+for element in y_train:：这个循环遍历了y_train中的每个元素。
+
+unique_labels.add(element.numpy())：在循环中，代码使用add方法将每个元素（假设是一个Tensor）的numpy表示（即元素的实际值）添加到unique_labels集合中。这样，集合unique_labels就会包含训练数据集中的所有唯一标签值。
+
+print(unique_labels)：最后，代码打印输出了unique_labels集合，其中包含训练数据集中的所有唯一标签值。
+
+总之，这段代码的作用是获取训练数据集y_train中的所有唯一标签，并将其打印输出。
+
+unique_labels = set()
+for element in y_train:
+    unique_labels.add(element.numpy())
+print(unique_labels)
+
+![1](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/c9e673dd-75a3-48ba-8d8d-d4a8403a7a71)
