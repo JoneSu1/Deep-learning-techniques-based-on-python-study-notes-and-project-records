@@ -133,3 +133,47 @@ print(unique_labels)
 ```
 
 ![1](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/c9e673dd-75a3-48ba-8d8d-d4a8403a7a71)
+
+You can see some of the images in the dataset by running the following cell.
+
+您可以通过运行以下单元格查看数据集中的部分图像。
+
+这段代码使用matplotlib库在一个5x5的图像网格中显示训练数据集中的图像和对应的标签。
+
+images_iter = iter(x_train)：这行代码将训练数据集x_train转换为一个迭代器对象images_iter。迭代器可以用于逐个访问数据集中的元素。
+
+labels_iter = iter(y_train)：这行代码将训练数据集y_train转换为一个迭代器对象labels_iter。同样，迭代器可以用于逐个访问数据集中的元素。
+
+plt.figure(figsize=(10, 10))：这行代码创建一个大小为10x10的新图像窗口。
+
+for i in range(25):：这个循环遍历25次，即在图像网格中显示25张图像。
+
+ax = plt.subplot(5, 5, i + 1)：这行代码创建一个子图，将当前图像放在5x5的网格中的第i+1个位置。
+
+plt.imshow(next(images_iter).numpy().astype("uint8"))：这行代码使用next(images_iter)获取训练数据集中的下一个图像，并使用imshow方法显示图像。.numpy()方法将TensorFlow张量转换为NumPy数组，.astype("uint8")将数据类型转换为无符号8位整数。
+
+plt.title(next(labels_iter).numpy().astype("uint8"))：这行代码使用next(labels_iter)获取训练数据集中下一个图像对应的标签，并使用title方法将其显示为图像的标题。同样，.numpy()方法将TensorFlow张量转换为NumPy数组，.astype("uint8")将数据类型转换为无符号8位整数。
+
+plt.axis("off")：这行代码关闭图像的坐标轴显示，以便更好地查看图像本身。
+
+```python
+images_iter = iter(x_train)
+labels_iter = iter(y_train)
+plt.figure(figsize=(10, 10))
+for i in range(25):
+    ax = plt.subplot(5, 5, i + 1)
+    plt.imshow(next(images_iter).numpy().astype("uint8"))
+    plt.title(next(labels_iter).numpy().astype("uint8"))
+    plt.axis("off")
+```
+![5](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/e6cb31aa-333e-49da-9915-161ef115448e)
+
+TensorFlow数据集和Numpy数组之间还有一个额外的区别： 如果您需要转换数据集，您需要调用`map`方法，将作为参数传递的函数应用到每个元素上。
+
+## Normalization the images 
+
+和在Numpy中的常规操作相同，像素的最大值的255，我们让每一个dim_layer中的元素都除以255，归一化到[0,1]的范围中，然后将3维array，
+转换成1维array（64*64*3）.
+
+而在
+
