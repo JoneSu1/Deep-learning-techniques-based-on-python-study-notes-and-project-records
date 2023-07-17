@@ -175,5 +175,166 @@ TensorFlow数据集和Numpy数组之间还有一个额外的区别： 如果您�
 和在Numpy中的常规操作相同，像素的最大值的255，我们让每一个dim_layer中的元素都除以255，归一化到[0,1]的范围中，然后将3维array，
 转换成1维array（64*64*3）.
 
-而在
+而在TensorFlow 的上面，我们首先需要把将图像像素值转换为浮点数类型。再将像素值除以255，将其归一化到[0, 1]范围内。
 
+而代码和Numpy中时，有所不同.
+这是Numpy中： image = image.astype(np.float32) / 255.0
+这是Tf中：    image = tf.cast(image, tf.float32) / 255.0
+
+然后将这个3维数组转成1维：64*64*3
+使用reshape（）函数达到效果    image = tf.reshape(image, [-1,])
+```python
+def normalize(image):
+    """
+    Transform an image into a tensor of shape (64 * 64 * 3, )
+    and normalize its components.
+    
+    Arguments
+    image - Tensor.
+    
+    Returns: 
+    result -- Transformed tensor 
+    """
+    image = tf.cast(image, tf.float32) / 255.0
+    image = tf.reshape(image, [-1,])
+    return image
+```
+然后这段代码使用了TensorFlow中的map方法对训练数据集x_train和测试数据集x_test中的每个图像应用normalize函数进行归一化处理。
+
+x_train和x_test是TensorFlow的tf.data.Dataset对象，表示训练数据集和测试数据集。
+
+normalize是一个函数，它是将图像进行归一化的函数，将像素值除以255来将像素值缩放到[0, 1]的范围内。
+
+new_train = x_train.map(normalize)：这行代码使用map方法，将normalize函数应用于x_train数据集中的每个图像。这样，训练数据集中的每个图像都会被归一化处理，并存储在new_train数据集中。
+
+new_test = x_test.map(normalize)：这行代码使用map方法，将normalize函数应用于x_test数据集中的每个图像。这样，测试数据集中的每个图像也会被归一化处理，并存储在new_test数据集中。
+
+最终，new_train和new_test数据集中的每个图像都被归一化处理，以便后续的图像处理和深度学习模型的训练。这是利用tf.data.Dataset.map()方法对数据集中的元素进行预处理的常见用法。
+```
+new_train = x_train.map(normalize)
+new_test = x_test.map(normalize)
+```
+使用element_spec后缀来查询新复制的训练数组的内容
+```
+new_train.element_spec
+```
+![1](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/759f930a-fb1c-413b-b177-7be48855ebde)
+![2](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/56a1e4fe-812c-40ff-9ca2-2cf99e14cbc7)
+
+<a name='2-1'></a>
+### 2.1 - Linear Function
+
+Let's begin this programming exercise by computing the following equation: $Y = WX + b$, where $W$ and $X$ are random matrices and b is a random vector. 
+
+让我们从计算下列方程开始这个编程练习：𝑌=𝑋+𝑏 ，其中 𝑋 和 𝑋 是随机矩阵，b 是随机向量。
+
+<a name='ex-1'></a>
+### Exercise 1 - linear_function
+
+Compute $WX + b$ where $W, X$, and $b$ are drawn from a random normal distribution. W is of shape (4, 3), X is (3,1) and b is (4,1). As an example, this is how to define a constant X with the shape (3,1):
+```python
+X = tf.constant(np.random.randn(3,1), name = "X")
+
+```
+Note that the difference between `tf.constant` and `tf.Variable` is that you can modify the state of a `tf.Variable` but cannot change the state of a `tf.constant`.
+
+You might find the following functions helpful: 
+- tf.matmul(..., ...) to do a matrix multiplication
+- tf.add(..., ...) to do an addition
+- np.random.randn(...) to initialize randomly
+
+ 练习 1 - 线性函数
+计算 𝑋+𝑏，其中𝑋, 𝑏和 𝑏从随机正态分布中抽取。W 的形状为 (4,3)，X 为 (3,1)，b 为 (4,1)。举例说明，如何定义形状为(3,1)的常数X：
+
+X = tf.constant(np.random.randn(3,1), name = "X")
+请注意，tf.constant和tf.Variable的区别在于，您可以修改tf.Variable的状态，但不能改变tf.constant的状态。
+
+您可能会发现以下函数很有用：
+
+tf.matmul(...,...)进行矩阵乘法运算
+tf.add(...,...)进行加法运算
+np.random.randn(...)用于随机初始化
+
+
+这段代码实现了一个线性函数，根据给定的初始化规则创建了随机张量，并计算出线性函数的输出。
+
+np.random.seed(1)：这行代码设置了随机种子，以确保随机数的生成与预期结果一致。
+
+X = tf.constant(np.random.randn(3,1), name = "X")：这行代码创建了一个名为X的常量张量，形状为(3, 1)，值为随机生成的服从标准正态分布的数字。
+
+W = tf.constant(np.random.randn(4,3), name = "W")：这行代码创建了一个名为W的常量张量，形状为(4, 3)，值为随机生成的服从标准正态分布的数字。
+
+b = tf.constant(np.random.randn(4,1), name = "b")：这行代码创建了一个名为b的常量张量，形状为(4, 1)，值为随机生成的服从标准正态分布的数字。
+
+Y = tf.matmul(W, X) + b：这行代码计算了线性函数的输出，通过矩阵乘法tf.matmul将W和X相乘，然后加上b得到结果Y。
+
+最后，函数返回输出张量Y作为结果。
+
+请注意，这段代码使用了TensorFlow库来创建和计算张量。在这个函数中，tf.constant用于创建常量张量，tf.matmul用于矩阵乘法操作。
+
+
+# GRADED FUNCTION: linear_function
+```
+def linear_function():
+    """
+    Implements a linear function: 
+            Initializes X to be a random tensor of shape (3,1)
+            Initializes W to be a random tensor of shape (4,3)
+            Initializes b to be a random tensor of shape (4,1)
+    Returns: 
+    result -- Y = WX + b 
+    """
+
+    np.random.seed(1)
+    
+    """
+    Note, to ensure that the "random" numbers generated match the expected results,
+    please create the variables in the order given in the starting code below.
+    (Do not re-arrange the order).
+    """
+    # (approx. 4 lines)
+    # X = ...
+    # W = ...
+    # b = ...
+    # Y = ...
+    # YOUR CODE STARTS HERE
+    X = tf.constant(np.random.randn(3,1), name = "X")
+    W = tf.constant(np.random.randn(4,3), name = "W")
+    b = tf.constant(np.random.randn(4,1), name = "b")
+    Y = tf.matmul(W, X) + b
+    # YOUR CODE ENDS HERE
+    return Y
+```python
+![3](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/89557687-bfa1-4001-9ed0-fe26c5ffe665)
+
+<a name='2-2'></a>
+### 2.2 - Computing the Sigmoid 
+Amazing! You just implemented a linear function. TensorFlow offers a variety of commonly used neural network functions like `tf.sigmoid` and `tf.softmax`.
+
+For this exercise, compute the sigmoid of z. 
+
+In this exercise, you will: Cast your tensor to type `float32` using `tf.cast`, then compute the sigmoid using `tf.keras.activations.sigmoid`. 
+
+<a name='ex-2'></a>
+### Exercise 2 - sigmoid
+
+Implement the sigmoid function below. You should use the following: 
+
+- `tf.cast("...", tf.float32)`
+- `tf.keras.activations.sigmoid("...")`
+
+<a name='2-2'></a>
+### 2.2 - 计算Sigmoid函数 
+太棒了！你刚刚实现了一个线性函数。TensorFlow提供了各种常用的神经网络函数，如`tf.sigmoid`和`tf.softmax`。
+
+在本练习中，计算z的sigmoid。
+
+在本练习中，您将 使用`tf.cast`将张量转换为`float32`类型，然后使用`tf.keras.activations.sigmoid`计算sigmoid。
+
+<a name='ex-2'></a>
+### 练习 2 - sigmoid
+
+实现下面的sigmoid函数。你应该使用下面的方法： 
+
+- `tf.cast("...",tf.float32)`。
+- `tf.keras.activations.sigmoid("...")`。
