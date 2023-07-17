@@ -274,7 +274,7 @@ Y = tf.matmul(W, X) + b：这行代码计算了线性函数的输出，通过矩
 
 
 # GRADED FUNCTION: linear_function
-```
+```python
 def linear_function():
     """
     Implements a linear function: 
@@ -304,7 +304,7 @@ def linear_function():
     Y = tf.matmul(W, X) + b
     # YOUR CODE ENDS HERE
     return Y
-```python
+```
 ![3](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/89557687-bfa1-4001-9ed0-fe26c5ffe665)
 
 <a name='2-2'></a>
@@ -338,3 +338,34 @@ Implement the sigmoid function below. You should use the following:
 
 - `tf.cast("...",tf.float32)`。
 - `tf.keras.activations.sigmoid("...")`。
+
+
+# GRADED FUNCTION: sigmoid
+```python
+
+def sigmoid(z):
+    
+    """
+    Computes the sigmoid of z
+    
+    Arguments:
+    z -- input value, scalar or vector
+    
+    Returns: 
+    a -- (tf.float32) the sigmoid of z
+    """
+    # tf.keras.activations.sigmoid requires float16, float32, float64, complex64, or complex128.
+    
+    # (approx. 2 lines)
+    # z = ...
+    # a = ...
+    # YOUR CODE STARTS HERE
+    z = tf.cast(z, tf.float32)
+    a = tf.keras.activations.sigmoid(z)
+
+    
+    # YOUR CODE ENDS HERE
+    return a
+```
+
+
