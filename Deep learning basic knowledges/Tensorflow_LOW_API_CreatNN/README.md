@@ -728,6 +728,7 @@ tf.reduce_sum将对示例求和。
 
 # GRADED FUNCTION: compute_total_loss 
 ```python
+
 def compute_total_loss(logits, labels):
     """
     Computes the total loss
@@ -744,9 +745,10 @@ def compute_total_loss(logits, labels):
     # remember to set `from_logits=True`
     # total_loss = ...
     # YOUR CODE STARTS HERE
-    total_loss = tf.reduce_sum(tf.keras.losses.categorical_crossentropy(labels, logits, from_logits=True))
-
-    # YOUR CODE ENDS HERE
+    # 计算每个样本的损失
+    per_example_loss = tf.keras.losses.categorical_crossentropy(labels, logits, from_logits=True)
+    # 对所有样本的损失进行求和
+    total_loss = tf.reduce_sum(per_example_loss)
     return total_loss
 ```
 
