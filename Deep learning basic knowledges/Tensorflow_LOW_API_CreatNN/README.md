@@ -368,4 +368,24 @@ def sigmoid(z):
     return a
 ```
 
+![1](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/9e902533-c801-492c-8110-5a3ebb481cde)
+
+<a name='2-3'></a>
+### 2.3 - Using One Hot Encodings
+
+Many times in deep learning you will have a $Y$ vector with numbers ranging from $0$ to $C-1$, where $C$ is the number of classes. If $C$ is for example 4, then you might have the following y vector which you will need to convert like this:
+![2](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/10a1ed1e-85c3-47b7-871d-082dfd6291fb)
+
+This is called "one hot" encoding, because in the converted representation, exactly one element of each column is "hot" (meaning set to 1). To do this conversion in numpy, you might have to write a few lines of code. In TensorFlow, you can use one line of code: 
+
+- [tf.one_hot(labels, depth, axis=0)](https://www.tensorflow.org/api_docs/python/tf/one_hot)
+
+`axis=0` indicates the new axis is created at dimension 0
+
+<a name='ex-3'></a>
+### Exercise 3 - one_hot_matrix
+
+Implement the function below to take one label and the total number of classes $C$, and return the one hot encoding in a column wise matrix. Use `tf.one_hot()` to do this, and `tf.reshape()` to reshape your one hot tensor! 
+
+- `tf.reshape(tensor, shape)`
 
