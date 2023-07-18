@@ -411,3 +411,457 @@ axis=0表示在维度0创建新轴
 猫：[1, 0, 0]
 狗：[0, 1, 0]
 鸟：[0, 0, 1]
+
+
+**代码解释**
+
+先定义了一个名为 one_hot_matrix 的函数，它接受两个参数：label（分类标签）和 depth（类别的数量）。
+```
+    one_hot = tf.reshape(tf.one_hot(label, depth, axis=0), shape=[-1, ])
+```
+这一行代码的作用是计算输入标签 label 的独热编码。首先，我们使用 tf.one_hot() 函数将 label 编码为独热向量，其中 depth 指定了类别的数量。然后，我们使用 tf.reshape() 对结果进行形状调整，将其转换为单列矩阵。shape=[-1, ] 表示我们将结果调整为一个未知行数、单列的形状。
+
+
+# GRADED FUNCTION: one_hot_matrix
+```python
+def one_hot_matrix(label, depth=6):
+    """
+    Computes the one hot encoding for a single label
+    
+    Arguments:
+        label --  (int) Categorical labels
+        depth --  (int) Number of different classes that label can take
+    
+    Returns:
+         one_hot -- tf.Tensor A single-column matrix with the one hot encoding.
+    """
+    # (approx. 1 line)
+    # one_hot = None(None(None, None, None), shape=[-1, ])
+    # YOUR CODE STARTS HERE
+    one_hot = tf.reshape(tf.one_hot(label, depth, axis = 0),shape =  [-1, ])
+    
+    # YOUR CODE ENDS HERE
+    return one_hot
+```
+![1](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/029bf760-f8a0-47d1-8bb2-8015b134a622)
+
+**下一步就是使用.map函数使得array中的每一个元素都被one_hot_matrix函数处理**
+```python
+new_y_test = y_test.map(one_hot_matrix)
+new_y_train = y_train.map(one_hot_matrix)
+```
+![2](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/586c9cbc-ed2d-47ff-b7c9-c43e91e917d4)
+
+<a name='2-4'></a>
+### 2.4 - Initialize the Parameters 
+
+Now you'll initialize a vector of numbers with the Glorot initializer. The function you'll be calling is `tf.keras.initializers.GlorotNormal`, which draws samples from a truncated normal distribution centered on 0, with `stddev = sqrt(2 / (fan_in + fan_out))`, where `fan_in` is the number of input units and `fan_out` is the number of output units, both in the weight tensor. 
+
+To initialize with zeros or ones you could use `tf.zeros()` or `tf.ones()` instead. 
+
+<a name='ex-4'></a>
+### Exercise 4 - initialize_parameters
+
+Implement the function below to take in a shape and to return an array of numbers using the GlorotNormal initializer. 
+
+ - `tf.keras.initializers.GlorotNormal(seed=1)`
+ - `tf.Variable(initializer(shape=())`
+
+
+<a name='2-4'></a> ### 2.4 - 初始化参数
+### 2.4 - 初始化参数 
+
+现在，您将使用Glorot初始化器初始化一个数字向量。你要调用的函数是`tf.keras.initializers.GlorotNormal`，它从以0为中心的截断正态分布中抽取样本，其中`stddev = sqrt(2 / (fan_in + fan_out))`，
+`fan_in`是输入单位的数量，`fan_out`是输出单位的数量，两者都在权重张量中。
+
+要使用0或1初始化，可以使用`tf.zeros()`或`tf.nes()`代替。
+
+<a name='ex-4'></a>.
+### 练习 4 - 初始化参数
+
+实现下面的函数，使用GlorotNormal初始化器接收一个形状并返回一个数组。
+
+ - `tf.keras.initializers.GlorotNormal(seed=1)`。
+ - `tf.Variable(initializer(shape=())`。
+
+#### 什么是GlorotNormal
+
+Glorot initializer，也称为Xavier初始化器，是一种常用的权重初始化方法，用于初始化神经网络中的参数（权重）。它由Xavier Glorot和Yoshua Bengio在2010年提出，并被广泛应用于深度学习中。
+
+Glorot初始化器的目标是在网络的不同层之间保持输入和输出的方差相等。它考虑了每个神经元的输入和输出连接数量，以及非线性激活函数的特性。
+
+对于具有n_in个输入和n_out个输出的层，Glorot初始化器使用以下方法初始化权重：
+
+对于均匀分布的权重初始化（uniform distribution），权重在[-limit, limit]之间均匀采样，其中limit = sqrt(6 / (n_in + n_out))。
+对于正态分布的权重初始化（normal distribution），权重从均值为0，标准差为sqrt(2 / (n_in + n_out))的正态分布中采样。
+通过使用适当的方差来初始化权重，Glorot初始化器有助于避免梯度消失或梯度爆炸问题，从而更好地训练深度神经网络。这种初始化方法在许多常见的深度学习框架中都被默认使用或作为一种选择提供。
+
+
+**这是对每一个已经初始化过的参数，进行了glorot处理**
+
+# GRADED FUNCTION: initialize_parameters
+```python
+def initialize_parameters():
+    """
+    Initializes parameters to build a neural network with TensorFlow. The shapes are:
+                        W1 : [25, 12288]
+                        b1 : [25, 1]
+                        W2 : [12, 25]
+                        b2 : [12, 1]
+                        W3 : [6, 12]
+                        b3 : [6, 1]
+    
+    Returns:
+    parameters -- a dictionary of tensors containing W1, b1, W2, b2, W3, b3
+    """
+                                
+    initializer = tf.keras.initializers.GlorotNormal(seed=1)   
+    #(approx. 6 lines of code)
+    # W1 = ...
+    # b1 = ...
+    # W2 = ...
+    # b2 = ...
+    # W3 = ...
+    # b3 = ...
+    # Initialize W1
+    W1 = tf.Variable(initializer(shape=(25, 12288)))
+
+    # Initialize b1
+    b1 = tf.Variable(initializer((25, 1)))
+
+    # Initialize W2
+    W2 = tf.Variable(initializer(shape=(12, 25)))
+
+    # Initialize b2
+    b2 = tf.Variable(initializer(shape = (12, 1)))
+
+    # Initialize W3
+    W3 = tf.Variable(initializer(shape=(6, 12)))
+
+    # Initialize b3
+    b3 = tf.Variable(initializer((6, 1)))
+    # YOUR CODE ENDS HERE
+
+    parameters = {"W1": W1,
+                  "b1": b1,
+                  "W2": W2,
+                  "b2": b2,
+                  "W3": W3,
+                  "b3": b3}
+    
+    return parameters
+```
+    
+<a name='3'></a>
+## 3 - Building Your First Neural Network in TensorFlow
+
+In this part of the assignment you will build a neural network using TensorFlow. Remember that there are two parts to implementing a TensorFlow model:
+
+- Implement forward propagation
+- Retrieve the gradients and train the model
+
+Let's get into it!
+
+<a name='3-1'></a>
+### 3.1 - Implement Forward Propagation 
+
+One of TensorFlow's great strengths lies in the fact that you only need to implement the forward propagation function and it will keep track of the operations you did to calculate the back propagation automatically.  
+
+
+<a name='ex-5'></a>
+### Exercise 5 - forward_propagation
+
+Implement the `forward_propagation` function.
+
+**Note** Use only the TF API. 
+
+- tf.math.add
+- tf.linalg.matmul
+- tf.keras.activations.relu
+
+You will not apply "softmax" here. You'll see below, in `Exercise 6`, how the computation for it can be done internally by TensorFlow.
+
+
+
+# GRADED FUNCTION: forward_propagation
+```python
+def forward_propagation(X, parameters):
+    """
+    Implements the forward propagation for the model: LINEAR -> RELU -> LINEAR -> RELU -> LINEAR
+    
+    Arguments:
+    X -- input dataset placeholder, of shape (input size, number of examples)
+    parameters -- python dictionary containing your parameters "W1", "b1", "W2", "b2", "W3", "b3"
+                  the shapes are given in initialize_parameters
+
+    Returns:
+    Z3 -- the output of the last LINEAR unit
+    """
+    
+    # Retrieve the parameters from the dictionary "parameters" 
+    W1 = parameters['W1']
+    b1 = parameters['b1']
+    W2 = parameters['W2']
+    b2 = parameters['b2']
+    W3 = parameters['W3']
+    b3 = parameters['b3']
+    
+    #(approx. 5 lines)                   # Numpy Equivalents:
+    # Z1 = ...                           # Z1 = np.dot(W1, X) + b1
+    # A1 = ...                           # A1 = relu(Z1)
+    # Z2 = ...                           # Z2 = np.dot(W2, A1) + b2
+    # A2 = ...                           # A2 = relu(Z2)
+    # Z3 = ...                           # Z3 = np.dot(W3, A2) + b3
+    # YOUR CODE STARTS HERE
+    Z1 = tf.linalg.matmul(W1, X) + b1
+    A1 = tf.keras.activations.relu(Z1)
+    Z2 = tf.linalg.matmul(W2, A1) + b2
+    A2 = tf.keras.activations.relu(Z2)
+    Z3 = tf.linalg.matmul(W3, A2) + b3
+    # YOUR CODE ENDS HERE
+    
+    return Z3
+```
+
+<a name='3-2'></a>
+### 3.2 Compute the Total Loss
+
+All you have to do now is define the loss function that you're going to use. For this case, since we have a classification problem with 6 labels, a categorical cross entropy will work!
+
+You are used to compute the cost value which sums the losses over the whole batch (i.e. all mini-batches) of samples, then divide the sum by the total number of samples. Here, you will achieve this in two steps. 
+
+In step 1, the `compute_total_loss` function will only take care of summing the losses from one mini-batch of samples. Then, as you train the model (in section 3.3) which will call this `compute_total_loss` function once per mini-batch, step 2 will be done by accumulating the sums from each of the mini-batches, and finishing it with the division by the total number of samples to get the final cost value.
+
+Computing the "total loss" instead of "mean loss" in step 1 can make sure the final cost value to be consistent. For example, if the mini-batch size is 4 but there are just 5 samples in the whole batch, then the last mini-batch is going to have 1 sample only. Considering the 5 samples, losses to be [0, 1, 2, 3, 4] respectively, we know the final cost should be their average which is 2. Adopting the "total loss" approach will get us the same answer. However, the "mean loss" approach will first get us 1.5 and 4 for the two mini-batches, and then finally 2.75 after taking average of them, which is different from the desired result of 2. Therefore, the "total loss" approach is adopted here. 
+
+现在要做的就是定义要使用的损失函数。在本例中，由于我们面临的是一个有6个标签的分类问题，因此可以使用分类交叉熵！
+
+您需要计算代价值，代价值为整批样本（即所有小批量样本）的损失总和，然后用总和除以样本总数。这里分两步实现。
+
+在第一步中，compute_total_loss 函数将只计算一个迷你批次样本的损失总和。然后，当您训练模型时（在第 3.3 节中），每个迷你批次将调用一次 compute_total_loss 函数，第 2 步将通过累加每个迷你批次的总和来完成，最后除以样本总数得到最终的成本值。
+
+在步骤1中计算 "总损失 "而不是 "平均损失 "可以确保最终成本值保持一致。例如，如果小批量为 4 个，但整批样品只有 5 个，那么最后一个小批量只有 1 个样品。考虑到这5个样品的损失分别为[0, 1, 2, 3, 4]，我们知道最终成本应该是它们的平均值，即2。但是，如果采用 "平均损失 "法，则两个小批量的成本分别为 1.5 和 4，取其平均值后，最终成本为 2.75，这与预期结果 2 不同。因此，这里采用 "总损失 "法。
+
+<a name='ex-6'></a>
+### Exercise 6 -  compute_total_loss
+
+Implement the total loss function below. You will use it to compute the total loss of a batch of samples. With this convenient function, you can sum the losses across many batches, and divide the sum by the total number of samples to get the cost value. 
+- It's important to note that the "`y_pred`" and "`y_true`" inputs of [tf.keras.losses.categorical_crossentropy](https://www.tensorflow.org/api_docs/python/tf/keras/losses/categorical_crossentropy) are expected to be of shape (number of examples, num_classes). 
+
+- `tf.reduce_sum` does the summation over the examples.
+
+- You skipped applying "softmax" in `Exercise 5` which will now be taken care by the `tf.keras.losses.categorical_crossentropy` by setting its parameter `from_logits=True` (You can read the response by one of our mentors [here](https://community.deeplearning.ai/t/week-3-assignment-compute-total-loss-try-to-set-from-logits-false/243049/2?u=paulinpaloalto) in the Community for the mathematical reasoning behind it. If you are not part of the Community already, you can do so by going [here](https://www.coursera.org/learn/deep-neural-network/ungradedLti/ZE1VR/important-have-questions-issues-or-ideas-join-our-community).)
+  
+
+练习 6 - 计算总损失
+实现下面的总损失函数。您将用它来计算一批样本的总损失。有了这个方便的函数，您就可以将许多批次的损失相加，然后将总和除以样本总数，得到成本值。
+
+值得注意的是，tf.keras.lossings.categorical_crossentropy的输入 "y_pred "和 "y_true "预计为形状（示例数、类数）。
+
+tf.reduce_sum将对示例求和。
+
+您在练习 5 中跳过了应用 "softmax"，现在将由 tf.keras.losses.categorical_crossentropy 通过设置其参数 from_logits=True（您可以阅读我们的一位导师在社区中的回复，了解其背后的数学推理。如果您还不是社区的一员，您可以点击此处加入)。
+
+
+
+
+# GRADED FUNCTION: compute_total_loss 
+```python
+def compute_total_loss(logits, labels):
+    """
+    Computes the total loss
+    
+    Arguments:
+    logits -- output of forward propagation (output of the last LINEAR unit), of shape (6, num_examples)
+    labels -- "true" labels vector, same shape as Z3
+    
+    Returns:
+    total_loss - Tensor of the total loss value
+    """
+    
+    #(1 line of code)
+    # remember to set `from_logits=True`
+    # total_loss = ...
+    # YOUR CODE STARTS HERE
+    total_loss = tf.reduce_mean(tf.keras.losses.categorical_crossentropy(labels, logits, from_logits=True))
+    
+    # YOUR CODE ENDS HERE
+    return total_loss
+
+```
+
+<a name='3-3'></a>
+### 3.3 - Train the Model
+
+Let's talk optimizers. You'll specify the type of optimizer in one line, in this case `tf.keras.optimizers.Adam` (though you can use others such as SGD), and then call it within the training loop. 
+
+Notice the `tape.gradient` function: this allows you to retrieve the operations recorded for automatic differentiation inside the `GradientTape` block. Then, calling the optimizer method `apply_gradients`, will apply the optimizer's update rules to each trainable parameter. At the end of this assignment, you'll find some documentation that explains this more in detail, but for now, a simple explanation will do. ;) 
+
+
+Here you should take note of an important extra step that's been added to the batch training process: 
+
+- `tf.Data.dataset = dataset.prefetch(8)` 
+
+What this does is prevent a memory bottleneck that can occur when reading from disk. `prefetch()` sets aside some data and keeps it ready for when it's needed. It does this by creating a source dataset from your input data, applying a transformation to preprocess the data, then iterating over the dataset the specified number of elements at a time. This works because the iteration is streaming, so the data doesn't need to fit into the memory. 
+
+3.2 计算总损失
+现在要做的就是定义要使用的损失函数。在本例中，由于我们面临的是一个有6个标签的分类问题，因此可以使用分类交叉熵！
+
+您需要计算代价值，代价值为整批样本（即所有小批量样本）的损失总和，然后用总和除以样本总数。这里分两步实现。
+
+在第一步中，compute_total_loss 函数将只计算一个迷你批次样本的损失总和。然后，当您训练模型时（在第 3.3 节中），每个迷你批次将调用一次 compute_total_loss 函数，第 2 步将通过累加每个迷你批次的总和来完成，最后除以样本总数得到最终的成本值。
+
+在步骤1中计算 "总损失 "而不是 "平均损失 "可以确保最终成本值保持一致。例如，如果小批量为 4 个，但整批样品只有 5 个，那么最后一个小批量只有 1 个样品。考虑到这5个样品的损失分别为[0, 1, 2, 3, 4]，我们知道最终成本应该是它们的平均值，即2。然而，采用 "平均损失 "的方法将首先得到两个小批量的 1.5 和 4，然后在求出它们的平均值后得到 2.75，这与期望的结果 2 不同。因此，这里采用 "总损失 "的方法。
+
+
+练习 6 - 计算总损失
+实现下面的总损失函数。您将用它来计算一批样本的总损失。有了这个方便的函数，您就可以将许多批次的损失相加，然后将总和除以样本总数，得到成本值。
+
+值得注意的是，tf.keras.lossings.categorical_crossentropy的输入 "y_pred "和 "y_true "预计为形状（示例数、类数）。
+
+tf.reduce_sum将对示例求和。
+
+您在练习 5 中跳过了应用 "softmax"，现在将由 tf.keras.losses.categorical_crossentropy 通过设置其参数 from_logits=True（您可以阅读我们的一位导师在社区中的回复，了解其背后的数学推理。如果您还不是社区的一员，您可以点击此处加入)。
+
+
+**Disputed results**
+
+# GRADED FUNCTION: compute_total_loss 
+```python
+def compute_total_loss(logits, labels):
+    """
+    Computes the total loss
+    
+    Arguments:
+    logits -- output of forward propagation (output of the last LINEAR unit), of shape (6, num_examples)
+    labels -- "true" labels vector, same shape as Z3
+    
+    Returns:
+    total_loss - Tensor of the total loss value
+    """
+    
+    #(1 line of code)
+    # remember to set `from_logits=True`
+    # total_loss = ...
+    # YOUR CODE STARTS HERE
+    total_loss = tf.reduce_sum(tf.keras.losses.categorical_crossentropy(labels, logits, from_logits=True))
+
+    # YOUR CODE ENDS HERE
+    return total_loss
+```
+
+
+
+<a name='3-3'></a>
+### 3.3 - Train the Model
+
+Let's talk optimizers. You'll specify the type of optimizer in one line, in this case `tf.keras.optimizers.Adam` (though you can use others such as SGD), and then call it within the training loop. 
+
+Notice the `tape.gradient` function: this allows you to retrieve the operations recorded for automatic differentiation inside the `GradientTape` block. Then, calling the optimizer method `apply_gradients`, will apply the optimizer's update rules to each trainable parameter. At the end of this assignment, you'll find some documentation that explains this more in detail, but for now, a simple explanation will do. ;) 
+
+
+Here you should take note of an important extra step that's been added to the batch training process: 
+
+- `tf.Data.dataset = dataset.prefetch(8)` 
+
+What this does is prevent a memory bottleneck that can occur when reading from disk. `prefetch()` sets aside some data and keeps it ready for when it's needed. It does this by creating a source dataset from your input data, applying a transformation to preprocess the data, then iterating over the dataset the specified number of elements at a time. This works because the iteration is streaming, so the data doesn't need to fit into the memory. 
+
+```python
+def model(X_train, Y_train, X_test, Y_test, learning_rate = 0.0001,
+          num_epochs = 1500, minibatch_size = 32, print_cost = True):
+    """
+    Implements a three-layer tensorflow neural network: LINEAR->RELU->LINEAR->RELU->LINEAR->SOFTMAX.
+    
+    Arguments:
+    X_train -- training set, of shape (input size = 12288, number of training examples = 1080)
+    Y_train -- test set, of shape (output size = 6, number of training examples = 1080)
+    X_test -- training set, of shape (input size = 12288, number of training examples = 120)
+    Y_test -- test set, of shape (output size = 6, number of test examples = 120)
+    learning_rate -- learning rate of the optimization
+    num_epochs -- number of epochs of the optimization loop
+    minibatch_size -- size of a minibatch
+    print_cost -- True to print the cost every 10 epochs
+    
+    Returns:
+    parameters -- parameters learnt by the model. They can then be used to predict.
+    """
+    
+    costs = []                                        # To keep track of the cost
+    train_acc = []
+    test_acc = []
+    
+    # Initialize your parameters
+    #(1 line)
+    parameters = initialize_parameters()
+
+    W1 = parameters['W1']
+    b1 = parameters['b1']
+    W2 = parameters['W2']
+    b2 = parameters['b2']
+    W3 = parameters['W3']
+    b3 = parameters['b3']
+
+    optimizer = tf.keras.optimizers.Adam(learning_rate)
+    
+    # The CategoricalAccuracy will track the accuracy for this multiclass problem
+    test_accuracy = tf.keras.metrics.CategoricalAccuracy()
+    train_accuracy = tf.keras.metrics.CategoricalAccuracy()
+    
+    dataset = tf.data.Dataset.zip((X_train, Y_train))
+    test_dataset = tf.data.Dataset.zip((X_test, Y_test))
+    
+    # We can get the number of elements of a dataset using the cardinality method
+    m = dataset.cardinality().numpy()
+    
+    minibatches = dataset.batch(minibatch_size).prefetch(8)
+    test_minibatches = test_dataset.batch(minibatch_size).prefetch(8)
+    #X_train = X_train.batch(minibatch_size, drop_remainder=True).prefetch(8)# <<< extra step    
+    #Y_train = Y_train.batch(minibatch_size, drop_remainder=True).prefetch(8) # loads memory faster 
+
+    # Do the training loop
+    for epoch in range(num_epochs):
+
+        epoch_total_loss = 0.
+        
+        #We need to reset object to start measuring from 0 the accuracy each epoch
+        train_accuracy.reset_states()
+        
+        for (minibatch_X, minibatch_Y) in minibatches:
+            
+            with tf.GradientTape() as tape:
+                # 1. predict
+                Z3 = forward_propagation(tf.transpose(minibatch_X), parameters)
+
+                # 2. loss
+                minibatch_total_loss = compute_total_loss(Z3, tf.transpose(minibatch_Y))
+
+            # We accumulate the accuracy of all the batches
+            train_accuracy.update_state(minibatch_Y, tf.transpose(Z3))
+            
+            trainable_variables = [W1, b1, W2, b2, W3, b3]
+            grads = tape.gradient(minibatch_total_loss, trainable_variables)
+            optimizer.apply_gradients(zip(grads, trainable_variables))
+            epoch_total_loss += minibatch_total_loss
+        
+        # We divide the epoch total loss over the number of samples
+        epoch_total_loss /= m
+
+        # Print the cost every 10 epochs
+        if print_cost == True and epoch % 10 == 0:
+            print ("Cost after epoch %i: %f" % (epoch, epoch_total_loss))
+            print("Train accuracy:", train_accuracy.result())
+            
+            # We evaluate the test set every 10 epochs to avoid computational overhead
+            for (minibatch_X, minibatch_Y) in test_minibatches:
+                Z3 = forward_propagation(tf.transpose(minibatch_X), parameters)
+                test_accuracy.update_state(minibatch_Y, tf.transpose(Z3))
+            print("Test_accuracy:", test_accuracy.result())
+
+            costs.append(epoch_total_loss)
+            train_acc.append(train_accuracy.result())
+            test_acc.append(test_accuracy.result())
+            test_accuracy.reset_states()
+
+
+    return parameters, costs, train_acc, test_acc
+```
