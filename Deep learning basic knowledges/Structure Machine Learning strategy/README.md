@@ -86,4 +86,45 @@ Formally, the F1 score is defined by this formula. : 2/(1/p + 1/r)
 
 How to set up the dev/test.
 
-选择distribution of the 
+**选择distribution of the Train/dev/test**
+
+是需要根据 dev set + metric 定制的一个目标，然后就可以尝试不同的方法达到这个目标.
+
+为了使得数据没有偏向性，我们需要把数据随机打乱，然后再分成dev和test set.
+
+
+**Guideline**
+
+**其中的dev和test set应该有same distribution**
+
+Choose a dev set and test set to reflect data you expect to get in the future and consider important to do well on.
+
+## Size of dev and test sets
+
+in the old way of splitting data.
+
+In the early machine learning, this is very reasonable. 
+
+70% traning set, 30% testing set.
+
+or the 60% traning, 20% develop set, 20% test set.
+
+如果样本量足够大，例如达到10000000，那我们就可以选择98% as the traning set, 1% as the dev set, 1% as the test set.
+![5](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/3bad0d14-a7c8-49dd-a6f4-356269c8a7eb)
+
+**Size of test set**
+
+Set your test set to be big enough to give high confidence in the overall performance of your system.
+
+这就意味着，也许test set并不需要上百万给样例. 也许1W个样本就能提供足够的置信度来评估性能，或10w给.
+
+## When to change dev/test sets and metrics
+
+好办法其实是加入error 分数的筛选。
+
+Error： 1/ m_dev * (i=1 到M_dev数量的连加) y（预测）≠ y（实际的值）
+但是这时，这个并没有把我们需要区分的色情图片错误和非猫咪错误区分开来.
+我们可以加入一个进行判断了W参数来解决这个问题.
+
+
+
