@@ -220,3 +220,41 @@ Human-level error 和 Training error之间的误差就是Avoidable bias
 **下图展示了如何降低Avoidable bias以及Variance 值的方法**
 ![2](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/9132bb60-b4ef-491a-97ce-ccf38dc0a8a1)
 
+# Carrying out error analysis
+
+**如果我们想让我们的algorithm达到human-level，我们可以手动地检查算法中的错误**
+
+This process called **error analysis**
+
+Look at dev examples to evaluate ideas
+
+如图下例子中所示，这是一个识别cat的算法，它对猫的识别率是90%，而那10%error 是下面的dog图.
+
+队友会建议  ：如何使算法更好，特别是在识别狗的时候。
+
+所以就会出现侧重点：collect more dog pictures. 为了让这个算法不再把狗判定成猫.
+
+![3](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/c0f9e1b1-10af-4e3d-bc05-1d97b5f19bca)
+
+
+关于 **Error analysis**：
+1. Get~100 mislabeled dev set examples.
+2. Count up how many are dogs.(现在图中的结果是，100张分错的样本中有5%是狗的图片)
+   这意味着 就算解决了狗识别的问题，也没有提升多少准确率.
+3. 如果计算出来之后，发现100张分错的样本中，有50%是狗，那就值得努力去提升准确率.
+4. 所以一般进行Error analysis可以绘制一个excel图.这将帮助你遍历手动查看图像集，
+   而这个Colum是进行检测的问题：1. Dog， 2. Great Cats， 3. Blurry images问题，4. 再留一个列来写conmments.
+   
+![5](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/4d6c60c3-ea4b-4045-a0da-bdb6209c1a6c)
+
+这个图将告诉你，处理哪一个部分的问题，你的Model可以得到一个更准确的结果.
+
+如果有两个问题都占有较大的error比重，就可以分成两队，一队改善Great cats一队改善Blurry.
+
+总结： 要进行error analysis 你应该找到一套在验证集中被错误预测了label的样本，并按照 look for false positive and false negative. 并计算在不同类别中mislabeled的数量。
+
+## cleaning Up Incorrectly Labeled Data
+
+In the Supervisor learning case, the Data comes from input X and output label Y.
+
+而在Model预测后输出的X和Ylable对不上时候，就产生了 Mislabeled examples.
