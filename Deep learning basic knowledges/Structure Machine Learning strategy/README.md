@@ -125,6 +125,98 @@ Set your test set to be big enough to give high confidence in the overall perfor
 Error： 1/ m_dev * (i=1 到M_dev数量的连加) y（预测）≠ y（实际的值）
 但是这时，这个并没有把我们需要区分的色情图片错误和非猫咪错误区分开来.
 我们可以加入一个进行判断了W参数来解决这个问题.
+![1](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/b4e1a34f-dfd7-4452-a0d4-aebd89c171b1)
 
 
+# 关于机器学习目标设定的步骤
+
+**可以更快的对算法A还是算法B更好做出决定**
+
+1. 设定评估功能的单一化指标（first step： play target）（由一个knob控制）
+2. 考虑如何在这个指标上获得更好的性能（第二步，研究如何打中target）（由另一个knob控制）
+3. 可以通过在Cost function中引入常数（）的方式增加权重，来达到获得更好性能的目的.
+
+![2](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/d475c1fa-5fa2-4261-a8ca-d9d0a4308140)
+
+例子
+![3](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/9682c7cc-c052-4f7f-8caa-baba1bcc7cc2)
+
+
+## Comparing to human-level Performance
+
+### Why human-level performance
+
+1. 在某些领域中，机器学习处理问题的程度能和人比较了.
+
+**特别是在训练机器学习算法，如果以时间作为横轴可以看到，一段时间之后，机器学习算法的准确读就高于人类了**
+
+但是都会低于贝叶斯最优误差线. 当你准确率低于人类的时候，还有工具来进行改正，如果accuracy高于人类了，
+就很少有工具能进行提升准确率了.
+
+![5](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/000dbbe5-c124-4cfe-8b81-2fb8ff1400e2)
+
+![1](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/94e82cf1-a31e-40d6-90b0-9c3490ee82ea)
+
+### 可避免的bias
+
+**将Human类误差和Training error之间的差值看作是Avoidable Bias**
+![1](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/e10710c2-7c1e-4da3-bdf4-048cc7053668)
+
+
+例子： 在执行猫识别任务中，如果训练集（8%）的误差度和人（1%）都有比较大差距（bias高了，训练set不拟合）
+1. 训练更长时间，用更大的神经网络（更多层）
+
+例子例子： 在执行猫识别任务中，如果训练集（8%）的误差度和人（7.5%），而Dev set中error（10%）.这个时候，就是模型在Dev set中不拟合了，这个时候就是过拟合训练集（high Variance）.
+
+1. 进行Regulazition 减小Variance
+
+**所以我们可以将人类准确度看成是贝叶斯最优误差的代理变量，或者是估计值**
+
+上面两个例子表明其实，是否overfitting或者是underfitting都是取决于人类误差的比较的.
+
+所以我们需要进行判断，是Avoidable bias大？还是Variance误差大
+
+
+### Understanding human-level performance
+
+more precisely define the human-level performance.
+
+**Human-level error as a proxy for Bayes error**
+
+例子中，对于这张骨科X-ray image不同的人或者团队会有不同的准确度.
+其实选择哪一个作为human-level performance是基于你的模型的适用场景的.
+最佳的肯定是准确率最高的0.5%，但是如果只是进行发表，或者证明有效性，1%超过一个普通放射科医生就可以了.
+![1](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/a159975f-6249-437e-9036-b395c4f3cd9b)
+
+**选取不同level作为human-level时候**
+
+Human-level error 和 Training error之间的误差就是Avoidable bias
+
+这个Training error和Dev error之间的误差就是表现了Variance的值的变化.
+
+### Surpassing Human-level Performance
+
+一旦它的training error 解决0.5% 就很少有工具能够提升了，但是能通过Avoidable bias来找到Optimization.
+
+**Problems where ML significantly surpasses human-level performance**
+例如：
+- Online advertising （算法性能远超人类）
+- Product recommendations （产品推荐）
+- Logistics（predicting transit time） (预测物流时间)
+- Loan approvals （贷款许可）
+
+**这些都不是Nature Perception（自然感知）问题**
+不是计算机视觉等。
+
+而人类在Perception方面更有优势，所以导致Algorithm在这方面很难超过人类.
+
+**当然以上所有，都是基于我们的团队获得了大量的数据的情况**
+
+### Improving your model performance
+
+1. 很好的fitting training set（可以得到较小的Avoidable bias）
+2. The training set performance generalizes pretty well to the dev/test set(the variance is not too bad)
+
+**下图展示了如何降低Avoidable bias以及Variance 值的方法**
+![2](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/9132bb60-b4ef-491a-97ce-ccf38dc0a8a1)
 
