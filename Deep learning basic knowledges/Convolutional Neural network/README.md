@@ -60,9 +60,23 @@ in order to detect the vertical edges in this image, we can construct a 3*3 filt
 
  在numpy为workform的情况下，我们需要定义conv_forward的函数
  在TensorFlow为workform的情况下，我们可以使用既定函数：tf.nn.conv2d
+ Keras: conv2D
  
  **下面的git图是在pooling过程中，filter怎么工作的**
 ![filter_Progress](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/e142fa6d-7e51-4b2e-bb48-947204e500d8)
 
+**所以，为什么这是在进行detect Vertical edge**
 
+这是进行解释的例子：
+
+在左半边都是10的像素，右半边都是0的像素.
+它的图就是左边更亮的像素强度，右边更暗的像素强度.
+在这个图像的中间有一个明显的**分界**.
+
+这个3*3的filter可视化之后就是一个由3色（白灰黑）组成的.更明亮的在左边，向右的暗.
+
+然后再经过converlution operation之后得到的4*4 matrix，可视化之后是，
+两边灰，中间白的。  这就和检测出来的vertiacl edge相对应，这个中间的高亮就是和6*6中的分界对应.
+这表示刚好由一个强垂直edge再图像中间.
+![1](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/31ff9c65-0a11-490d-ac06-3b4eed0a58ed)
 
