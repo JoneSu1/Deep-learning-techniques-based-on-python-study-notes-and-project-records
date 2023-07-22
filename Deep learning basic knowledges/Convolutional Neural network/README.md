@@ -124,4 +124,62 @@ in order to detect the vertical edges in this image, we can construct a 3*3 filt
 
 **关于Padding过程**
 
+如果我由n*n的input matrix， f*f的filter matrix，最后的输出，我们会得到的是（n-f +1 ）* (n-f+1) 的matrix.
 
+**进行padding的缺陷（downside）**
+
+1. 如果每一次我使用一个卷积操作，图像就会缩小（shrinking output）（可能做不了几次图片就会变得非常小）
+2. 图片中的 pixel(像素) of edge和corner只会在输出中被使用一次，然而位于中间的pixel会在多个filter上重叠.相对来说pixel of edge and cornor被使用次数会少很多（所以会损失很多边界信息）.
+   
+So to sovle both of these problems,both the shrinking(收缩) output.
+我们可以在使用coverlution operation之前要执行**Padding**.
+
+ 我们可以pad image到那个input matrix里面.
+ 如下图，我们可以用一个额外的边缘（border）填充图片（一个pixel大小为1的额外边缘），来让
+
+做完padding之后，本来的input matrix是6*6现在就变成了8*8
+
+所以这个output再进行了padding之后就不再是4*4了，而是8-3+1，8-3+1=6*6的matrix了.
+
+ **当我用0来padding的时候**
+
+如果 p 是填充的数量，意思就是填充的圈数.
+p =  padding = 1 ,此时就变成了（n + 2p - f+1）,(n + 2p - f + 1)
+                             6 + 2 -3+1, 6 = 6*6的matri
+
+![4](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/b88b1059-1a16-4f81-a1c7-3ca6a8487755)
+
+**那到底需要padding多少呢**
+
+**一般就两种卷积方式：Valid 卷积和 Same卷积**
+
+**Valid（有效）卷积**：意思是没有padding，就是n*n 卷积 f*f 得到n - f + 1, n-f+1
+
+**Same convolution** Pad so that output size is the same as the input size.
+就是在padding之后，input和output的matrix的大小是一样的， n + 2p - f+1 = n.
+则p = (f-1)/2 ,所以当filter是奇数的时候，就可以用这个公式使得输入和输出相同size的matrix.
+
+**而在computer vision中基本上filter都是用奇数（odd）而不是偶数（even number）**
+
+如果filter is even number, you may need some asymmetric（不对称的） padding(不对称填充)
+只有f是odd时候才能有same convolution.
+
+而且当是odd filter时候，会在中间有一个特殊的pixel点，这在vision learning中是好的.
+
+## Strided Convolutions（滤波器）
+
+**Strided convolutions**是一种在卷积神经网络（Convolutional Neural Networks，CNNs）中常用的技术。在卷积操作中，"stride"是指滤波器（或称为卷积核）在输入数据上移动的步长。例如，stride为1意味着滤波器每次移动一个像素，stride为2意味着滤波器每次移动两个像素，以此类推。
+
+Strided convolutions常常被用作下采样（downsampling）的手段，以减少网络中的参数数量和计算量，同时也能增加模型的感受野（receptive field）。这在某些任务中是有用的，例如在图像分类中，我们可能更关心图像的全局信息，而不是局部细节。
+
+使用strided convolutions可以减小输出的空间维度（例如，宽度和高度）。例如，如果你在7x7的input matrix上使用3x3的filter和stride为2的卷积，那么输出将是3x3的。这是因为滤波器每次移动两个像素，所以它覆盖的输入区域更少。 
+我将stride seting成 2意思就是，每次convolution operation 都要hop over 2 steps.
+就是从第一个pixel到下一个重合的pixel之间由两个单位的差距，不管是横向还是纵向.
+
+n*n 卷积 f*f 那么output ，end up ： (n + 2p -f)/S  + 1 * (n + 2p -f)/S  + 1就是output的size.
+
+padding p   stride：  S，  S=2 ， （7 + 0 - 3）/2 +1=3，所以size of output是 3*3
+
+**特殊情况这个分数不是整数的时候**
+
+Which is one of this
