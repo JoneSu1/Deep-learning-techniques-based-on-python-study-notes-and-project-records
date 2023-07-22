@@ -180,6 +180,107 @@ n*n 卷积 f*f 那么output ，end up ： (n + 2p -f)/S  + 1 * (n + 2p -f)/S  + 
 
 padding p   stride：  S，  S=2 ， （7 + 0 - 3）/2 +1=3，所以size of output是 3*3
 
+![10](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/ccd276ac-d706-454e-9572-0997a6156a8c)
+
+
 **特殊情况这个分数不是整数的时候**
 
-Which is one of this
+Which is one of this fraction(分数) is not an integer(整数).
+
+In this case, we are going round this down. (round down 向下取整，4舍5入)
+
+[Z] = floor(Z) 意思就是对Z进行round-down
+![1](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/4eb8d88a-fc00-4243-9d4e-0b6fda0a3984)
+
+**Technical note on cross-correlation vs. convolution**
+
+一般都会跳过（如果有必要可以单独来看这个技术部分）
+对filter进行操作.
+![2](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/acc6530e-e8fd-4b2e-83da-eb4b405829d4)
+
+flip it on the horizontal as well as the vertical axis.
+基于横轴和纵轴进行翻转.
+
+然后得到mirroring it both on（两个的镜像）
+
+所以它的结论就是：A于B卷积后再和C卷积 = B和C卷积之后再和A卷积. 这对于某些信号处理有用（对深度学习用处不大）
+
+## Convolutions Over Volume(卷积在体积上)
+
+### Convolutions on RGB images
+就是不止对grey image处理了，而是Three-dimension的处理，也就是RGB images（red，green，blue的3通道图像）
+
+进行Convolution operation 的过程还是相似的，只是input变成了n*n*3并且filter 也变成了f*f*3
+
+**图中的，6*6*3**：第一个6是代表hight，第二个6代表width宽，3代表channel number.
+input的channel和filter的channel数量必须相同.
+
+ 进行Convolution operation 的过程和1 dimension时候是相似的，但是是一整个的square放了上去.
+
+这个3*3*3filter是一个3的立方体（cube）.
+
+ 为了得到下一个数字，必须将这个cube移动一个单位去计算27次相乘，再相加.
+
+ ![filter_Progress](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/e1e6667a-280a-474e-a8f9-fad342455399)
+
+ 
+如果我们只想对red channel进行vertical edge的convolution operation就可以将filter的第二和第三层都设成0.
+如果不在意vertical edge是属于哪一个channel可以都使用相同的filter层.
+通过设置parameters of filter将会能得到达成不同效果detected edge.
+
+**In by computer vision**: 通常当你输入一个certain（固定）height和certain width，以及certain number of channels的input，我们会设置一个固定channel和不同宽高的filter，我们可以由一个只负责red或者green或者blue通道的filter。
+
+![3](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/f5aeea3d-2cf4-43ad-bed5-531ff73d024a)
+
+**The one last important concept**
+
+**如果我们不止想进行vertical edge detection 还想同时进行horizontal edge detection或者其他角度的detection**
+
+**如何同时应用多个filter**
+
+下图中黄色为一个vertical filter，橘色为第二个Horizontal filter.
+
+在使用这两个不同的filter之后得到了两个4*4 的matrix，我们可以吧第一个filter的结果放在第一层，把第二个的filter的结果放在第二层，使得我们的output变成了4*4*2的output.
+
+**Summarize：** n * n*nc  卷积 f*f*nc 得到一个 n-f+1,n-f+1, (number of filters).
+
+卷积是很强大的，这个filter的设置让我们可以同时的处理vertical，horizontal以及更多的不同特征.
+
+![1](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/aae347f7-4eb7-4c75-a05e-13a3c78b5016)
+
+# One layer of a convolutional network
+
+例子：对卷积完之后的结果加上一个常数集b并且用一个非线性的函数进行处理（比如ReLU）.
+然后将得到的几个filter的结果整合到一起.
+
+然后将这个处理Convolution network的步骤和之前neural network的步骤对应起来。
+
+其实filter的处理是通过相乘在相加得到结果，是一个线性方程计算的结果，而在构建卷积神经网络（Convolutional Neural Networks，CNNs）时，非线性函数（通常被称为激活函数）的使用是至关重要的。这是因为它们赋予了网络捕捉复杂和非线性问题的能力。如果没有非线性函数，无论网络有多深，它都只能表示线性函数，这大大限制了网络的表达能力。
+
+所以这个a[0](input)到a[1]的步骤：
+1. 线性计算得到filter output的结果
+2.  然后添加bias再通过非线性函数RelU进行操作得到a[1]
+
+**Number of parameters in one layer**
+
+If you have 10 filters that are 3*3*3 in one layer of a neural network,
+how many parameters does that layer have? 
+
+其中一个filter的3*3*3 + bias = 28个，而有10个filters则是28*10=280个parameters.
+
+这种复杂的数学组成使得再convolution neural network中不太容易overfitting.
+这意味着我们训练出的filter模型，可以应用到非常大的图像（特征detection）中.
+
+![5](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/3aca8e44-458e-4246-bf8d-c5b916368f6f)
+
+**Summary**
+![1](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/fba3b6f7-691a-4a6e-b509-db838863a53f)
+
+
+## A simple convolution network example
+
+Example ConvNet:
+
+
+
+
