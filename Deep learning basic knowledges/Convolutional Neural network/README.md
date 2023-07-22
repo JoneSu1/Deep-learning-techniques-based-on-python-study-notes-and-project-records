@@ -32,5 +32,37 @@ but in the style of the image on the right, and end up with the image at the bot
 
   1. 当拿到一张图片时候，第一件事就是detect the vertical edges(垂直边缘)，从图中看在vertical edges的过程中，人像被识别出来了.
   2. 然后第二步，就是进行 horizontal edges（横向边缘），这将检测到一些横向的背景.
-  3. 
+
+
+**那么如何进行detect Vertical edge and Horizontal edges**
+
+因为这是一个grey image所以只是一个6*6*1的matrix. 而不是 6*6*3，因为没有RGB channel.
+
+in order to detect the vertical edges in this image, we can construct a 3*3 filter (过滤器).
+
+然而我们需要做的就是通过3*3的filter对6*6的图像进行convolution operation. 在数学中"*"被认为是卷积计算符号，而在python中是元素乘法.
+
+而在通过filter的处理之后，将得到一个4*4的 matrix.
+
+计算过程是，将filter 复制到6*6的矩阵上面，然后进行element-wish operation.
+
+就是将每个元素都相乘再相加，就可以得到4*4 矩阵的第一个element.
+
+其中，filter中的数值是通过随机选值得到的。当然也有一些适用于特定情况的filter（如Sobel滤波器，Prewitt滤波器等）在进行detect edge的过程中是卓有成效的
+
+
+**使用filter的过程**
+
+![5](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/50a6a5e7-36cf-43a9-8043-db0d3c713832)
+
+
+然后为了得到4*4中的下一个值，就需要将filter也同时向右边平移
+
+ 在numpy为workform的情况下，我们需要定义conv_forward的函数
+ 在TensorFlow为workform的情况下，我们可以使用既定函数：tf.nn.conv2d
+ 
+ **下面的git图是在pooling过程中，filter怎么工作的**
+![filter_Progress](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/e142fa6d-7e51-4b2e-bb48-947204e500d8)
+
+
 
