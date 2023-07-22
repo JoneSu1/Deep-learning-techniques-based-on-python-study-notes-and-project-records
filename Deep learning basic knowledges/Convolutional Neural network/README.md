@@ -80,3 +80,48 @@ in order to detect the vertical edges in this image, we can construct a 3*3 filt
 这表示刚好由一个强垂直edge再图像中间.
 ![1](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/31ff9c65-0a11-490d-ac06-3b4eed0a58ed)
 
+## More edge detection
+
+**Positive and negative edges**
+
+还是和刚才的例子相似，但是第二个图改变了高像素的位置，这就导致4*4的哪个matrix中，出现了negative的像素值.
+
+而再上面的图是，从暗到亮的边界，而下图就成了由亮到暗的了.
+
+![1](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/c43e6fb4-420b-4932-b274-9941a6999828)
+
+**以下是更多detect edge的例子**
+
+**关于Horizontal edge**
+
+不同的filter可以帮我们找到图中不同水平的edge.
+
+
+在这个例子的右边，-30那里，取值的是很多0的地方，就是一个典型的负边界.
+![1](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/215b1f65-9048-4d25-af00-5130756010a8)
+
+**以下是介绍经典的filter数字设置的是，是根据vertical edge** 
+
+**现在的介绍**
+
+**如Sobel滤波器，Prewitt滤波器等**
+
+**如sobel filter**： 优点在于给中间行赋予了更大的权重。 就可能让它更加的稳定.
+
+**Scharr filter**
+
+**如果想要detect 一些复杂的edge of image**：
+并不需要计算机视觉的研究人员挑选出这9给矩阵元素.
+可以将这9个数给定义成parameter W，并通过backward propagation来得到他们的数值，从而得到一个优秀的filter.
+
+**如果需要也可以尝试调节element到达进行45°，70°，73°无论什么角度的学习**
+
+![4](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/d68c4542-97f9-4699-b9c9-8f0c584d510b)
+
+## Padding（填充）
+
+构建CNNs 网络的基本操作就是是Padding.
+
+**关于Padding过程**
+
+
