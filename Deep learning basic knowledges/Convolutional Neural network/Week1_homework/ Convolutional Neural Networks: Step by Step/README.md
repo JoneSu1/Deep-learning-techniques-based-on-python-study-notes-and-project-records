@@ -8,7 +8,7 @@ By the end of this notebook, you'll be able to:
 * Apply two different types of pooling operation
 * Identify the components used in a convolutional neural network (padding, stride, filter, ...) and their purpose
 * Build a convolutional neural network
-* 
+  
 ![3](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/ba874069-5063-46d7-98e8-e9785ecad94f)
 
 
@@ -80,6 +80,7 @@ You will be implementing the building blocks of a convolutional neural network! 
     - Pooling backward (optional)
     
 This notebook will ask you to implement these functions from scratch in `numpy`. In the next notebook, you will use the TensorFlow equivalents of these functions to build the following model:
+
 **Note**: For every forward function, there is a corresponding backward equivalent. Hence, at every step of your forward module you will store some parameters in a cache. These parameters are used to compute gradients during backpropagation. 
 
 <a name='2'></a>
@@ -215,6 +216,13 @@ In this part, implement a single step of convolution, in which you apply the fil
 - Applies a filter at every position of the input
 - Outputs another volume (usually of different size)
 
+
+在这一部分中，我们将实现单步卷积，即在输入的单个位置应用滤波器。这将用于建立一个卷积单元，它可以 
+
+- 获取输入Volume 
+- 在输入的每个位置应用滤波器
+- 输出另一个volume（通常大小不同）
+  
 ![Convolution_schematic](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/bb2c803b-9ee6-47fb-ae03-631939d29e91)
 
 <caption><center> <u> <font color='purple'> <b>Figure 2</b> </u><font color='purple'>  : <b>Convolution operation</b><br> with a filter of 3x3 and a stride of 1 (stride = amount you move the window each time you slide) </center></caption>
@@ -223,8 +231,119 @@ In a computer vision application, each value in the matrix on the left correspon
 
 Later in this notebook, you'll apply this function to multiple positions of the input to implement the full convolutional operation. 
 
+在计算机视觉应用中，左边矩阵中的每个值都对应一个像素值。通过将 3x3 滤波器的值与原始矩阵逐元素相乘，然后求和并加上偏置，就可以将图像卷积为 3x3 滤波器。在练习的第一步，您将执行单步卷积，即在其中一个位置应用滤波器，以获得单个实值输出。
+
+在本笔记本的后面部分，您将对输入的多个位置应用此函数，以实现完整的卷积操作。
+
 <a name='ex-2'></a>
 ### Exercise 2 - conv_single_step
 Implement `conv_single_step()`. 
     
 [Hint](https://docs.scipy.org/doc/numpy-1.13.0/reference/generated/numpy.sum.html).
+
+
+**Note**: The variable b will be passed in as a numpy array.  If you add a scalar (a float or integer) to a numpy array, the result is a numpy array.  In the special case of a numpy array containing a single value, you can cast it as a float to convert it to a scalar.
+
+**注意**： 变量 b 将作为一个 numpy 数组传入。 如果在一个 numpy 数组中加入一个标量（浮点数或整数），结果就是一个 numpy 数组。 在一个包含单个值的 numpy 数组的特殊情况下，你可以将其投为浮点数，将其转换为标量。
+
+# GRADED FUNCTION: conv_single_step
+
+**代码解释**
+其中的a_slice_prev 的shape（f,f,n_C_prev） 就是在input那层进行取值的那个方块.
+W 也是个array， shape是（f,f,n_C_prev）就是filter的weight parameters
+b 是matrix of shape（1，1，1）
+
+```python
+def conv_single_step(a_slice_prev, W, b):
+    """
+    Apply one filter defined by parameters W on a single slice (a_slice_prev) of the output activation 
+    of the previous layer.
+    
+    Arguments:
+    a_slice_prev -- slice of input data of shape (f, f, n_C_prev)
+    W -- Weight parameters contained in a window - matrix of shape (f, f, n_C_prev)
+    b -- Bias parameters contained in a window - matrix of shape (1, 1, 1)
+    
+    Returns:
+    Z -- a scalar value, the result of convolving the sliding window (W, b) on a slice x of the input data
+    """
+
+    #(≈ 3 lines of code)
+    # Element-wise product between a_slice_prev and W. Do not add the bias yet.
+    # s = None
+    # Sum over all entries of the volume s.
+    # Z = None
+    # Add bias b to Z. Cast b to a float() so that Z results in a scalar value.
+    # Z = None
+    # YOUR CODE STARTS HERE
+    s = np.multiply(a_slice_prev, W)
+    Z = np.sum(s)
+    Z = Z + float(b)
+    # YOUR CODE ENDS HERE
+
+    return Z
+```
+
+**Test**
+![4](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/8d48be7c-a755-43d0-993e-b95d747fcf33)
+
+<a name='3-3'></a>
+### 3.3 - Convolutional Neural Networks - Forward Pass
+
+In the forward pass, you will take many filters and convolve them on the input. Each 'convolution' gives you a 2D matrix output. You will then stack these outputs to get a 3D volume: 
+
+
+https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/ed374291-34e7-4ece-968c-2889455c0a1a
+
+
+### Exercise 3 -  conv_forward
+Implement the function below to convolve the filters `W` on an input activation `A_prev`.  
+This function takes the following inputs:
+* `A_prev`, the activations output by the previous layer (for a batch of m inputs); 
+* Weights are denoted by `W`.  The filter window size is `f` by `f`.
+* The bias vector is `b`, where each filter has its own (single) bias. 
+
+You also have access to the hyperparameters dictionary, which contains the stride and the padding. 
+
+**Hint**: 
+1. To select a 2x2 slice at the upper left corner of a matrix "a_prev" (shape (5,5,3)), you would do:
+```python
+a_slice_prev = a_prev[0:2,0:2,:]
+```
+Notice how this gives a 3D slice that has height 2, width 2, and depth 3.  Depth is the number of channels.  
+This will be useful when you will define `a_slice_prev` below, using the `start/end` indexes you will define.
+
+2. To define a_slice you will need to first define its corners `vert_start`, `vert_end`, `horiz_start` and `horiz_end`. This figure may be helpful for you to find out how each of the corners can be defined using h, w, f and s in the code below.
+
+
+<caption><center> <u> <font color='purple'> <b>Figure 3</b> </u><font color='purple'>  : <b>Definition of a slice using vertical and horizontal start/end (with a 2x2 filter)</b> <br> This figure shows only a single channel.  </center></caption>
+![1](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/4b0be2cd-e989-4ba8-b84b-62f21e274d96)
+
+
+**Reminder**:
+    
+The formulas relating the output shape of the convolution to the input shape are:
+    
+$$n_H = \Bigl\lfloor \frac{n_{H_{prev}} - f + 2 \times pad}{stride} \Bigr\rfloor +1$$
+$$n_W = \Bigl\lfloor \frac{n_{W_{prev}} - f + 2 \times pad}{stride} \Bigr\rfloor +1$$
+$$n_C = \text{number of filters used in the convolution}$$
+    
+
+
+
+For this exercise, don't worry about vectorization! Just implement everything with for-loops.
+
+
+#### Additional Hints (if you're stuck):
+
+
+* Use array slicing (e.g.`varname[0:1,:,3:5]`) for the following variables:  
+  `a_prev_pad` ,`W`, `b`  
+  - Copy the starter code of the function and run it outside of the defined function, in separate cells.  
+  - Check that the subset of each array is the size and dimension that you're expecting.  
+* To decide how to get the `vert_start`, `vert_end`, `horiz_start`, `horiz_end`, remember that these are indices of the previous layer.  
+  - Draw an example of a previous padded layer (8 x 8, for instance), and the current (output layer) (2 x 2, for instance).  
+  - The output layer's indices are denoted by `h` and `w`.  
+* Make sure that `a_slice_prev` has a height, width and depth.
+* Remember that `a_prev_pad` is a subset of `A_prev_pad`.  
+  - Think about which one should be used within the for loops.
