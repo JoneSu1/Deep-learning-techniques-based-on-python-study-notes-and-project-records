@@ -281,6 +281,68 @@ how many parameters does that layer have?
 
 Example ConvNet:
 
+一组图片判断是不是猫，input是39*39*3 那么就意味着
+        H[0] = 39
+        W[0] = 39
+        n[c] = 3
+        f[1] = 3
+        s[1] = 1
+        p[1] = 0
+        10个filter
+所以output层的是(n+2p-f)/s +1 得知output是37*37*10（有10个filter）
+       nH[1] = nW[1] = 37
+       nc[1] = 10
 
+而下一层是:  
+       f[2] = 5
+       s[2] = 2
+       p[2] = 0
+       20个filter
+所以output层是（n+2p-f)/s +1 = 17, 所以是 17*17*20
+       nH[2] = 17
+       nW[2] = 17
+       nc[2] = 20
+再加上一个卷积层：
 
+       f[3] = 5
+       s[3] = 2
+       40个filter
+所以output layer是（n+2p-f）/s +1 = 7, 所以是7*7*40
 
+所以我们的3次卷积将39*39*7的图像給计算出成了7*7*40=1960的特征.
+
+然后我们将这1960个单元进行reshape的转换，变成one dimension array（vector）.
+（all 1960 numbers, and unrolling(展开)them into a very long vector.）
+然后导入logical的binary classification函数Sigmoid或者是多分类的Softmax，得到判断结果.
+![1](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/355c2542-1df4-43c4-9293-c40067be15fd)
+
+**Types of layer in a convolutional network**
+
+- Convolution(CONV)
+- Pooling(POOL)
+- Fully connected (FC)
+
+ ## Pooling layer
+
+ ConvNets often also use pooling layers to reduce the size of the representation,
+ to speed the computation, as well as make some of the features that detect a bit more
+ robust(强壮的).
+
+ 在卷积神经网络中，池化层通常在卷积层之后使用，主要有以下几个原因：
+
+1. 降维：池化层减少了输入数据的空间尺寸，从而减少了网络中的参数和计算量，提高了计算效率，同时也有助于防止过拟合。
+
+2. 平移不变性：池化层可以提供一种形式的平移不变性，即输入数据稍微移动，大部分池化输出的值不会改变。这对于图像识别等任务非常有用。
+
+3. 特征提取：池化层有助于提取主要的局部空间特征。
+
+4. 模型正则化：通过减少参数数量，池化层也有助于防止模型过拟合。
+
+而再现有的pooling 的方法中，多用的是：**Max pooling** 和 **average pooling**.
+![2](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/6fac6eb3-3f28-425c-adf6-81acdbfb4ba8)
+
+**Max pooling**
+我们将经过Convolution operation处理的output数据分成4个颜色的区，然后取每个颜色中最大的数字.
+
+其实就是设置了一个filter，f = 2, s= 2,但取的是最大值.
+如果把4*4看作是feature的集合的话，就是再神经网络某个层中的激活状态
