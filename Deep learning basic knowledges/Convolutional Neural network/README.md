@@ -282,6 +282,7 @@ how many parameters does that layer have?
 Example ConvNet:
 
 一组图片判断是不是猫，input是39*39*3 那么就意味着
+
         H[0] = 39
         W[0] = 39
         n[c] = 3
@@ -289,19 +290,25 @@ Example ConvNet:
         s[1] = 1
         p[1] = 0
         10个filter
+        
 所以output层的是(n+2p-f)/s +1 得知output是37*37*10（有10个filter）
+
        nH[1] = nW[1] = 37
        nc[1] = 10
 
 而下一层是:  
+
        f[2] = 5
        s[2] = 2
        p[2] = 0
        20个filter
+       
 所以output层是（n+2p-f)/s +1 = 17, 所以是 17*17*20
+
        nH[2] = 17
        nW[2] = 17
        nc[2] = 20
+       
 再加上一个卷积层：
 
        f[3] = 5
@@ -342,7 +349,70 @@ Example ConvNet:
 ![2](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/6fac6eb3-3f28-425c-adf6-81acdbfb4ba8)
 
 **Max pooling**
+
+**在实践中发现这个方法效果更好一些**
+![3](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/b970bcd0-12ec-4ff2-adb2-ba1ebb3436b8)
+
 我们将经过Convolution operation处理的output数据分成4个颜色的区，然后取每个颜色中最大的数字.
 
 其实就是设置了一个filter，f = 2, s= 2,但取的是最大值.
-如果把4*4看作是feature的集合的话，就是再神经网络某个层中的激活状态
+如果把4*4看作是feature的集合的话，就是再神经网络某个层中的激活状态中的一个大的数字，意味着它或许检测到了一个特定的特征，显然它在左上角那里有一个大的数字9，这个特征也许他不是cat eye detect，但是在右上的区域没有这个特征。 
+
+所以Max Pooling做的是，检测到所有地方的特征. 如果在滤波器中任何地方检测到了这些特征，就保留最大值.
+
+**特点**
+- 它有一套Hyperparameters： f =2, s=2
+- 但是在实际上没有任何需要梯度相加算法学习的东西（这就表示，只要确定了f和s，怎么迭代都不影响它）
+- 因为Max pooling实际上也是用的filter做的，所以同样可以用n = （n+2p-f）/s +1来算
+
+![4](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/5f8bf68c-7db1-4de5-b7d3-fd3cb48bdfce)
+
+**关于Average Pooling**
+**一般是选择用Max pooling**
+
+和之前的Max pooling差不多，就是在设置filter的时候，让它不是取最大值而是取平均值.
+![1](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/206f1412-fe9e-40a9-b237-d1a67fadf1b5)
+
+## CNN example
+
+在进行Convolutional Neural network 构建中，将CNN1和PooL1看成是一层. 
+
+进行了3次convolution operation 得到400*1的verctor， 就是被unrolling的neural unite.
+然后用我们400*1的做为input作为输入，在下一层layer中构建给120 unite的全连接层（FC3）和普通的单层神经网络层相同所以这层是（120，400），然后再构建一个FC4(84,120)。然后在下一层中使用Softmax作为activation function就可以得到进行识别了的数据。
+
+**关于Hyperparameters的设定，尽量取找别人在文献中使用的，别自己造**
+![2](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/cc7359f6-322d-4b79-82bb-161479805c3a)
+
+**一些总结**
+随着网络的构建，Activation size是在逐渐减小的.
+![1](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/413e8529-2833-4d38-8def-549cc4c9dd17)
+
+## Why Convolutions?
+
+**Advantages**
+1. parameter sharing（一个filter在经过1层所有数据时候都是相同的）
+2. sparsity of connections(连接稀疏)，输出的结果和周边的结果无关.
+ 
+ 参数共享有以下几个主要优点：
+
+减少参数数量：通过在整个输入图像上共享同一组权重，我们大大减少了模型的参数数量。这使得模型更加高效，同时也减少了过拟合的风险。
+
+平移不变性：由于同一组权重在整个图像上都被应用，所以无论特征在图像中的何处，CNNs都能够识别出它。这就是所谓的平移不变性，它使得CNNs非常适合处理图像数据。
+
+学习空间层次结构：通过在不同的层级上应用参数共享，CNNs能够学习到图像的空间层次结构。在较低层级，网络可能会学习到边缘或颜色斑块等简单特征；在较高层级，网络可能会学习到更复杂的特征，如物体部分或整个物体。
+
+**Advantages**
+
+**参数共享**：在CNNs中，同一组权重（即卷积核）在整个输入图像上都被应用。这种参数共享策略大大减少了模型的参数数量，使得模型更加高效，同时也减少了过拟合的风险。
+
+**平移不变性（Translation Invariance）**：由于同一组权重在整个图像上都被应用，所以无论特征在图像中的何处，CNNs都能够识别出它。这就是所谓的平移不变性，它使得CNNs非常适合处理图像数据。
+
+**局部感知（Local Perception）**：CNNs的每个神经元只与输入数据的一个小区域（即其感受野）相连，这使得CNNs能够捕捉到图像的局部特征。
+
+**层次结构（Hierarchical Structure:）**：CNNs通常由多个卷积层和池化层堆叠而成，这使得网络能够学习到数据的层次结构。在较低层级，网络可能会学习到边缘或颜色斑块等简单特征；在较高层级，网络可能会学习到更复杂的特征，如物体部分或整个物体。
+
+**在图像和视频处理任务上的优秀表现（Excellent Performance on Image and Video Processing Tasks:）**：CNNs在许多图像和视频处理任务上都表现出色，包括图像分类、物体检测、语义分割、人脸识别、行为识别等。
+
+**如何训练一个好的模型**
+![4](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/3e4684da-09a7-4e46-822f-69d398b5922e)
+
