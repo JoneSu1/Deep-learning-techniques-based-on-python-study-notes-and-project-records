@@ -633,3 +633,26 @@ def pool_forward(A_prev, hparameters, mode = "max"):
 ![3](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/eb20ba18-689a-42f6-af3f-a8969245cdfd)
 ![5](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/6e5b7798-1a37-452d-8990-207f5da53220)
 
+
+<font color='blue'>
+    
+**What you should remember**:
+
+* A convolution extracts features from an input image by taking the dot product between the input data and a 3D array of weights (the filter). 
+* The 2D output of the convolution is called the feature map
+* A convolution layer is where the filter slides over the image and computes the dot product 
+    * This transforms the input volume into an output volume of different size 
+* Zero padding helps keep more information at the image borders, and is helpful for building deeper networks, because you can build a CONV layer without shrinking the height and width of the volumes
+* Pooling layers gradually reduce the height and width of the input by sliding a 2D window over each specified region, then summarizing the features in that region
+
+
+<font color='blue'>
+    
+**你应该记住**：
+
+* 卷积从输入图像中提取特征，方法是求出输入数据与三维权值阵列（滤波器）之间的点积。
+* 卷积的二维输出称为特征图
+* 卷积层是滤波器在图像上滑动并计算点积的地方 
+    * 这将输入体积转化为不同大小的输出体积 
+* 零填充有助于在图像边界保留更多信息，并有助于构建更深的网络，因为你可以在不缩小体积高度和宽度的情况下构建 CONV 层
+* 池化层通过在每个指定区域上滑动二维窗口，逐渐缩小输入的高度和宽度，然后汇总该区域的特征。
