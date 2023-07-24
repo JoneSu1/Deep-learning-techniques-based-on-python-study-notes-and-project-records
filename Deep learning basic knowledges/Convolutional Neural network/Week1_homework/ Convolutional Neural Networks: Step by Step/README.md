@@ -512,3 +512,124 @@ def conv_forward(A_prev, W, b, hparameters):
   ```
 ![1](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/c9eaa527-f4e0-4487-be67-626db8bd19aa)
 
+<a name='4'></a>
+## 4 - Pooling Layer 
+
+The pooling (POOL) layer reduces the height and width of the input. It helps reduce computation, as well as helps make feature detectors more invariant to its position in the input. The two types of pooling layers are: 
+
+- Max-pooling layer: slides an ($f, f$) window over the input and stores the max value of the window in the output.
+
+- Average-pooling layer: slides an ($f, f$) window over the input and stores the average value of the window in the output.
+![2](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/9bf63bfc-8bbe-4b13-9ce3-2b12e4ba1245)
+These pooling layers have no parameters for backpropagation to train. However, they have hyperparameters such as the window size $f$. This specifies the height and width of the $f \times f$ window you would compute a *max* or *average* over. 
+
+<a name='4-1'></a>
+### 4.1 - Forward Pooling
+Now, you are going to implement MAX-POOL and AVG-POOL, in the same function. 
+
+<a name='ex-4'></a>
+### Exercise 4 - pool_forward
+
+Implement the forward pass of the pooling layer. Follow the hints in the comments below.
+
+**Reminder**:
+As there's no padding, the formulas binding the output shape of the pooling to the input shape is:
+
+$$n_H = \Bigl\lfloor \frac{n_{H_{prev}} - f}{stride} \Bigr\rfloor +1$$
+
+$$n_W = \Bigl\lfloor \frac{n_{W_{prev}} - f}{stride} \Bigr\rfloor +1$$
+
+$$n_C = n_{C_{prev}}$$
+
+```python
+# GRADED FUNCTION: pool_forward
+
+def pool_forward(A_prev, hparameters, mode = "max"):
+    """
+    Implements the forward pass of the pooling layer
+    实现池化层的前向传播
+
+    Arguments:
+    A_prev -- Input data, numpy array of shape (m, n_H_prev, n_W_prev, n_C_prev)
+    A_prev -- 输入数据，形状为 (m, n_H_prev, n_W_prev, n_C_prev) 的 numpy 数组
+    hparameters -- python dictionary containing "f" and "stride"
+    hparameters -- 包含 "f" 和 "stride" 的 python 字典
+    mode -- the pooling mode you would like to use, defined as a string ("max" or "average")
+    mode -- 你想要使用的池化模式，定义为字符串 ("max" 或 "average")
+
+    Returns:
+    A -- output of the pool layer, a numpy array of shape (m, n_H, n_W, n_C)
+    A -- 池化层的输出，形状为 (m, n_H, n_W, n_C) 的 numpy 数组
+    cache -- cache used in the backward pass of the pooling layer, contains the input and hparameters 
+    cache -- 池化层反向传播时使用的缓存，包含输入和 hparameters
+    """
+    
+    # Retrieve dimensions from the input shape
+    # 从输入形状中提取维度
+    (m, n_H_prev, n_W_prev, n_C_prev) = A_prev.shape
+    
+    # Retrieve hyperparameters from "hparameters"
+    # 从 "hparameters" 中提取超参数
+    f = hparameters["f"]
+    stride = hparameters["stride"]
+    
+    # Define the dimensions of the output
+    # 定义输出的维度
+    n_H = int(1 + (n_H_prev - f) / stride)
+    n_W = int(1 + (n_W_prev - f) / stride)
+    n_C = n_C_prev
+    
+    # Initialize output matrix A
+    # 初始化输出矩阵 A
+    A = np.zeros((m, n_H, n_W, n_C))              
+    
+    # YOUR CODE STARTS HERE
+    # 你的代码开始于此
+    for i in range(m):                         # loop over the training examples 遍历训练样本
+        for h in range(n_H):                     # loop on the vertical axis of the output volume 在输出体积的垂直轴上循环
+            # Find the vertical start and end of the current "slice"
+            # 找到当前 "切片" 的垂直开始和结束
+            vert_start = h * stride
+            vert_end = vert_start + f
+
+            for w in range(n_W):                 # loop on the horizontal axis of the output volume 在输出体积的水平轴上循环
+                # Find the horizontal start and end of the current "slice"
+                # 找到当前 "切片" 的水平开始和结束
+                horiz_start = w * stride
+                horiz_end = horiz_start + f
+
+                for c in range(n_C):            # loop over the channels of the output volume 遍历输出体积的通道
+
+                    # Use the corners to define the current slice on the ith training example of A_prev, channel c. 
+                    # 使用角点定义 A_prev 的第 i 个训练样本的当前切片，通道 c。
+                    a_prev_slice = A_prev[i, vert_start:vert_end, horiz_start:horiz_end, c]
+
+                    # Compute the pooling operation on the slice. 
+                    # Use an if statement to differentiate the modes. 
+                    # Use np.max and np.mean.
+                    # 在切片上计算池化操作。
+                    # 使用 if 语句区分模式。
+                    # 使用 np.max 和 np.mean。
+                    if mode == "max":
+                        A[i, h, w, c] = np.max(a_prev_slice)
+                    elif mode == "average":
+                        A[i, h, w, c] = np.mean(a_prev_slice)
+    
+    # YOUR CODE ENDS HERE
+    # 你的代码结束于此
+    
+    # Store the input and hparameters in "cache" for pool_backward()
+    # 为 pool_backward() 将输入和 hparameters 存储在 "cache" 中
+    cache = (A_prev, hparameters)
+    
+    # Making sure your output shape is correct
+    # 确保你的输出形状是正确的
+    assert(A.shape == (m, n_H, n_W, n_C))
+    
+    return A, cache
+```
+
+**Test**
+![3](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/eb20ba18-689a-42f6-af3f-a8969245cdfd)
+![5](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/6e5b7798-1a37-452d-8990-207f5da53220)
+
