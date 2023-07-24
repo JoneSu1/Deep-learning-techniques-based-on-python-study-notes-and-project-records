@@ -347,3 +347,168 @@ For this exercise, don't worry about vectorization! Just implement everything wi
 * Make sure that `a_slice_prev` has a height, width and depth.
 * Remember that `a_prev_pad` is a subset of `A_prev_pad`.  
   - Think about which one should be used within the for loops.
+
+
+ 这段代码定义了一个卷积神经网络（Convolutional Neural Network，简称 CNN）中的卷积前向传播函数。下面是对每一部分的解释：
+
+conv_forward(A_prev, W, b, hparameters):: 这是函数定义，其中：
+
+A_prev 是前一层的输出激活值，一个形状为 (m, n_H_prev, n_W_prev, n_C_prev) 的 numpy 数组。
+W 是权重，一个形状为 (f, f, n_C_prev, n_C) 的 numpy 数组。
+b 是偏差，一个形状为 (1, 1, 1, n_C) 的 numpy 数组。
+hparameters 是一个包含 "stride" 和 "pad" 的 python 字典。
+接下来的一部分代码从输入的数组 A_prev 和 W 中获取维度信息，并从 hparameters 中提取步长（stride）和填充（pad）信息。
+
+然后，代码计算了卷积输出体积的维度，并初始化输出体积 Z 为零。
+
+A_prev_pad 是通过对 A_prev 进行填充（padding）得到的。
+
+随后的四个 for 循环是在批量训练样本、输出体积的垂直轴、水平轴和通道（即过滤器数量）上进行循环。在这个过程中，每个 "slice"（切片）的垂直和水平起始和结束位置被找出，从 a_prev_pad 中得到一个三维切片，然后与正确的滤波器 W 和偏差 b 进行卷积，得到一个输出神经元。
+
+conv_single_step(a_slice_prev, weights, biases) 是一个未在这段代码中定义的函数，它执行的是单步卷积运算。
+
+最后，将一些需要在后向传播中使用的信息保存在 "cache" 中，并返回卷积输出 Z 和 cache。
+
+**代码逐行解释**
+
+def conv_forward(A_prev, W, b, hparameters): 这一行定义了一个名为 conv_forward 的函数，它接受四个参数：前一层的输出 A_prev，权重 W，偏置 b，以及一个包含超参数（如步长和填充）的字典 hparameters。
+
+(m, n_H_prev, n_W_prev, n_C_prev) = A_prev.shape 这一行从输入 A_prev 中获取形状信息，并将各维度的大小分别赋值给 m, n_H_prev, n_W_prev 和 n_C_prev。
+
+(f, f, n_C_prev, n_C) = W.shape 这一行从权重 W 中获取形状信息，并将各维度的大小分别赋值给 f, f, n_C_prev 和 n_C。
+
+stride = hparameters['stride'] 和 pad = hparameters['pad'] 这两行从 hparameters 字典中提取步长和填充参数。
+
+n_H = int((n_H_prev - f + 2 * pad) / stride) + 1 和 n_W = int((n_W_prev - f + 2 * pad) / stride) + 1 这两行根据公式计算卷积操作后输出的高度 n_H 和宽度 n_W。
+
+Z = np.zeros((m, n_H, n_W, n_C)) 这一行创建一个全零的数组 Z，用于存储卷积结果。
+
+A_prev_pad = np.pad(A_prev, ((0,0), (pad,pad), (pad,pad), (0,0)), 'constant', constant_values = (0,0)) 这一行对输入 A_prev 进行填充，创建一个新的数组 A_prev_pad。
+
+接下来的部分包含了四层嵌套循环，对每个训练样本的每个输出通道的每个垂直和水平位置进行遍历：
+
+for i in range(m): 这一行开始遍历所有的训练样本。
+a_prev_pad = A_prev_pad[i] 这一行选取第 i 个训练样本的填充后的激活值。
+for h in range(n_H): 这一行开始遍历输出体积的垂直轴。
+vert_start = h * stride 和 vert_end = vert_start + f 这两行计算当前切片在垂直轴上的起始和结束位置。
+for w in range(n_W): 这一行开始遍历输出体积的水平轴。
+horiz_start = w * stride 和 horiz_end = horiz_start + f 这两行计算当前切片在水平轴上的起始和结束位置。
+for c in range(n_C): 这一行开始遍历输出体积的通道（即过滤器数量）。
+a_slice_prev = a_prev_pad[vert_start:vert_end, horiz_start:horiz_end, :] 这一行从 a_prev_pad 中获取三维切片。
+weights = W[...,c] 和 biases = b[...,c] 这两行获取当前通道的权重和偏置。
+Z[i, h, w, c] = conv_single_step(a_slice_prev, weights, biases) 这一行执行单步卷积运算，得到一个输出神经元，并将结果存入 Z。
+最后的部分：
+
+cache = (A_prev, W, b, hparameters) 这一行将一些在后向传播中需要用到的变量保存在 cache 中。
+return Z, cache 这一行返回卷积的输出 Z 和 cache。
+
+```python
+# GRADED FUNCTION: conv_forward
+
+def conv_forward(A_prev, W, b, hparameters):
+    """
+    Implements the forward propagation for a convolution function
+    
+    Arguments:
+    A_prev -- output activations of the previous layer, 
+        numpy array of shape (m, n_H_prev, n_W_prev, n_C_prev)
+    W -- Weights, numpy array of shape (f, f, n_C_prev, n_C)
+    b -- Biases, numpy array of shape (1, 1, 1, n_C)
+    hparameters -- python dictionary containing "stride" and "pad"
+        
+    Returns:
+    Z -- conv output, numpy array of shape (m, n_H, n_W, n_C)
+    cache -- cache of values needed for the conv_backward() function
+    """
+    
+    # Retrieve dimensions from A_prev's shape (≈1 line)  
+    # (m, n_H_prev, n_W_prev, n_C_prev) = None
+    
+    # Retrieve dimensions from W's shape (≈1 line)
+    # (f, f, n_C_prev, n_C) = None
+    
+    # Retrieve information from "hparameters" (≈2 lines)
+    # stride = None
+    # pad = None
+    
+    # Compute the dimensions of the CONV output volume using the formula given above. 
+    # Hint: use int() to apply the 'floor' operation. (≈2 lines)
+    # n_H = None
+    # n_W = None
+    
+    # Initialize the output volume Z with zeros. (≈1 line)
+    # Z = None
+    
+    # Create A_prev_pad by padding A_prev
+    # A_prev_pad = None
+    
+    # for i in range(None):               # loop over the batch of training examples
+        # a_prev_pad = None               # Select ith training example's padded activation
+        # for h in range(None):           # loop over vertical axis of the output volume
+            # Find the vertical start and end of the current "slice" (≈2 lines)
+            # vert_start = None
+            # vert_end = None
+            
+            # for w in range(None):       # loop over horizontal axis of the output volume
+                # Find the horizontal start and end of the current "slice" (≈2 lines)
+                # horiz_start = None
+                # horiz_end = None
+                
+                # for c in range(None):   # loop over channels (= #filters) of the output volume
+                                        
+                    # Use the corners to define the (3D) slice of a_prev_pad (See Hint above the cell). (≈1 line)
+                    # a_slice_prev = None
+                    
+                    # Convolve the (3D) slice with the correct filter W and bias b, to get back one output neuron. (≈3 line)
+                    # weights = None
+                    # biases = None
+                    # Z[i, h, w, c] = None
+    # YOUR CODE STARTS HERE
+    (m, n_H_prev, n_W_prev, n_C_prev) = A_prev.shape
+    
+    # Retrieve dimensions from W's shape
+    (f, f, n_C_prev, n_C) = W.shape
+    
+    # Retrieve information from "hparameters"
+    stride = hparameters['stride']
+    pad = hparameters['pad']
+    
+    # Compute the dimensions of the CONV output volume using the formula given above. 
+    n_H = int((n_H_prev - f + 2 * pad) / stride) + 1
+    n_W = int((n_W_prev - f + 2 * pad) / stride) + 1
+    
+    # Initialize the output volume Z with zeros.
+    Z = np.zeros((m, n_H, n_W, n_C))
+    
+    # Create A_prev_pad by padding A_prev
+    A_prev_pad = np.pad(A_prev, ((0,0), (pad,pad), (pad,pad), (0,0)), 'constant', constant_values = (0,0))
+
+    for i in range(m):               # loop over the batch of training examples
+        a_prev_pad = A_prev_pad[i]               # Select ith training example's padded activation
+        for h in range(n_H):           # loop over vertical axis of the output volume
+            # Find the vertical start and end of the current "slice"
+            vert_start = h * stride
+            vert_end = vert_start + f
+            
+            for w in range(n_W):       # loop over horizontal axis of the output volume
+                # Find the horizontal start and end of the current "slice"
+                horiz_start = w * stride
+                horiz_end = horiz_start + f
+                
+                for c in range(n_C):   # loop over channels (= #filters) of the output volume
+                    # Use the corners to define the (3D) slice of a_prev_pad 
+                    a_slice_prev = a_prev_pad[vert_start:vert_end, horiz_start:horiz_end, :]
+                    # Convolve the (3D) slice with the correct filter W and bias b, to get back one output neuron.
+                    weights = W[...,c]
+                    biases = b[...,c]
+                    Z[i, h, w, c] = conv_single_step(a_slice_prev, weights, biases)
+    
+    # YOUR CODE ENDS HERE
+    
+    # Save information in "cache" for the backprop
+    cache = (A_prev, W, b, hparameters)
+    
+    return Z, cache
+  ```
+![1](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/c9eaa527-f4e0-4487-be67-626db8bd19aa)
+
