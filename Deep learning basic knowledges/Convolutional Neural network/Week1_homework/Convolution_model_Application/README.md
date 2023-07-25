@@ -313,5 +313,197 @@ print ("Y_test shape: " + str(Y_test.shape))
 ```
 ![1](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/123261c2-03db-46ff-a3d1-bce6a30c53c1)
 
+<a name='4-3'></a>
+### 4.3 - Forward Propagation
+
+In TensorFlow, there are built-in functions that implement the convolution steps for you. By now, you should be familiar with how TensorFlow builds computational graphs. In the [Functional API](https://www.tensorflow.org/guide/keras/functional), you create a graph of layers. This is what allows such great flexibility.
+
+However, the following model could also be defined using the Sequential API since the information flow is on a single line. But don't deviate. What we want you to learn is to use the functional API.
+
+Begin building your graph of layers by creating an input node that functions as a callable object:
+- **input_img = tf.keras.Input(shape=input_shape):** 
+
+Then, create a new node in the graph of layers by calling a layer on the `input_img` object: 
+
+- **tf.keras.layers.Conv2D(filters= ... , kernel_size= ... , padding='same')(input_img):** Read the full documentation on [Conv2D](https://www.tensorflow.org/api_docs/python/tf/keras/layers/Conv2D).
+
+- **tf.keras.layers.MaxPool2D(pool_size=(f, f), strides=(s, s), padding='same'):** `MaxPool2D()` downsamples your input using a window of size (f, f) and strides of size (s, s) to carry out max pooling over each window.  For max pooling, you usually operate on a single example at a time and a single channel at a time. Read the full documentation on [MaxPool2D](https://www.tensorflow.org/api_docs/python/tf/keras/layers/MaxPool2D).
+
+- **tf.keras.layers.ReLU():** computes the elementwise ReLU of Z (which can be any shape). You can read the full documentation on [ReLU](https://www.tensorflow.org/api_docs/python/tf/keras/layers/ReLU).
+
+- **tf.keras.layers.Flatten()**: given a tensor "P", this function takes each training (or test) example in the batch and flattens it into a 1D vector.  
+
+    * If a tensor P has the shape (batch_size,h,w,c), it returns a flattened tensor with shape (batch_size, k), where $k=h \times w \times c$.  "k" equals the product of all the dimension sizes other than the first dimension.
+    
+    * For example, given a tensor with dimensions [100, 2, 3, 4], it flattens the tensor to be of shape [100, 24], where 24 = 2 * 3 * 4.  You can read the full documentation on [Flatten](https://www.tensorflow.org/api_docs/python/tf/keras/layers/Flatten).
+
+- **tf.keras.layers.Dense(units= ... , activation='softmax')(F):** given the flattened input F, it returns the output computed using a fully connected layer. You can read the full documentation on [Dense](https://www.tensorflow.org/api_docs/python/tf/keras/layers/Dense).
+
+In the last function above (`tf.keras.layers.Dense()`), the fully connected layer automatically initializes weights in the graph and keeps on training them as you train the model. Hence, you did not need to initialize those weights when initializing the parameters.
+
+Lastly, before creating the model, you'll need to define the output using the last of the function's compositions (in this example, a Dense layer): 
+
+- **outputs = tf.keras.layers.Dense(units=6, activation='softmax')(F)**
 
 
+#### Window, kernel, filter, pool
+
+The words "kernel" and "filter" are used to refer to the same thing. The word "filter" accounts for the amount of "kernels" that will be used in a single convolution layer. "Pool" is the name of the operation that takes the max or average value of the kernels. 
+
+This is why the parameter `pool_size` refers to `kernel_size`, and you use `(f,f)` to refer to the filter size. 
+
+Pool size and kernel size refer to the same thing in different objects - They refer to the shape of the window where the operation takes place. 
+
+
+<a name='ex-2'></a>
+### Exercise 2 - convolutional_model
+
+Implement the `convolutional_model` function below to build the following model: `CONV2D -> RELU -> MAXPOOL -> CONV2D -> RELU -> MAXPOOL -> FLATTEN -> DENSE`. Use the functions above! 
+
+Also, plug in the following parameters for all the steps:
+
+ - [Conv2D](https://www.tensorflow.org/api_docs/python/tf/keras/layers/Conv2D): Use 8 4 by 4 filters, stride 1, padding is "SAME"
+ - [ReLU](https://www.tensorflow.org/api_docs/python/tf/keras/layers/ReLU)
+ - [MaxPool2D](https://www.tensorflow.org/api_docs/python/tf/keras/layers/MaxPool2D): Use an 8 by 8 filter size and an 8 by 8 stride, padding is "SAME"
+ - **Conv2D**: Use 16 2 by 2 filters, stride 1, padding is "SAME"
+ - **ReLU**
+ - **MaxPool2D**: Use a 4 by 4 filter size and a 4 by 4 stride, padding is "SAME"
+ - [Flatten](https://www.tensorflow.org/api_docs/python/tf/keras/layers/Flatten) the previous output.
+ - Fully-connected ([Dense](https://www.tensorflow.org/api_docs/python/tf/keras/layers/Dense)) layer: Apply a fully connected layer with 6 neurons and a softmax activation.
+
+```python
+def convolutional_model(input_shape):
+    """
+    Implements the forward propagation for the model:
+    CONV2D -> RELU -> MAXPOOL -> CONV2D -> RELU -> MAXPOOL -> FLATTEN -> DENSE
+    
+    Note that for simplicity and grading purposes, you'll hard-code some values
+    such as the stride and kernel (filter) sizes. 
+    Normally, functions should take these values as function parameters.
+    
+    Arguments:
+    input_shape -- input dataset, of shape (input_shape)
+
+    Returns:
+    model -- TF Keras model (object containing the information for the entire training process) 
+    """
+
+    input_img = tf.keras.Input(shape=input_shape)
+    ## CONV2D: 8 filters 4x4, stride of 1, padding 'SAME'
+    Z1 = tf.keras.layers.Conv2D(8, (4, 4), strides=(1, 1), padding='same')(input_img)
+    ## RELU
+    A1 = tf.keras.layers.ReLU()(Z1)
+    ## MAXPOOL: window 8x8, stride 8, padding 'SAME'
+    P1 = tf.keras.layers.MaxPooling2D((8, 8), strides=(8, 8), padding='same')(A1)
+    ## CONV2D: 16 filters 2x2, stride 1, padding 'SAME'
+    Z2 = tf.keras.layers.Conv2D(16, (2, 2), strides=(1, 1), padding='same')(P1)
+    ## RELU
+    A2 = tf.keras.layers.ReLU()(Z2)
+    ## MAXPOOL: window 4x4, stride 4, padding 'SAME'
+    P2 = tf.keras.layers.MaxPooling2D((4, 4), strides=(4, 4), padding='same')(A2)
+    ## FLATTEN
+    F = tf.keras.layers.Flatten()(P2)
+    ## Dense layer
+    ## 6 neurons in output layer. Hint: one of the arguments should be "activation='softmax'" 
+    outputs = tf.keras.layers.Dense(6, activation='softmax')(F)
+    
+    model = tf.keras.Model(inputs=input_img, outputs=outputs)
+    return model
+```
+```python
+conv_model = convolutional_model((64, 64, 3))
+conv_model.compile(optimizer='adam',
+                  loss='categorical_crossentropy',
+                  metrics=['accuracy'])
+conv_model.summary()
+    
+output = [['InputLayer', [(None, 64, 64, 3)], 0],
+        ['Conv2D', (None, 64, 64, 8), 392, 'same', 'linear', 'GlorotUniform'],
+        ['ReLU', (None, 64, 64, 8), 0],
+        ['MaxPooling2D', (None, 8, 8, 8), 0, (8, 8), (8, 8), 'same'],
+        ['Conv2D', (None, 8, 8, 16), 528, 'same', 'linear', 'GlorotUniform'],
+        ['ReLU', (None, 8, 8, 16), 0],
+        ['MaxPooling2D', (None, 2, 2, 16), 0, (4, 4), (4, 4), 'same'],
+        ['Flatten', (None, 64), 0],
+        ['Dense', (None, 6), 390, 'softmax']]
+    
+comparator(summary(conv_model), output)
+```
+![3](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/ca3ba18f-94f5-436b-9ff5-11e7eb0f86cf)
+
+
+Both the Sequential and Functional APIs return a TF Keras model object. The only difference is how inputs are handled inside the object model! 
+
+顺序型和功能型 API 都会返回一个 TF Keras 模型对象。唯一的区别在于对象模型内部如何处理输入！
+
+<a name='4-4'></a>
+### 4.4 - Train the Model
+
+
+这里使用Keras 进行训练喝使用Sequential进行训练最大的区别就是在Sequential中可以直接使用input的数据，并且不用单独进行分割batch。
+
+创建训练和测试数据集：tf.data.Dataset.from_tensor_slices 是 TensorFlow 的一个函数，用于创建一个数据集对象。这个函数接收一个元组作为输入，元组中的第一个元素是特征数据（在这个例子中是 X_train 和 X_test），第二个元素是标签数据（在这个例子中是 Y_train 和 Y_test）。数据集对象表示的是一个元素序列，在这里每个元素是一个样本和它对应的标签。
+
+分批数据：batch(64) 函数将数据集分成多个批次，每个批次包含64个元素。在训练神经网络时，我们通常不会一次性处理所有的数据，而是分批次处理，每次处理一个批次的数据。
+
+拟合模型：fit 函数用来训练模型。它需要接收输入数据和标签数据，以及训练的周期数（epochs）。在这个例子中，模型用训练数据集 train_dataset 训练了100个周期。另外，validation_data 参数设置了用于在训练过程中进行模型性能评估的数据集（在这个例子中是 test_dataset）。
+
+fit 函数返回一个 history 对象，它包含了训练过程中的一些信息，例如每个周期的训练和验证损失等。
+
+```python
+train_dataset = tf.data.Dataset.from_tensor_slices((X_train, Y_train)).batch(64)
+test_dataset = tf.data.Dataset.from_tensor_slices((X_test, Y_test)).batch(64)
+history = conv_model.fit(train_dataset, epochs=100, validation_data=test_dataset)
+```
+![3](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/c164e0ac-5151-4eac-a3d7-d08d681283c9)
+
+<a name='5'></a>
+## 5 - History Object 
+
+The history object is an output of the `.fit()` operation, and provides a record of all the loss and metric values in memory. It's stored as a dictionary that you can retrieve at `history.history`: 
+
+5 - 历史对象
+历史对象是 .fit() 操作的输出，它提供了内存中所有损耗和度量值的记录。它以字典形式存储，可在 history.history.History 中检索：
+![4](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/c3810e90-613a-4365-bb11-fd6e112f7d55)
+
+
+Now visualize the loss over time using `history.history`: 
+```python
+# The history.history["loss"] entry is a dictionary with as many values as epochs that the
+# model was trained on. 
+df_loss_acc = pd.DataFrame(history.history)
+df_loss= df_loss_acc[['loss','val_loss']]
+df_loss.rename(columns={'loss':'train','val_loss':'validation'},inplace=True)
+df_acc= df_loss_acc[['accuracy','val_accuracy']]
+df_acc.rename(columns={'accuracy':'train','val_accuracy':'validation'},inplace=True)
+df_loss.plot(title='Model loss',figsize=(12,8)).set(xlabel='Epoch',ylabel='Loss')
+df_acc.plot(title='Model Accuracy',figsize=(12,8)).set(xlabel='Epoch',ylabel='Accuracy')
+```
+
+**代码解释**
+提取历史记录: history.history 包含了训练过程中每个周期的训练损失、训练准确率、验证损失和验证准确率。它是一个字典，键是度量名称（如"loss", "accuracy", "val_loss", "val_accuracy"），值是对应的度量值列表。
+
+创建数据框: pd.DataFrame(history.history) 将 history.history 字典转换为 Pandas 数据框。这样做的目的是方便后续的数据处理和可视化。
+
+分别提取损失和准确率: df_loss = df_loss_acc[['loss','val_loss']] 和 df_acc = df_loss_acc[['accuracy','val_accuracy']] 分别提取出训练和验证的损失和准确率。
+
+重命名列名: df_loss.rename(columns={'loss':'train','val_loss':'validation'},inplace=True) 和 df_acc.rename(columns={'accuracy':'train','val_accuracy':'validation'},inplace=True) 将列名重命名，使其更具可读性。
+
+绘制图形: df_loss.plot() 和 df_acc.plot() 分别绘制了损失和准确率的图形。标题、图形尺寸、x轴和y轴标签都被设置了。
+![1](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/809339d8-40ef-486d-8dc5-5418e8e60992)
+
+![2](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/bfd59b11-92bb-4023-9284-7405b2ae1349)
+
+
+Congratulations! You've finished the assignment and built two models: One that recognizes smiles, and another that recognizes SIGN language with almost 80% accuracy on the test set. In addition to that, you now also understand the applications of two Keras APIs: Sequential and Functional. Nicely done!
+
+By now, you know a bit about how the Functional API works and may have glimpsed the possibilities. In your next assignment, you'll really get a feel for its power when you get the opportunity to build a very deep ConvNet, using ResNets!
+
+<a name='6'></a>
+## 6 - Bibliography
+
+You're always encouraged to read the official documentation. To that end, you can find the docs for the Sequential and Functional APIs here: 
+
+https://www.tensorflow.org/guide/keras/sequential_model
+
+https://www.tensorflow.org/guide/keras/functional
