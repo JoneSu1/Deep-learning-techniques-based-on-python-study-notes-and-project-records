@@ -253,3 +253,65 @@ The Functional API can handle models with non-linear topology, shared layers, as
 In the visual example below, the one possible direction of the movement Sequential model is shown in contrast to a skip connection, which is just one of the many ways a Functional model can be constructed. A skip connection, as you might have guessed, skips some layer in the network and feeds the output to a later layer in the network. Don't worry, you'll be spending more time with skip connections very soon! 
 
 
+欢迎来到作业的后半部分，您将使用 Keras 灵活的 [Functional API](https://www.tensorflow.org/guide/keras/functional)，构建一个能够区分 6 位手语数字的 ConvNet。
+
+功能 API 可以处理具有非线性拓扑结构、共享层以及具有多个输入或输出的层的模型。试想一下，序列应用程序接口要求模型以线性方式在各层中移动，而功能应用程序接口则允许更大的灵活性。顺序模型是一条直线，而功能模型则是一张图，图中各层的节点可以多种方式连接。
+
+在下面的可视化示例中，显示的是顺序模型的一种可能运动方向，而跳过连接只是构建功能模型的多种方式之一。正如你可能已经猜到的那样，跳转连接跳过了网络中的某一层，并将输出馈送到网络的后一层。别担心，你很快就会花更多时间来学习跳转连接！
+
+![1](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/5fd2e990-8330-454e-b30a-ce96b5df8a02)
+
+<a name='4-1'></a>
+### 4.1 - Load the SIGNS Dataset
+
+As a reminder, the SIGNS dataset is a collection of 6 signs representing numbers from 0 to 5.
+
+<a name='4-1'></a>
+#### 4.1 - 加载 SIGNS 数据集
+
+请注意，SIGNS 数据集是由 6 个符号组成的集合，分别代表 0 到 5 的数字。
+```python
+# Loading the data (signs)
+X_train_orig, Y_train_orig, X_test_orig, Y_test_orig, classes = load_signs_dataset()
+```
+![1](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/5d7ef9ce-3642-4e6d-9ba1-bceb78eeeeb2)
+
+下一个单元格将向您展示数据集中带标签图像的示例。请随意更改下面的索引值并重新运行，以查看不同的示例。
+```python
+# Example of an image from the dataset
+index = 9
+plt.imshow(X_train_orig[index])
+print ("y = " + str(np.squeeze(Y_train_orig[:, index])))
+```
+![2](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/cd84ea2f-b5cb-4c51-8ded-d07d60526b4d)
+
+
+<a name='4-2'></a>
+### 4.2 - Split the Data into Train/Test Sets
+
+In Course 2, you built a fully-connected network for this dataset. But since this is an image dataset, it is more natural to apply a ConvNet to it.
+
+To get started, let's examine the shapes of your data. 
+
+<a name='4-2'></a>
+#### 4.2 - 将数据拆分为训练/测试集
+
+在课程 2 中，您为该数据集构建了一个全连接网络。但由于这是一个图像数据集，因此更自然的做法是将 ConvNet 应用于该数据集。
+
+首先，让我们检查一下数据的形状。
+```python
+X_train = X_train_orig/255.
+X_test = X_test_orig/255.
+Y_train = convert_to_one_hot(Y_train_orig, 6).T
+Y_test = convert_to_one_hot(Y_test_orig, 6).T
+print ("number of training examples = " + str(X_train.shape[0]))
+print ("number of test examples = " + str(X_test.shape[0]))
+print ("X_train shape: " + str(X_train.shape))
+print ("Y_train shape: " + str(Y_train.shape))
+print ("X_test shape: " + str(X_test.shape))
+print ("Y_test shape: " + str(Y_test.shape))
+```
+![1](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/123261c2-03db-46ff-a3d1-bce6a30c53c1)
+
+
+
