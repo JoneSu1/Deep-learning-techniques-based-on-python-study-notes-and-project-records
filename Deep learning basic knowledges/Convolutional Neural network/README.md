@@ -416,3 +416,5 @@ Example ConvNet:
 **如何训练一个好的模型**
 ![4](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/3e4684da-09a7-4e46-822f-69d398b5922e)
 
+# About the case studies
+
