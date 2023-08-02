@@ -418,3 +418,16 @@ Example ConvNet:
 
 # About the case studies
 
+借鉴别人的模型和代码，但是我们有不同的计算版本任务，我们需要把别的的arcticture apply that to my problem.
+
+## Outline
+这些是pretty effective network
+### Classic networks:
+1. LeNet-5
+2. AlexNet
+3. VGG
+
+#### ResNet（152 layers）
+
+这个LeNet - 5是识别文字图像的
+
