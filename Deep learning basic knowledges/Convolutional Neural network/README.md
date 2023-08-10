@@ -428,6 +428,59 @@ Example ConvNet:
 3. VGG
 
 #### ResNet（152 layers）
+![2](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/3debf249-df4f-4ea1-ae80-4b6bfddb4d3b)
 
-这个LeNet - 5是识别文字图像的
+这个LeNet - 5是识别文字图像的经典CNN模型. 现在已经不用了.
+
+#### AlexNet
+
+这个也是用足够多的filter把image 给分隔成足够多的dimensions.
+
+这个模型和LeNet-5很像，但是用的是Max pooling，和ReLU函数，并且这个模型更大.
+
+这个的文章的核心是在GPU算力低的时候。所以他们使用了两个GPU，将网络中很多层被分割到两块不同的GPU上.
+但现在不是很重要了.
+
+ 
+![3](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/70bceae3-222c-426d-ab6c-3881baa1c829)
+
+#### VGG - 16
+
+VGG-16 的结构更简单，更关注卷积层
+
+是一个简洁且好用的模型，是随着length and width降低而深度加深的一个模型.
+
+![4](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/f07addd5-be85-4e21-829f-dbd786a9643a)
+
+### 更先进和有力的神经网络结构
+
+#### 残差网络（Residual Network）
+
+跳跃连接（skip connection） 能让我从一层中得到激活.
+
+并且他解决了Vanishing and exploding gradient 出现的问题.
+
+而利用skip connection能让我懵训练网络层次很深的残差网络.
+
+在这个网络中，我们需要设置Residual block
+
+**Residual block**
+
+
+残差块 (Residual Block)
+
+残差块是深度学习中 ResNet（残差网络）的核心组件。ResNet 的主要创新是引入了所谓的“残差连接”或“跳过连接”，这些连接可以直接将输入传递到后面的层，从而避免了深层网络中的梯度消失问题。
+
+残差块的基本思想是：对于一个深层的神经网络，如果我们假设某些层应该近似于恒等函数，那么让这些层学习一个残差映射（即与恒等函数的差值）可能会更简单。
+
+具体来说，考虑一个输入 x 和一个深层网络的输出 H(x)。在 ResNet 中，我们不直接学习这个输出 H(x)，而是学习残差 F(x) = H(x) - x。之后，我们可以简单地通过 F(x) + x 来获得 H(x)。
+
+这种结构在实践中非常有效，因为“跳过连接”提供了一个直接的途径，使梯度在反向传播时可以绕过一些层，从而避免了梯度消失问题，使得网络可以安全地增加深度。
+
+在实际的残差块设计中，这个块可能包含几个卷积层、激活函数和批量归一化层。残差连接确保了块的输入可以直接添加到块的输出。
+
+总的来说，残差块通过引入跳过连接，使得深度神经网络的训练变得更稳定和高效，从而允许我们构建非常深的网络结构。
+
+
+
 
