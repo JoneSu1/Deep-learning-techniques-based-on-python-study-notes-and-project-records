@@ -495,3 +495,27 @@ VGG-16 的结构更简单，更关注卷积层
 这就使得这成为了Residual block
 
 通过大量堆叠Residual block 形成一个深层网络。
+
+
+**在plain network的训练中，不管是用gradient descent还是别的来进行，都会在layers大到一定数量就发现training error会反弹**
+
+而这限制我们构建更深的网络，因为网络约深可能误差约大.
+
+**而如果我们使用了，Residual network，通过那些skip layer，以及shot cut能让我们的trining error不发生反弹**
+
+![1](https://github.com/JoneSu1/Deep-learning-techniques-based-on-python-study-notes-and-project-records/assets/103999272/256d30db-ccd3-4294-884e-266e33ee07d8)
+
+
+### Why do ResNets work so well?
+
+Why do residual networks work?
+
+由于我们加上了一个shot cut的block
+
+所以我们a[l] 输入到Residual block之后得到的是a[l+2]
+
+这意味着Residual block更容易学习恒等函数
+
+
+
+
